@@ -1,0 +1,26 @@
+(let
+  max1:(int -> int -> int)
+=
+  (fun
+    x2:int
+    y3:int
+  ->
+    (if
+      (
+        (>):(int -> int -> bool)
+        x2:int
+        y3:int
+      ):bool
+    then
+      x2:int
+    else
+      y3:int
+    ):int
+  ):(int -> int -> int)
+in
+  (
+    max1:(int -> int -> int)
+    3:int
+    1:int
+  ):int
+):int

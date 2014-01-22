@@ -1,0 +1,19 @@
+let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> max1_f4:(y3:int -> ret:int)),
+    abs(['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):x2:int,
+         'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):y3:int
+         ],
+        ite(app('>'@loc('max.ml', 0, 0, 0, 0, 0, 0):'>_c_ret':('>_c_reta':int -> '>_c_retb':int -> c_ret:bool),
+                ['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):'>_c_reta':int,
+                 'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):'>_c_retba':int
+                 ]
+               )@loc('max.ml', 0, 0, 0, 0, 0, 0):c_ret:bool,
+            'x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int,
+            'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int
+            )@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int
+       )@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> max1_f4:(y3:int -> ret:int)),
+    app('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(max1_vleta:int -> max1_f4:(max1_vletba:int -> vlet:int)),
+        [3@loc('max.ml', 0, 0, 0, 0, 0, 0):max1_vleta:int,
+         1@loc('max.ml', 0, 0, 0, 0, 0, 0):max1_vletba:int
+        ]
+       )@loc('max.ml', 0, 0, 0, 0, 0, 0):vlet:int
+   )@loc('max.ml', 0, 0, 0, 0, 0, 0):vlet:int.
