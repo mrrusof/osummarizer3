@@ -1,3 +1,9 @@
+% Modified: Thu Jan 23 17:45:41 CET 2014
+
+
+% **********************************************************************
+% Misc
+
 :- use_module('log.pl', [lprint/1,
                          start_log/0,
                          lpush_format/2,
@@ -9,45 +15,75 @@
 
 
 % **********************************************************************
-% Syntax
+% Syntax and Well-formedness of typed expressions
 
 /*
-Expressions:
-e ::= c
-    | x
-    | (e, ..., e)
-    | if e then e else e
-    | fun x ... x -> e
-    | e e ... e
-    | let x = e in e
-    | let rec x = e and ... and x = e in e
-    | match e with | p when e -> e ... | p when e -> e
-p                  ::=  x |  app(x, [e, ..., e])
-c                  ::=  number | true | false | pervasives
-x                  ::=  atom
-(e, ..., e)        ::=  tup([e, ..., e])
-if e then e else e ::=  ite(e, e, e)
-fun x ... x -> e   ::=  abs([x, ..., x], e)
-e e ... e          ::=  app(e, [e, ..., e])
-let x = e in e     ::=  let(x, e, e)
-let rec x = e in e ::=  ltr([(x, e), ..., (x, e)], e)
+
+* Syntax
+
+Expression e:
+x                   ::=  lowercase atom
+c                   ::=  path | pervasives | string
+e, ..., e           ::=  tup([e, ..., e])
+e e ... e           ::=  app(e, [e, ..., e])
+fun x ... x -> e    ::=  abs([x, ..., x], e)
+if e then e else e  ::=  ite(e, e, e)
+let x = e in e      ::=  let(x, e, e)
+let rec x = e
+    and ... and
+        x = e in e  ::=  ltr([(x, e), ..., (x, e)], e)
+assert(e)           ::=  assert(e)
+assume(e)           ::=  assume(e)
+
+x                   ::=  lowercase atom
+c                   ::=  path | pervasives | string
+e, ..., e           ::=  tup([e, ..., e])
+e e ... e           ::=  app(e, [e, ..., e])
+fun x ... x -> e    ::=  abs([x, ..., x], e)
+if e then e else e  ::=  ite(e, e, e)
+let x = e in e      ::=  let(x, e, e)
+let rec x = e
+    and ... and
+        x = e in e  ::=  ltr([(x, e), ..., (x, e)], e)
+assert(e)           ::=  assert(e)
+assume(e)           ::=  assume(e)
+
+X                   ::=  capitalized atom
+X(e, ..., e)        ::=
 match e with
  | p when e -> e
  ...
- | p when e -> e   ::=  mae(e, [(p, e, e), ..., (p, e, e)])
-assert(e)          ::=  assert(e)
-assume(e)          ::=  assume(e)
+ | p when e -> e    ::=  mae(e, [(p, e, e), ..., (p, e, e)])
 
-Types:
-t ::= bool | int | 'a | t -> t | k(t, ..., t)
-k ::= atom
-'a ::= prolog var
 
-Named types:
-nt ::= x:bool | x:int | x:'a | x:nt -> x:nt | x:k(nt, ..., nt)
+Pattern p:
+x                   ::=  lowercase atom
+X(p, ..., p)        ::=  app(X, [p, ..., p])
+
+
+Type t:
+'a                  ::=  prolog var
+b                   ::=  bool | int
+t -> t              ::=  t -> t
+t * ... * t         ::=  t * ... * t
+X(t, ..., t)        ::=  X(t, ..., t)
+
+
+Typed expression: substitute e:t for e in Expression.
+Typed pattern: substitute p:t for p in Pattern.
 */
 
-ml_const(C) :- ground(C), ( ml_const_pervasives(C) ; ml_const_path(C) ).
+/*
+Cases for typed expressions and corresponding examples
+
+Nullary constant                :  c:i
+Function constant               :  c:(i -> i)
+Nullary identifier              :  x:i
+Function identifier             :  x:(i -> i)
+Application                     :  (+:(i -> i ->) 1:i 2:i):i
+*/
+
+ml_const(C) :- ground(C), ( number(C) ; string(C) ; ml_const_pervasives(C) ; ml_const_path(C) ).
 ml_const_path('List.nil').
 ml_const_path('List.cons').
 ml_const_path('List.map').
@@ -71,7 +107,6 @@ ml_const_pervasives(true).
 ml_const_pervasives(false).
 ml_const_pervasives(unit).
 ml_const_pervasives(read_int).
-ml_const_pervasives(C) :- ( number(C) -> true ; string(C) ).
 
 string(C) :- ( foreach(N, C) do number(N) ).
 
@@ -80,9 +115,9 @@ ml_id(X) :- atom(X), \+ml_const(X).
 base_type(T) :- atom(T).
 type_var(T) :- var(T).
 
-
 /*
-Well-formedness of expressions
+
+* Well-formedness of typed expressions
 
 wf_typed_exp(+ELT)
 */
@@ -166,8 +201,15 @@ wf_t(T) :-
         ;   ( base_type(T) ; type_var(T) )
         ).
 
+
 % **********************************************************************
-% Pretty printing
+% Pretty printing of typed expressions
+
+% TODO
+
+
+% **********************************************************************
+% Pretty printing of named expressions
 
 % TODO
 
@@ -199,11 +241,11 @@ summarize(FileIn, _FileOut) :-
            ),
 % Check that the expression is well-formed
         (   bb_get(nowf, 1) ->
-            (   wf_t_e(ELT) ->
+            true
+        ;   (   wf_typed_exp(ELT) ->
                 true
             ;   print('ERROR: the input expression is malformed\n')
             )
-        ;   true
         ).
 % Pretty print the expression
 % Name the expression

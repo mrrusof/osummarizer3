@@ -1,14 +1,15 @@
-% Wed Jan 22 00:51:46 CET 2014
+% Modified: Thu Jan 23 17:45:28 CET 2014
 
 %
-% There are three kinds of unit tests.
+% There are unit tests for the following submodules of osummarizer.
 %
-% 1. WF unit testing
+% 1. Well-formedness of typed expressions
 % 2. Naming unit testing
 % 3. Summarization unit testing
 %
 
 :- ['osummarizer.pl'].
+:- use_module(library(codesio)).
 
 
 % **********************************************************************
@@ -28,57 +29,63 @@ unit_test(_, _) :-
 % **********************************************************************
 % Well-formedness of typed expressions
 
-unit_test_wf_t_e_const_true :-
-        unit_test('Test WF const true',
+pos_wf_t_e_const_plus :-
+        unit_test('Positive test WF const plus',
+                  wf_typed_exp('+'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int))).
+pos_wf_t_e_const_true :-
+        unit_test('Positive test WF const true',
                   wf_typed_exp(true@loc('max.ml', 0, 0, 0, 0, 0, 0):bool)).
-unit_test_wf_t_e_const_10 :-
-        unit_test('Test WF const 10',
+pos_wf_t_e_const_10 :-
+        unit_test('Positive test WF const 10',
                   wf_typed_exp('10'@loc('max.ml', 0, 0, 0, 0, 0, 0):int)).
-unit_test_wf_t_e_const_hola :-
-        unit_test('Test WF const hola',
+pos_wf_t_e_const_hola :-
+        unit_test('Positive test WF const hola',
                   wf_typed_exp("hola"@loc('max.ml', 0, 0, 0, 0, 0, 0):string)).
 
-unit_test_wf_t_e_id :-
-        unit_test('Test WF id',
-                  wf_typed_exp('x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):int)).
+pos_wf_t_e_nullary_id :-
+        unit_test('Positive test WF nullary id',
+                  wf_typed_exp(x@loc('max.ml', 0, 0, 0, 0, 0, 0):int)).
+pos_wf_t_e_function_id :-
+        unit_test('Positive test WF function id',
+                  wf_typed_exp(inc@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int))).
 
-unit_test_wf_t_e_abs :-
-        unit_test('Test WF abs',
+pos_wf_t_e_abs :-
+        unit_test('Positive test WF abs',
                   wf_typed_exp(
-                     abs(['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):int],
-                         'x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                         )@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int)
+                     abs([x@loc('max.ml', 0, 0, 0, 0, 0, 0):int],
+                         x@loc('max.ml', 0, 0, 0, 0, 0, 0):int
+                         )@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int)
                     )).
 
-unit_test_wf_t_e_app :-
-        unit_test('Test WF app',
-              wf_typed_exp(
+pos_wf_t_e_app :-
+        unit_test('Positive test WF app',
+                  wf_typed_exp(
                      app('>'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
-                         ['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                          'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):int
+                         [x@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
+                          y@loc('max.ml', 0, 0, 0, 0, 0, 0):int
                           ]
                         )@loc('max.ml', 0, 0, 0, 0, 0, 0):bool
                     )).
 
-unit_test_wf_t_e_ite :-
-        unit_test('Test WF ite',
+pos_wf_t_e_ite :-
+        unit_test('Positive test WF ite',
                   wf_typed_exp(
                                ite(true@loc('max.ml', 0, 0, 0, 0, 0, 0):bool,
-                                   'x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                                   'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                                   )@loc('max.ml', 0, 0, 0, 0, 0, 0):int
+                                   x@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
+                                   y@loc('max.ml', 0, 0, 0, 0, 0, 0):int
+                                  )@loc('max.ml', 0, 0, 0, 0, 0, 0):int
                  )).
 
-unit_test_wf_t_e_let :-
-        unit_test('Test WF let',
+pos_wf_t_e_let :-
+        unit_test('Positive test WF let',
                   wf_typed_exp(let(x@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
                                    1@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
                                    x@loc('max.ml', 0, 0, 0, 0, 0, 0):int
                                   )@loc('max.ml', 0, 0, 0, 0, 0, 0):int
                               )).
 
-unit_test_wf_t_e_max :-
-        unit_test('Test WF max',
+pos_wf_t_e_max :-
+        unit_test('Positive test WF max',
                   wf_typed_exp(let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
                                    abs(['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
                                         'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):int
@@ -100,12 +107,14 @@ unit_test_wf_t_e_max :-
                                   )@loc('max.ml', 0, 0, 0, 0, 0, 0):int
                               )).
 
-:-      unit_test_wf_t_e_const_true,
-        unit_test_wf_t_e_const_10,
-        unit_test_wf_t_e_const_hola,
-        unit_test_wf_t_e_id,
-        unit_test_wf_t_e_abs,
-        unit_test_wf_t_e_app,
-        unit_test_wf_t_e_ite,
-        unit_test_wf_t_e_let,
-        unit_test_wf_t_e_max.
+:-      pos_wf_t_e_const_plus,
+        pos_wf_t_e_const_true,
+        pos_wf_t_e_const_10,
+        pos_wf_t_e_const_hola,
+        pos_wf_t_e_nullary_id,
+        pos_wf_t_e_function_id,
+        pos_wf_t_e_abs,
+        pos_wf_t_e_app,
+        pos_wf_t_e_ite,
+        pos_wf_t_e_let,
+        pos_wf_t_e_max.

@@ -1,5 +1,4 @@
-% Created  : Mon Jan 20 00:26:03 CET 2014
-% Modified : Mon Jan 20 15:47:14 CET 2014
+% Modified: Mon Jan 20 15:47:14 CET 2014
 
 :- use_module('ext/utils/cmd_line_parse.pl', [cmd_line_parse/3,
                                               print_cmd_option_list/0]).
