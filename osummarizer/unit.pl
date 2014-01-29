@@ -1,4 +1,4 @@
-% Modified: Wed Jan 29 14:45:19 CET 2014
+% Modified: Wed Jan 29 15:48:54 CET 2014
 
 %
 % There are unit tests for the following submodules of osummarizer.
@@ -305,6 +305,12 @@ pos_pp_typed_max :-
         pos_pp_typed_ite,
         pos_pp_typed_let,
         pos_pp_typed_max.
+
+
+% **********************************************************************
+% Well-formedness of typed expressions
+
+% TODO
 
 
 % % **********************************************************************

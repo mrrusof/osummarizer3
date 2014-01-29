@@ -1,12 +1,13 @@
-% Modified: Wed Jan 29 14:45:19 CET 2014
+% Modified: Wed Jan 29 15:48:54 CET 2014
 
-:- use_module('log.pl', [lprint/1,
-                         start_log/0,
-                         lpush_format/2,
-                         lpop_format/2]).
+:- use_module('log.pl', [start_log/0,
+                         lprint/1]).
+:- use_module('debug.pl', [start_debug/0,
+                           dprint/1,
+                           dpush_format/2,
+                           dpop_format/2]).
 
 :- multifile user:portray/1.
-:- dynamic user:portray/1.
 
 % Define operator @
 % A@B:C == (A@B):C because current_op(N, _, :) ---> N = 550
@@ -104,7 +105,7 @@ wf_typed_exp(E@L:T) :- wf_t_e(E, L, T).
 wf_t_e(+E, +L, +T)
 */
 wf_t_e(app(Ef@Lf:Tf, ELTs), L, T) :- !,
-        lpush_format('wf_t_e.app.in : ~p\n', [app(Ef@Lf:Tf, ELTs)@L:T]),
+        dpush_format('wf_t_e.app.in :\n~p\n', [app(Ef@Lf:Tf, ELTs)@L:T]),
         wf_l(L),
         wf_t(T),
         wf_t_e(Ef, Lf, Tf),
@@ -112,9 +113,9 @@ wf_t_e(app(Ef@Lf:Tf, ELTs), L, T) :- !,
         (   foreach(Ei@Li:Ti, ELTs)
         do  wf_t_e(Ei, Li, Ti)
         ),
-        lpop_format('wf_t_e.app.out: ~p\n', [app(Ef@Lf:Tf, ELTs)@L:T]).
+        dpop_format('wf_t_e.app.out:\n~p\n', [app(Ef@Lf:Tf, ELTs)@L:T]).
 wf_t_e(abs(XLTs, Eb@Lb:Tb), L, T) :- !,
-        lpush_format('wf_t_e.abs.in : ~p\n', [abs(XLTs, Eb@Lb:Tb)@L:T]),
+        dpush_format('wf_t_e.abs.in :\n~p\n', [abs(XLTs, Eb@Lb:Tb)@L:T]),
         wf_l(L),
         wf_t(T),
         XLTs = [_|_],
@@ -124,9 +125,9 @@ wf_t_e(abs(XLTs, Eb@Lb:Tb), L, T) :- !,
             wf_t(Ti)
         ),
         wf_t_e(Eb, Lb, Tb),
-        lpop_format('wf_t_e.abs.out: ~p\n', [abs(XLTs, Eb@Lb:Tb)@L:T]).
+        dpop_format('wf_t_e.abs.out:\n~p\n', [abs(XLTs, Eb@Lb:Tb)@L:T]).
 wf_t_e(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T) :- !,
-        lpush_format('wf_t_e.ite.in : ~p\n', [ite(E1@L1:T1, E2@L2:T2, E3@L3:T3)@L:T]),
+        dpush_format('wf_t_e.ite.in :\n~p\n', [ite(E1@L1:T1, E2@L2:T2, E3@L3:T3)@L:T]),
         wf_l(L),
         wf_t(T),
         T2 == T3,
@@ -134,9 +135,9 @@ wf_t_e(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T) :- !,
         wf_t_e(E1, L1, T1),
         wf_t_e(E2, L2, T2),
         wf_t_e(E3, L3, T3),
-        lpop_format('wf_t_e.ite.out: ~p\n', [ite(E1@L1:T1, E2@L2:T2, E3@L3:T3)@L:T]).
+        dpop_format('wf_t_e.ite.out:\n~p\n', [ite(E1@L1:T1, E2@L2:T2, E3@L3:T3)@L:T]).
 wf_t_e(let(X@Lx:Tx, E1@L1:T1, E2@L2:T2), L, T) :- !,
-        lpush_format('wf_t_e.let.in : ~p\n', [let(X@Lx:Tx, E1@L1:T1, E2@L2:T2)@L:T]),
+        dpush_format('wf_t_e.let.in :\n~p\n', [let(X@Lx:Tx, E1@L1:T1, E2@L2:T2)@L:T]),
         wf_l(L),
         wf_t(T),
         ml_id(X),
@@ -144,13 +145,13 @@ wf_t_e(let(X@Lx:Tx, E1@L1:T1, E2@L2:T2), L, T) :- !,
         wf_t(Tx),
         wf_t_e(E1, L1, T1),
         wf_t_e(E2, L2, T2),
-        lpop_format('wf_t_e.let.out: ~p\n', [let(X@Lx:Tx, E1@L1:T1, E2@L2:T2)@L:T]).
+        dpop_format('wf_t_e.let.out:\n~p\n', [let(X@Lx:Tx, E1@L1:T1, E2@L2:T2)@L:T]).
 wf_t_e(E, L, T) :- !,
-        lpush_format('wf_t_e.const/ident.in : ~p\n', [E@L:T]),
+        dpush_format('wf_t_e.const/ident.in : ~p\n', [E@L:T]),
         wf_l(L),
         wf_t(T),
         ( ml_const(E) ; ml_id(E) ),
-        lpop_format('wf_t_e.const/ident.out: ~p\n', [E@L:T]).
+        dpop_format('wf_t_e.const/ident.out: ~p\n', [E@L:T]).
 
 /*
 wf_l(+L)
@@ -354,7 +355,17 @@ pp_n_e(E, N, T, I) :- !,
 % **********************************************************************
 % Naming
 
-% TODO
+/*
+t_e_to_n_e(+ELT, -ELN)
+*/
+typed_exp_to_named_exp(E@L:T, ELN) :-
+        t_e_to_n_e1(E, L, T, _Fresh, empty, ELN).
+
+/*
+t_e_to_n_e1(+E, +L, +T, +N, +Env, -ELN)
+*/
+t_e_to_n_e1(_E, _L, _T, _N, _Env, _ELN) :-
+        throw('NYI: t_e_to_n_e1/6').
 
 
 % **********************************************************************
@@ -385,8 +396,15 @@ summarize(FileIn, _FileOut) :-
             )
         ),
 % Pretty print the expression
-        print(ELT),
-        nl.
+        lprint('\n'),
+        lprint('* Typed expression:\n'),
+        lprint(ELT),
+        lprint('\n'),
 % Name the expression
+        typed_exp_to_named_exp(ELT, ELN),
 % Pretty print the named expression
+        lprint('\n'),
+        lprint('* Named expression:\n'),
+        lprint(ELN),
+        dprint('\n').
 % Summarize the expression

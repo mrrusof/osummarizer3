@@ -1,4 +1,4 @@
-% Modified: Mon Jan 20 15:47:14 CET 2014
+% Modified: Wed Jan 29 15:48:54 CET 2014
 
 :- use_module('ext/utils/cmd_line_parse.pl', [cmd_line_parse/3,
                                               print_cmd_option_list/0]).
@@ -14,9 +14,10 @@ user:runtime_entry(start) :-
 osummarizer_start(Argv) :-
 	CmdShape =
 	[
-         ( '-v',     [], start_log,       'Verbose output, shows WF check, naming, and summarization'),
-         ( '-nowf',  [], bb_put(nowf, 1), 'Do not perform WF check'),
-         ( '-h',     [], print_help_halt, 'Print this help')
+         ( '-nowf',     [], bb_put(nowf, 1), 'Do not perform WF check.'),
+         ( '-v',        [], start_log,       'Show intermediate results.'),
+         ( '-d',        [], start_debug,     'Show intermediate computations.'),
+         ( '-h',        [], print_help_halt, 'Print this help.')
 	],
 	cmd_line_parse(Argv, CmdShape, Files),
         all((
