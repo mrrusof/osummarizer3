@@ -1,4 +1,4 @@
-% Modified: Thu Jan 23 17:45:41 CET 2014
+% Modified: Wed Jan 29 03:13:01 CET 2014
 
 
 % **********************************************************************
@@ -35,19 +35,7 @@ let rec x = e
 assert(e)           ::=  assert(e)
 assume(e)           ::=  assume(e)
 
-x                   ::=  lowercase atom
-c                   ::=  path | pervasives | string
-e, ..., e           ::=  tup([e, ..., e])
-e e ... e           ::=  app(e, [e, ..., e])
-fun x ... x -> e    ::=  abs([x, ..., x], e)
-if e then e else e  ::=  ite(e, e, e)
-let x = e in e      ::=  let(x, e, e)
-let rec x = e
-    and ... and
-        x = e in e  ::=  ltr([(x, e), ..., (x, e)], e)
-assert(e)           ::=  assert(e)
-assume(e)           ::=  assume(e)
-
+Expression e (continuation):
 X                   ::=  capitalized atom
 X(e, ..., e)        ::=
 match e with
@@ -73,17 +61,7 @@ Typed expression: substitute e:t for e in Expression.
 Typed pattern: substitute p:t for p in Pattern.
 */
 
-/*
-Cases for typed expressions and corresponding examples
-
-Nullary constant                :  c:i
-Function constant               :  c:(i -> i)
-Nullary identifier              :  x:i
-Function identifier             :  x:(i -> i)
-Application                     :  (+:(i -> i ->) 1:i 2:i):i
-*/
-
-ml_const(C) :- ground(C), ( number(C) ; string(C) ; ml_const_pervasives(C) ; ml_const_path(C) ).
+ml_const(C) :- ground(C), ( number(C) ; ml_string(C) ; ml_const_pervasives(C) ; ml_const_path(C) ).
 ml_const_path('List.nil').
 ml_const_path('List.cons').
 ml_const_path('List.map').
@@ -108,11 +86,11 @@ ml_const_pervasives(false).
 ml_const_pervasives(unit).
 ml_const_pervasives(read_int).
 
-string(C) :- ( foreach(N, C) do number(N) ).
+ml_string(C) :- ( foreach(N, C) do number(N) ).
 
 ml_id(X) :- atom(X), \+ml_const(X).
 
-base_type(T) :- atom(T).
+nullary_type(T) :- atom(T).
 type_var(T) :- var(T).
 
 /*
@@ -126,6 +104,28 @@ wf_typed_exp(E@L:T) :- wf_t_e(E, L, T).
 /*
 wf_t_e(+E, +L, +T)
 */
+wf_t_e(app(Ef@Lf:Tf, ELTs), L, T) :- !,
+        lpush_format('wf_t_e.app.in : ~p\n', [app(Ef@Lf:Tf, ELTs)@L:T]),
+        wf_l(L),
+        wf_t(T),
+        wf_t_e(Ef, Lf, Tf),
+        ELTs = [_|_],
+        (   foreach(Ei@Li:Ti, ELTs)
+        do  wf_t_e(Ei, Li, Ti)
+        ),
+        lpop_format('wf_t_e.app.out: ~p\n', [app(Ef@Lf:Tf, ELTs)@L:T]).
+wf_t_e(abs(XLTs, Eb@Lb:Tb), L, T) :- !,
+        lpush_format('wf_t_e.abs.in : ~p\n', [abs(XLTs, Eb@Lb:Tb)@L:T]),
+        wf_l(L),
+        wf_t(T),
+        XLTs = [_|_],
+        (   foreach(Xi@Li:Ti, XLTs)
+        do  ml_id(Xi),
+            wf_l(Li),
+            wf_t(Ti)
+        ),
+        wf_t_e(Eb, Lb, Tb),
+        lpop_format('wf_t_e.abs.out: ~p\n', [abs(XLTs, Eb@Lb:Tb)@L:T]).
 wf_t_e(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T) :- !,
         lpush_format('wf_t_e.ite.in : ~p\n', [ite(E1@L1:T1, E2@L2:T2, E3@L3:T3)@L:T]),
         wf_l(L),
@@ -136,26 +136,6 @@ wf_t_e(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T) :- !,
         wf_t_e(E2, L2, T2),
         wf_t_e(E3, L3, T3),
         lpop_format('wf_t_e.ite.out: ~p\n', [ite(E1@L1:T1, E2@L2:T2, E3@L3:T3)@L:T]).
-wf_t_e(abs(XLTs, Eb@Lb:Tb), L, T) :- !,
-        lpush_format('wf_t_e.abs.in : ~p\n', [abs(XLTs, Eb@Lb:Tb)@L:T]),
-        wf_l(L),
-        wf_t(T),
-        (   foreach(Xi@Li:Ti, XLTs)
-        do  ml_id(Xi),
-            wf_l(Li),
-            wf_t(Ti)
-        ),
-        wf_t_e(Eb, Lb, Tb),
-        lpop_format('wf_t_e.abs.out: ~p\n', [abs(XLTs, Eb@Lb:Tb)@L:T]).
-wf_t_e(app(Ef@Lf:Tf, ELTs), L, T) :- !,
-        lpush_format('wf_t_e.app.in : ~p\n', [app(Ef@Lf:Tf, ELTs)@L:T]),
-        wf_l(L),
-        wf_t(T),
-        wf_t_e(Ef, Lf, Tf),
-        (   foreach(Ei@Li:Ti, ELTs)
-        do  wf_t_e(Ei, Li, Ti)
-        ),
-        lpop_format('wf_t_e.app.out: ~p\n', [app(Ef@Lf:Tf, ELTs)@L:T]).
 wf_t_e(let(X@Lx:Tx, E1@L1:T1, E2@L2:T2), L, T) :- !,
         lpush_format('wf_t_e.let.in : ~p\n', [let(X@Lx:Tx, E1@L1:T1, E2@L2:T2)@L:T]),
         wf_l(L),
@@ -198,15 +178,106 @@ wf_t(T) :-
                 do  wf_t(Ti)
                 )
             )
-        ;   ( base_type(T) ; type_var(T) )
+        ;   ( nullary_type(T) ; type_var(T) )
         ).
 
 
 % **********************************************************************
 % Pretty printing of typed expressions
 
-% TODO
+pp_const_parenthesis(+).
+pp_const_parenthesis(-).
+pp_const_parenthesis(*).
+pp_const_parenthesis(/).
+pp_const_parenthesis(=).
+pp_const_parenthesis(<>).
+pp_const_parenthesis(>).
+pp_const_parenthesis(<).
+pp_const_parenthesis(>=).
+pp_const_parenthesis(<=).
+pp_const_parenthesis(&&).
 
+pp_type(T) :-
+        (   nullary_type(T) ->
+            print(T)
+        ;   write('('),
+            print(T),
+            write(')')
+        ).
+
+
+pp_t_e(app(Ef@_Lf:Tf, ELTs), T, I) :-
+        append(I, "  ", J),
+        format('~s(\n', [I]),
+        pp_t_e(Ef, Tf, J),
+        (   foreach(Ei@_:Ti, ELTs)
+        do  write('\n'),
+            pp_t_e(Ei, Ti, J)
+        ),
+        format('\n~s):', [I]),
+        pp_type(T).
+pp_t_e(abs(XLTs, Eb@Lb:Tb), T, I) :-
+        append(I, "  ", J),
+        format('~s(fun\n', [I]),
+        (   XLTs = [X@_:T] ->
+            pp_t_e(X, T, J)
+        ;   XLTs = [Xh@_:Th|XrLrTr] ->
+            pp_t_e(Xh, Th, J),
+            (   foreach(X@_:Tx, XrLrTr)
+            do  write('\n'),
+                pp_t_e(X, Tx, J)
+            )
+        ;   write(pp_t_e(abs(XLTs, Eb@Lb:Tb), T, J)),
+            throw('Unhandled function expression')
+        ),
+        format('\n~s->\n', [I]),
+        pp_t_e(Eb, Tb, J),
+        format('\n~s):', [I]),
+        pp_type(T).
+pp_t_e(ite(E1@_:T1, E2@_:T2, E3@_:T3), T, I) :-
+        append(I, "  ", J),
+        format('~s(if\n', [I]),
+        pp_t_e(E1, T1, J),
+        format('\n~sthen\n', [I]),
+        pp_t_e(E2, T2, J),
+        format('\n~selse\n', [I]),
+        pp_t_e(E3, T3, J),
+        format('\n~s):', [I]),
+        pp_type(T).
+pp_t_e(let(X@_:Tx, E1@_:T1, E2@_:T2), T, I) :-
+        append(I, "  ", J),
+        format('~s(let\n', [I]),
+        pp_t_e(X, Tx, J),
+        format('\n~s=\n', [I]),
+        pp_t_e(E1, T1, J),
+        format('\n~sin\n', [I]),
+        pp_t_e(E2, T2, J),
+        format('\n~s):', [I]),
+        pp_type(T).
+pp_t_e(E, T, I) :-
+        format('~s', [I]),
+        (   pp_const_parenthesis(E) ->
+            write('('),
+            write(E),
+            write(')')
+        ;   ml_string(E) ->
+            format("\"~s\"", [E])
+        ;   ( ml_const(E) ; ml_id(E) ) ->
+            write(E)
+        ),
+        write(':'),
+        (   nullary_type(T) ->
+            print(T)
+        ;   write('('),
+            print(T),
+            write(')')
+        ).
+
+user:portray(E@_:T) :-  pp_t_e(E, T, "").
+user:portray((T1->T2)) :-
+        print(T1),
+        write(' -> '),
+        print(T2).
 
 % **********************************************************************
 % Pretty printing of named expressions
