@@ -197,7 +197,7 @@ pp_const_parenthesis(>=).
 pp_const_parenthesis(<=).
 pp_const_parenthesis(&&).
 
-pp_type(T) :-
+pp_t(T) :-
         (   nullary_type(T) ->
             print(T)
         ;   write('('),
@@ -206,24 +206,26 @@ pp_type(T) :-
         ).
 
 
-pp_t_e(app(Ef@_Lf:Tf, ELTs), T, I) :-
+pp_t_e(app(Ef@_Lf:Tf, ELTs), T, I) :- !,
         append(I, "  ", J),
         format('~s(\n', [I]),
         pp_t_e(Ef, Tf, J),
-        (   foreach(Ei@_:Ti, ELTs)
+        (   foreach(Ei@_:Ti, ELTs),
+            param(J)
         do  write('\n'),
             pp_t_e(Ei, Ti, J)
         ),
         format('\n~s):', [I]),
-        pp_type(T).
-pp_t_e(abs(XLTs, Eb@Lb:Tb), T, I) :-
+        pp_t(T).
+pp_t_e(abs(XLTs, Eb@Lb:Tb), T, I) :- !,
         append(I, "  ", J),
         format('~s(fun\n', [I]),
         (   XLTs = [X@_:T] ->
             pp_t_e(X, T, J)
         ;   XLTs = [Xh@_:Th|XrLrTr] ->
             pp_t_e(Xh, Th, J),
-            (   foreach(X@_:Tx, XrLrTr)
+            (   foreach(X@_:Tx, XrLrTr),
+                param(J)
             do  write('\n'),
                 pp_t_e(X, Tx, J)
             )
@@ -233,8 +235,8 @@ pp_t_e(abs(XLTs, Eb@Lb:Tb), T, I) :-
         format('\n~s->\n', [I]),
         pp_t_e(Eb, Tb, J),
         format('\n~s):', [I]),
-        pp_type(T).
-pp_t_e(ite(E1@_:T1, E2@_:T2, E3@_:T3), T, I) :-
+        pp_t(T).
+pp_t_e(ite(E1@_:T1, E2@_:T2, E3@_:T3), T, I) :- !,
         append(I, "  ", J),
         format('~s(if\n', [I]),
         pp_t_e(E1, T1, J),
@@ -243,8 +245,8 @@ pp_t_e(ite(E1@_:T1, E2@_:T2, E3@_:T3), T, I) :-
         format('\n~selse\n', [I]),
         pp_t_e(E3, T3, J),
         format('\n~s):', [I]),
-        pp_type(T).
-pp_t_e(let(X@_:Tx, E1@_:T1, E2@_:T2), T, I) :-
+        pp_t(T).
+pp_t_e(let(X@_:Tx, E1@_:T1, E2@_:T2), T, I) :- !,
         append(I, "  ", J),
         format('~s(let\n', [I]),
         pp_t_e(X, Tx, J),
@@ -253,8 +255,8 @@ pp_t_e(let(X@_:Tx, E1@_:T1, E2@_:T2), T, I) :-
         format('\n~sin\n', [I]),
         pp_t_e(E2, T2, J),
         format('\n~s):', [I]),
-        pp_type(T).
-pp_t_e(E, T, I) :-
+        pp_t(T).
+pp_t_e(E, T, I) :- !,
         format('~s', [I]),
         (   pp_const_parenthesis(E) ->
             write('('),
@@ -266,12 +268,7 @@ pp_t_e(E, T, I) :-
             write(E)
         ),
         write(':'),
-        (   nullary_type(T) ->
-            print(T)
-        ;   write('('),
-            print(T),
-            write(')')
-        ).
+        pp_t(T).
 
 user:portray(E@_:T) :-  pp_t_e(E, T, "").
 user:portray((T1->T2)) :-
@@ -317,8 +314,10 @@ summarize(FileIn, _FileOut) :-
                 true
             ;   print('ERROR: the input expression is malformed\n')
             )
-        ).
+        ),
 % Pretty print the expression
+        print(ELT),
+        nl.
 % Name the expression
 % Pretty print the named expression
 % Summarize the expression
