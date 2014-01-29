@@ -14,6 +14,7 @@
           (prolog-consult-buffer))
         (switch-to-buffer-other-window cb))))
 (add-hook 'after-save-hook 'osum-unit-test)
+;; (remove-hook 'after-save-hook 'osum-unit-test)
 
 ;; Prolog mode for the following files
 (setq auto-mode-alist (append '(("\\.qarmc$" . prolog-mode)

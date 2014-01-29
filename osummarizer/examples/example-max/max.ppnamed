@@ -7,9 +7,9 @@
   ->
     (if
       (
-        (>):'>_c_ret':('>_c_reta':int -> '>_c_retb':('>_c_retba':int -> c_ret:bool))
-        x2:'>_c_reta':int
-        y3:'>_c_retba':int
+        (>):>_c_ret:(>_c_reta:int -> >_c_retb:(>_c_retba:int -> c_ret:bool))
+        x2:>_c_reta:int
+        y3:>_c_retba:int
       ):c_ret:bool
     then
       x2:ret:int

@@ -1,13 +1,12 @@
-% Modified: Wed Jan 29 03:13:01 CET 2014
-
-
-% **********************************************************************
-% Misc
+% Modified: Wed Jan 29 14:45:19 CET 2014
 
 :- use_module('log.pl', [lprint/1,
                          start_log/0,
                          lpush_format/2,
                          lpop_format/2]).
+
+:- multifile user:portray/1.
+:- dynamic user:portray/1.
 
 % Define operator @
 % A@B:C == (A@B):C because current_op(N, _, :) ---> N = 550
@@ -183,7 +182,20 @@ wf_t(T) :-
 
 
 % **********************************************************************
-% Pretty printing of typed expressions
+% Pretty printing of typed and named expressions
+
+user:portray(E@_:N:T) :-  pp_n_e(E, N, T, "").
+user:portray(E@_:T) :-  pp_t_e(E, T, "").
+user:portray(N:(T1->T2)) :-
+        format('~p:(', [N]),
+        print(T1),
+        write(' -> '),
+        print(T2),
+        write(')').
+user:portray((T1->T2)) :-
+        print(T1),
+        write(' -> '),
+        print(T2).
 
 pp_const_parenthesis(+).
 pp_const_parenthesis(-).
@@ -197,7 +209,10 @@ pp_const_parenthesis(>=).
 pp_const_parenthesis(<=).
 pp_const_parenthesis(&&).
 
-pp_t(T) :-
+/*
+paren_t(+T)
+*/
+paren_t(T) :-
         (   nullary_type(T) ->
             print(T)
         ;   write('('),
@@ -205,8 +220,10 @@ pp_t(T) :-
             write(')')
         ).
 
-
-pp_t_e(app(Ef@_Lf:Tf, ELTs), T, I) :- !,
+/*
+pp_t_e(+E, +T, +I)
+*/
+pp_t_e(app(Ef@_:Tf, ELTs), T, I) :- !,
         append(I, "  ", J),
         format('~s(\n', [I]),
         pp_t_e(Ef, Tf, J),
@@ -216,8 +233,8 @@ pp_t_e(app(Ef@_Lf:Tf, ELTs), T, I) :- !,
             pp_t_e(Ei, Ti, J)
         ),
         format('\n~s):', [I]),
-        pp_t(T).
-pp_t_e(abs(XLTs, Eb@Lb:Tb), T, I) :- !,
+        paren_t(T).
+pp_t_e(abs(XLTs, Eb@_:Tb), T, I) :- !,
         append(I, "  ", J),
         format('~s(fun\n', [I]),
         (   XLTs = [X@_:T] ->
@@ -229,13 +246,11 @@ pp_t_e(abs(XLTs, Eb@Lb:Tb), T, I) :- !,
             do  write('\n'),
                 pp_t_e(X, Tx, J)
             )
-        ;   write(pp_t_e(abs(XLTs, Eb@Lb:Tb), T, J)),
-            throw('Unhandled function expression')
         ),
         format('\n~s->\n', [I]),
         pp_t_e(Eb, Tb, J),
         format('\n~s):', [I]),
-        pp_t(T).
+        paren_t(T).
 pp_t_e(ite(E1@_:T1, E2@_:T2, E3@_:T3), T, I) :- !,
         append(I, "  ", J),
         format('~s(if\n', [I]),
@@ -245,7 +260,7 @@ pp_t_e(ite(E1@_:T1, E2@_:T2, E3@_:T3), T, I) :- !,
         format('\n~selse\n', [I]),
         pp_t_e(E3, T3, J),
         format('\n~s):', [I]),
-        pp_t(T).
+        paren_t(T).
 pp_t_e(let(X@_:Tx, E1@_:T1, E2@_:T2), T, I) :- !,
         append(I, "  ", J),
         format('~s(let\n', [I]),
@@ -255,7 +270,7 @@ pp_t_e(let(X@_:Tx, E1@_:T1, E2@_:T2), T, I) :- !,
         format('\n~sin\n', [I]),
         pp_t_e(E2, T2, J),
         format('\n~s):', [I]),
-        pp_t(T).
+        paren_t(T).
 pp_t_e(E, T, I) :- !,
         format('~s', [I]),
         (   pp_const_parenthesis(E) ->
@@ -268,18 +283,72 @@ pp_t_e(E, T, I) :- !,
             write(E)
         ),
         write(':'),
-        pp_t(T).
+        paren_t(T).
 
-user:portray(E@_:T) :-  pp_t_e(E, T, "").
-user:portray((T1->T2)) :-
-        print(T1),
-        write(' -> '),
-        print(T2).
-
-% **********************************************************************
-% Pretty printing of named expressions
-
-% TODO
+/*
+pp_n_e(+E, +N, +T, +I)
+*/
+pp_n_e(app(Ef@_:Nf:Tf, ELNs), N, T, I) :- !,
+        append(I, "  ", J),
+        format('~s(\n', [I]),
+        pp_n_e(Ef, Nf, Tf, J),
+        (   foreach(Ei@_:Ni:Ti, ELNs),
+            param(J)
+        do  write('\n'),
+            pp_n_e(Ei, Ni, Ti, J)
+        ),
+        format('\n~s):', [I]),
+        print(N:T).
+pp_n_e(abs(XLNs, Eb@_:Nb:Tb), N, T, I) :-
+        append(I, "  ", J),
+        format('~s(fun\n', [I]),
+        (   XLNs = [X@_:Nx:Tx] ->
+            pp_n_e(X, Nx, Tx, J)
+        ;   XLNs = [Xh@_:Nh:Th|XrLrNr] ->
+            pp_n_e(Xh, Nh, Th, J),
+            (   foreach(X@_:Nx:Tx, XrLrNr),
+                param(J)
+            do  write('\n'),
+                pp_n_e(X, Nx, Tx, J)
+            )
+        ),
+        format('\n~s->\n', [I]),
+        pp_n_e(Eb, Nb, Tb, J),
+        format('\n~s):', [I]),
+        print(N:T).
+pp_n_e(ite(E1@_:N1:T1, E2@_:N2:T2, E3@_:N3:T3), N, T, I) :- !,
+        append(I, "  ", J),
+        format('~s(if\n', [I]),
+        pp_n_e(E1, N1, T1, J),
+        format('\n~sthen\n', [I]),
+        pp_n_e(E2, N2, T2, J),
+        format('\n~selse\n', [I]),
+        pp_n_e(E3, N3, T3, J),
+        format('\n~s):', [I]),
+        print(N:T).
+pp_n_e(let(X@_:Nx:Tx, E1@_:N1:T1, E2@_:N2:T2), N, T, I) :- !,
+        append(I, "  ", J),
+        format('~s(let\n', [I]),
+        pp_n_e(X, Nx, Tx, J),
+        format('\n~s=\n', [I]),
+        pp_n_e(E1, N1, T1, J),
+        format('\n~sin\n', [I]),
+        pp_n_e(E2, N2, T2, J),
+        format('\n~s):', [I]),
+        print(N:T).
+pp_n_e(E, N, T, I) :- !,
+        format('~s', [I]),
+        (   pp_const_parenthesis(E) ->
+            write('('),
+            write(E),
+            write(')')
+        ;   ml_string(E) ->
+            format("\"~s\"", [E])
+        ;   ( ml_const(E) ; ml_id(E) ) ->
+            write(E)
+        ),
+        write(':'),
+        print(N:T).
 
 
 % **********************************************************************
