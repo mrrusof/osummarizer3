@@ -1,5 +1,5 @@
 (let
-  max1:max1:(x2:int -> max1_f4:(y3:int -> ret:int))
+  max1:max1:(x2:int -> max1_f1:(y3:int -> ret:int))
 =
   (fun
     x2:x2:int

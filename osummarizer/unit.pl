@@ -11,6 +11,7 @@
 %
 
 :- ['osummarizer.pl'].
+:- use_module(library(lists)).
 :- use_module(library(codesio)).
 
 
@@ -52,6 +53,9 @@ pos_wf_t_e_id_x :-
 pos_wf_t_e_id_inc :-
         unit_test('Positive test WF id inc',
                   wf_typed_exp(inc@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int))).
+pos_wf_t_e_id_max1 :-
+        unit_test('Positive test WF id max1',
+                  wf_typed_exp(max1@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int))).
 
 pos_wf_t_e_app :-
         unit_test('Positive test WF app',
@@ -118,23 +122,9 @@ pos_wf_t_e_max :-
                                   )@loc('max.ml', 0, 0, 0, 0, 0, 0):int
                               )).
 
-:-      pos_wf_t_e_const_true,
-        pos_wf_t_e_const_10,
-        pos_wf_t_e_const_hola,
-        pos_wf_t_e_const_plus,
-        pos_wf_t_e_const_gt,
-        pos_wf_t_e_id_x,
-        pos_wf_t_e_id_inc,
-        pos_wf_t_e_app,
-        pos_wf_t_e_abs_id,
-        pos_wf_t_e_abs_snd,
-        pos_wf_t_e_ite,
-        pos_wf_t_e_let,
-        pos_wf_t_e_max.
-
 neg_wf_t_e_app_no_param :-
         unit_test('Negative test WF app no param',
-                  wf_typed_exp(
+                  \+ wf_typed_exp(
                      app(
                          '>'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
                          []
@@ -143,13 +133,28 @@ neg_wf_t_e_app_no_param :-
 
 neg_wf_t_e_abs_no_param :-
         unit_test('Negative test WF abs no param',
-                  wf_typed_exp(
+                  \+ wf_typed_exp(
                      abs([],
                          x@loc('id.ml', 0, 0, 0, 0, 0, 0):int
                          )@loc('id.ml', 0, 0, 0, 0, 0, 0):(int -> int)
                     )).
 
-:-      neg_wf_t_e_app_no_param,
+wf_t_e :-
+        pos_wf_t_e_const_true,
+        pos_wf_t_e_const_10,
+        pos_wf_t_e_const_hola,
+        pos_wf_t_e_const_plus,
+        pos_wf_t_e_const_gt,
+        pos_wf_t_e_id_x,
+        pos_wf_t_e_id_inc,
+        pos_wf_t_e_id_max1,
+        pos_wf_t_e_app,
+        pos_wf_t_e_abs_id,
+        pos_wf_t_e_abs_snd,
+        pos_wf_t_e_ite,
+        pos_wf_t_e_let,
+        pos_wf_t_e_max,
+        neg_wf_t_e_app_no_param,
         neg_wf_t_e_abs_no_param.
 
 
@@ -199,6 +204,12 @@ pos_pp_typed_id_inc :-
                     format_to_codes("~p", [inc@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int)], Codes),
                     atom_codes('inc:(int -> int)', Codes)
                   )).
+pos_pp_typed_id_max1 :-
+        unit_test('Positive test PP typed id max1',
+                  (
+                    format_to_codes("~p", [max1@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int)], Codes),
+                    atom_codes('max1:(int -> int -> int)', Codes)
+                  )).
 
 pos_pp_typed_app_plus :-
         unit_test('Positive test PP typed app +',
@@ -222,7 +233,6 @@ pos_pp_typed_app_gt :-
                     format_to_codes("~p", [Exp], Codes),
                     atom_codes('(\n  (>):(int -> int -> bool)\n  x:int\n  y:int\n):bool', Codes)
                   )).
-
 
 pos_pp_typed_abs_id :-
         unit_test('Positive test PP typed abs id',
@@ -291,13 +301,15 @@ pos_pp_typed_max :-
                     atom_codes('(let\n  max1:(int -> int -> int)\n=\n  (fun\n    x2:int\n    y3:int\n  ->\n    (if\n      (\n        (>):(int -> int -> bool)\n        x2:int\n        y3:int\n      ):bool\n    then\n      x2:int\n    else\n      y3:int\n    ):int\n  ):(int -> int -> int)\nin\n  (\n    max1:(int -> int -> int)\n    3:int\n    1:int\n  ):int\n):int', Codes)
                   )).
 
-:-      pos_pp_typed_const_true,
+pp_typed :-
+        pos_pp_typed_const_true,
         pos_pp_typed_const_10,
         pos_pp_typed_const_hola,
         pos_pp_typed_const_plus,
         pos_pp_typed_const_gt,
         pos_pp_typed_id_x,
         pos_pp_typed_id_inc,
+        pos_pp_typed_id_max1,
         pos_pp_typed_app_plus,
         pos_pp_typed_app_gt,
         pos_pp_typed_abs_id,
@@ -308,13 +320,196 @@ pos_pp_typed_max :-
 
 
 % **********************************************************************
-% Well-formedness of typed expressions
+% Naming of typed expressions
 
-% TODO
+pos_name_type_fun_params :-
+        unit_test('Positive test name type with function parameters',
+                  (
+                    X = ((i -> i) -> ((i -> i) -> i)),
+                    name_type(f, X, Y),
+                    Y = f:(fa:(faa:i -> fab:i) -> fb:(fba:(fbaa:i -> fbab:i) -> fbb:i))
+                  )).
+pos_name_type_tyvar_params :-
+        unit_test('Positive test name type with type variable parameters',
+                  (
+                    X = (i -> ((i -> B) -> B)),
+                    name_type(f, X, Y),
+                    Y = f:(fa:i -> fb:(fba:(fbaa:i -> fbab:B) -> fbb:B))
+                  )).
+
+pos_naming_const_true :-
+        unit_test('Positive test naming const true',
+                  (
+                    t_e_to_n_e1(true, loc('max.ml', 0, 0, 0, 0, 0, 0), bool, r, empty,
+                                true@loc('max.ml', 0, 0, 0, 0, 0, 0):true_r:bool)
+                  )).
+pos_naming_const_10 :-
+        unit_test('Positive test naming const 10',
+                  (
+                  t_e_to_n_e1(10, loc('max.ml', 0, 0, 0, 0, 0, 0), int, r, empty,
+                              10@loc('max.ml', 0, 0, 0, 0, 0, 0):'10_r':int)
+                  )).
+pos_naming_const_hola :-
+        unit_test('Positive test naming const "hola"',
+                  (
+                  t_e_to_n_e1("hola", loc('max.ml', 0, 0, 0, 0, 0, 0), string, str, empty,
+                              "hola"@loc('max.ml', 0, 0, 0, 0, 0, 0):'hola_str':string)
+                  )).
+pos_naming_const_plus :-
+        unit_test('Positive test naming const +',
+                  (
+                  t_e_to_n_e1('+', loc('max.ml', 0, 0, 0, 0, 0, 0), (int -> int -> int), r, empty,
+                              '+'@loc('max.ml', 0, 0, 0, 0, 0, 0):'+_r':('+_ra':int -> '+_rb':('+_rba':int -> '+_rbb':int)))
+                  )).
+pos_naming_const_gt :-
+        unit_test('Positive test naming const >',
+                  (
+                  t_e_to_n_e1('>', loc('max.ml', 0, 0, 0, 0, 0, 0), (int -> int -> bool), c_ret, empty,
+                              (>)@loc('max.ml',0,0,0,0,0,0):'>_c_ret':('>_c_reta':int -> '>_c_retb':('>_c_retba':int -> '>_c_retbb':bool)))
+                  )).
+
+pos_naming_id_x :-
+        unit_test('Positive test naming id x',
+                  (
+                    t_e_to_n_e1(x, loc('max.ml', 0, 0, 0, 0, 0, 0), int, r, empty,
+                                x@loc('max.ml', 0, 0, 0, 0, 0, 0):r:int)
+                  )).
+pos_naming_id_inc :-
+        unit_test('Positive test naming id inc',
+                  (
+                    avl_store(inc, empty, inc:(x:int -> r:int), Env),
+                    t_e_to_n_e1(inc, loc('max.ml', 0, 0, 0, 0, 0, 0), (int -> int), x, Env,
+                                inc@loc('max.ml', 0, 0, 0, 0, 0, 0):inc:(inc_xa:int -> inc_xb:int))
+                  )).
+pos_naming_id_max1 :-
+        unit_test('Positive test naming id max1',
+                  (
+                    avl_store(max1, empty, max1:(x2:int -> max1_f1:(y3:int -> ret:int)), Env),
+                    t_e_to_n_e1(max1, loc('max.ml', 0, 0, 0, 0, 0, 0), (int -> int -> int), vlet, Env,
+                                max1@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(max1_vleta:int -> max1_f1:(max1_vletba:int -> max1_vletbb:int)))
+                  )).
+pos_naming_app_plus :-
+        unit_test('Positive test naming app +',
+                  (
+                    E@L:T = app(
+                                '+'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
+                                [1@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
+                                 2@loc('max.ml', 0, 0, 0, 0, 0, 0):int]
+                               )@loc('max.ml', 0, 0, 0, 0, 0, 0):bool,
+                    t_e_to_n_e1(E, L, T, ret, empty, R),
+                    R = app(
+                            '+'@loc('max.ml', 0, 0, 0, 0, 0, 0):'+_x':('+_xa':int -> '+_xb':('+_xba':int -> ret:int)),
+                            [1@loc('max.ml', 0, 0, 0, 0, 0, 0):'+_xa':int,
+                             2@loc('max.ml', 0, 0, 0, 0, 0, 0):'+_xba':int]
+                           )@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:bool
+                  )).
+pos_naming_app_gt :-
+        unit_test('Positive test naming app >',
+                  (
+                    Exp = app(
+                              '>'@loc('max.ml', 0, 0, 0, 0, 0, 0):'>_c_ret':('>_c_reta':int -> '>_c_retb':('>_c_retba':int -> 'c_ret':bool)),
+                              [x2@loc('max.ml', 0, 0, 0, 0, 0, 0):'>_c_reta':int,
+                               y3@loc('max.ml', 0, 0, 0, 0, 0, 0):'>_c_retba':int]
+                              )@loc('max.ml', 0, 0, 0, 0, 0, 0):'c_ret':bool,
+                    format_to_codes("~p", [Exp], Codes),
+                    atom_codes('(\n  (>):>_c_ret:(>_c_reta:int -> >_c_retb:(>_c_retba:int -> c_ret:bool))\n  x2:>_c_reta:int\n  y3:>_c_retba:int\n):c_ret:bool', Codes),
+                    false
+                  )).
+
+pos_naming_abs_id :-
+        unit_test('Positive test naming abs id',
+                  (
+                    Exp = abs([x@loc('id.ml', 0, 0, 0, 0, 0, 0):x:int],
+                              x@loc('id.ml', 0, 0, 0, 0, 0, 0):r:int
+                             )@loc('id.ml', 0, 0, 0, 0, 0, 0):id:(x:int -> r:int),
+                    format_to_codes("~p", [Exp], Codes),
+                    atom_codes('(fun\n  x:x:int\n->\n  x:r:int\n):id:(x:int -> r:int)', Codes),
+                    false
+                  )).
+pos_naming_abs_snd :-
+        unit_test('Positive test naming abs snd',
+                  (
+                    Exp = abs([x@loc('snd.ml', 0, 0, 0, 0, 0, 0):x:int, y@loc('snd.ml', 0, 0, 0, 0, 0, 0):y:int],
+                              y@loc('snd.ml', 0, 0, 0, 0, 0, 0):fresh2:int
+                             )@loc('snd.ml', 0, 0, 0, 0, 0, 0):snd:(x:int -> fresh1:(y:int -> fresh2:int)),
+                    format_to_codes("~p", [Exp], Codes),
+                    atom_codes('(fun\n  x:x:int\n  y:y:int\n->\n  y:fresh2:int\n):snd:(x:int -> fresh1:(y:int -> fresh2:int))', Codes),
+                    false
+                  )).
+
+pos_naming_ite :-
+        unit_test('Positive test naming ite',
+                  (
+                    Exp = ite(true@loc('max.ml', 0, 0, 0, 0, 0, 0):c_ret:bool,
+                              x@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int,
+                              y@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int
+                             )@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int,
+                    format_to_codes("~p", [Exp], Codes),
+                    atom_codes('(if\n  true:c_ret:bool\nthen\n  x:ret:int\nelse\n  y:ret:int\n):ret:int', Codes),
+                    false
+                  )).
+
+pos_naming_let :-
+        unit_test('Positive test naming let',
+                  (
+                    Exp = let(x@loc('max.ml', 0, 0, 0, 0, 0, 0):x:int,
+                                   1@loc('max.ml', 0, 0, 0, 0, 0, 0):x:int,
+                                   x@loc('max.ml', 0, 0, 0, 0, 0, 0):vlet:int
+                                  )@loc('max.ml', 0, 0, 0, 0, 0, 0):vlet:int,
+                    format_to_codes("~p", [Exp], Codes),
+                    atom_codes('(let\n  x:x:int\n=\n  1:x:int\nin\n  x:vlet:int\n):vlet:int', Codes),
+                    false
+                  )).
+
+pos_naming_max :-
+        unit_test('Positive test naming max',
+                  (
+                    Exp = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> max1_f1:(y3:int -> ret:int)),
+                              abs(['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):x2:int,
+                                   'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):y3:int
+                                   ],
+                                  ite(app('>'@loc('max.ml', 0, 0, 0, 0, 0, 0):'>_c_ret':('>_c_reta':int -> '>_c_retb':('>_c_retba':int -> c_ret:bool)),
+                                          ['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):'>_c_reta':int,
+                                           'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):'>_c_retba':int
+                                           ]
+                                         )@loc('max.ml', 0, 0, 0, 0, 0, 0):c_ret:bool,
+                                      'x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int,
+                                      'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int
+                                      )@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int
+                                 )@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> max1_f1:(y3:int -> ret:int)),
+                              app('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(max1_vleta:int -> max1_f1:(max1_vletba:int -> vlet:int)),
+                                  [3@loc('max.ml', 0, 0, 0, 0, 0, 0):max1_vleta:int,
+                                   1@loc('max.ml', 0, 0, 0, 0, 0, 0):max1_vletba:int
+                                  ]
+                                 )@loc('max.ml', 0, 0, 0, 0, 0, 0):vlet:int
+                             )@loc('max.ml', 0, 0, 0, 0, 0, 0):vlet:int,
+                    format_to_codes("~p", [Exp], Codes),
+                    atom_codes('(let\n  max1:max1:(x2:int -> max1_f1:(y3:int -> ret:int))\n=\n  (fun\n    x2:x2:int\n    y3:y3:int\n  ->\n    (if\n      (\n        (>):>_c_ret:(>_c_reta:int -> >_c_retb:(>_c_retba:int -> c_ret:bool))\n        x2:>_c_reta:int\n        y3:>_c_retba:int\n      ):c_ret:bool\n    then\n      x2:ret:int\n    else\n      y3:ret:int\n    ):ret:int\n  ):max1:(x2:int -> max1_f1:(y3:int -> ret:int))\nin\n  (\n    max1:max1:(max1_vleta:int -> max1_f1:(max1_vletba:int -> vlet:int))\n    3:max1_vleta:int\n    1:max1_vletba:int\n  ):vlet:int\n):vlet:int', Codes),
+                    false
+                  )).
+
+naming :-
+        pos_name_type_fun_params,
+        pos_name_type_tyvar_params,
+        pos_naming_const_true,
+        pos_naming_const_10,
+        pos_naming_const_hola,
+        pos_naming_const_plus,
+        pos_naming_const_gt,
+        pos_naming_id_x,
+        pos_naming_id_inc,
+        pos_naming_id_max1,
+        pos_naming_app_plus,
+        pos_naming_app_gt,
+        pos_naming_abs_id,
+        pos_naming_abs_snd,
+        pos_naming_ite,
+        pos_naming_let,
+        pos_naming_max.
 
 
-% % **********************************************************************
-% % Pretty printing of named expressions
+% **********************************************************************
+% Pretty printing of named expressions
 
 pos_pp_named_const_true :-
         unit_test('Positive test PP named const true',
@@ -358,6 +553,12 @@ pos_pp_named_id_inc :-
                   (
                     format_to_codes("~p", [inc@loc('max.ml', 0, 0, 0, 0, 0, 0):inc:(inc_fresha:int -> inc_freshb:int)], Codes),
                     atom_codes('inc:inc:(inc_fresha:int -> inc_freshb:int)', Codes)
+                  )).
+pos_pp_named_id_max1 :-
+        unit_test('Positive test PP named id max1',
+                  (
+                    format_to_codes("~p", [max1@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(max1_vleta:i -> max1_f1:(max1_vletba:i -> vlet:i))], Codes),
+                    atom_codes('max1:max1:(max1_vleta:i -> max1_f1:(max1_vletba:i -> vlet:i))', Codes)
                   )).
 
 pos_pp_named_app_plus :-
@@ -427,7 +628,7 @@ pos_pp_named_let :-
 pos_pp_named_max :-
         unit_test('Positive test PP named max',
                   (
-                    Exp = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> max1_f4:(y3:int -> ret:int)),
+                    Exp = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> max1_f1:(y3:int -> ret:int)),
                               abs(['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):x2:int,
                                    'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):y3:int
                                    ],
@@ -439,24 +640,26 @@ pos_pp_named_max :-
                                       'x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int,
                                       'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int
                                       )@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int
-                                 )@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> max1_f4:(y3:int -> ret:int)),
-                              app('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(max1_vleta:int -> max1_f4:(max1_vletba:int -> vlet:int)),
+                                 )@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> max1_f1:(y3:int -> ret:int)),
+                              app('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(max1_vleta:int -> max1_f1:(max1_vletba:int -> vlet:int)),
                                   [3@loc('max.ml', 0, 0, 0, 0, 0, 0):max1_vleta:int,
                                    1@loc('max.ml', 0, 0, 0, 0, 0, 0):max1_vletba:int
                                   ]
                                  )@loc('max.ml', 0, 0, 0, 0, 0, 0):vlet:int
                              )@loc('max.ml', 0, 0, 0, 0, 0, 0):vlet:int,
                     format_to_codes("~p", [Exp], Codes),
-                    atom_codes('(let\n  max1:max1:(x2:int -> max1_f4:(y3:int -> ret:int))\n=\n  (fun\n    x2:x2:int\n    y3:y3:int\n  ->\n    (if\n      (\n        (>):>_c_ret:(>_c_reta:int -> >_c_retb:(>_c_retba:int -> c_ret:bool))\n        x2:>_c_reta:int\n        y3:>_c_retba:int\n      ):c_ret:bool\n    then\n      x2:ret:int\n    else\n      y3:ret:int\n    ):ret:int\n  ):max1:(x2:int -> max1_f4:(y3:int -> ret:int))\nin\n  (\n    max1:max1:(max1_vleta:int -> max1_f4:(max1_vletba:int -> vlet:int))\n    3:max1_vleta:int\n    1:max1_vletba:int\n  ):vlet:int\n):vlet:int', Codes)
+                    atom_codes('(let\n  max1:max1:(x2:int -> max1_f1:(y3:int -> ret:int))\n=\n  (fun\n    x2:x2:int\n    y3:y3:int\n  ->\n    (if\n      (\n        (>):>_c_ret:(>_c_reta:int -> >_c_retb:(>_c_retba:int -> c_ret:bool))\n        x2:>_c_reta:int\n        y3:>_c_retba:int\n      ):c_ret:bool\n    then\n      x2:ret:int\n    else\n      y3:ret:int\n    ):ret:int\n  ):max1:(x2:int -> max1_f1:(y3:int -> ret:int))\nin\n  (\n    max1:max1:(max1_vleta:int -> max1_f1:(max1_vletba:int -> vlet:int))\n    3:max1_vleta:int\n    1:max1_vletba:int\n  ):vlet:int\n):vlet:int', Codes)
                   )).
 
-:-      pos_pp_named_const_true,
+pp_named :-
+        pos_pp_named_const_true,
         pos_pp_named_const_10,
         pos_pp_named_const_hola,
         pos_pp_named_const_plus,
         pos_pp_named_const_gt,
         pos_pp_named_id_x,
         pos_pp_named_id_inc,
+        pos_pp_named_id_max1,
         pos_pp_named_app_plus,
         pos_pp_named_app_gt,
         pos_pp_named_abs_id,
@@ -464,3 +667,13 @@ pos_pp_named_max :-
         pos_pp_named_ite,
         pos_pp_named_let,
         pos_pp_named_max.
+
+
+
+% **********************************************************************
+% Testing controls
+
+:-      wf_t_e,
+        pp_typed,
+        naming,
+        pp_named.

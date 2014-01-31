@@ -3,16 +3,18 @@
 :- use_module('log.pl', [start_log/0,
                          lprint/1]).
 :- use_module('debug.pl', [start_debug/0,
-                           dprint/1,
-                           dpush_format/2,
-                           dpop_format/2]).
+                           dpush_write/1,
+                           dpop_write/1,
+                           dnl/0]).
+:- use_module(library(avl), [avl_fetch/3,
+                             avl_store/4]).
+:- use_module('ext/utils/misc.pl', [format_atom/3]).
 
 :- multifile user:portray/1.
 
 % Define operator @
 % A@B:C == (A@B):C because current_op(N, _, :) ---> N = 550
 :- op(540, xfy, @).
-
 
 % **********************************************************************
 % Syntax and Well-formedness of typed expressions
@@ -61,7 +63,7 @@ Typed expression: substitute e:t for e in Expression.
 Typed pattern: substitute p:t for p in Pattern.
 */
 
-ml_const(C) :- ground(C), ( number(C) ; ml_string(C) ; ml_const_pervasives(C) ; ml_const_path(C) ).
+ml_const(C) :- ground(C), ( number(C) ; string(C) ; ml_const_pervasives(C) ; ml_const_path(C) ).
 ml_const_path('List.nil').
 ml_const_path('List.cons').
 ml_const_path('List.map').
@@ -86,12 +88,14 @@ ml_const_pervasives(false).
 ml_const_pervasives(unit).
 ml_const_pervasives(read_int).
 
-ml_string(C) :- ( foreach(N, C) do number(N) ).
+string(C) :- ( foreach(N, C) do number(N) ).
 
 ml_id(X) :- atom(X), \+ml_const(X).
 
+function_type(T) :- compound(T), T = (_->_).
 nullary_type(T) :- atom(T).
 type_var(T) :- var(T).
+
 
 /*
 
@@ -105,7 +109,7 @@ wf_typed_exp(E@L:T) :- wf_t_e(E, L, T).
 wf_t_e(+E, +L, +T)
 */
 wf_t_e(app(Ef@Lf:Tf, ELTs), L, T) :- !,
-        dpush_format('wf_t_e.app.in :\n~p\n', [app(Ef@Lf:Tf, ELTs)@L:T]),
+        dpush_write(wf_t_e(app(Ef@Lf:Tf, ELTs), L, T)-in), dnl,
         wf_l(L),
         wf_t(T),
         wf_t_e(Ef, Lf, Tf),
@@ -113,9 +117,9 @@ wf_t_e(app(Ef@Lf:Tf, ELTs), L, T) :- !,
         (   foreach(Ei@Li:Ti, ELTs)
         do  wf_t_e(Ei, Li, Ti)
         ),
-        dpop_format('wf_t_e.app.out:\n~p\n', [app(Ef@Lf:Tf, ELTs)@L:T]).
+        dpop_write(wf_t_e(app(Ef@Lf:Tf, ELTs), L, T)-out), dnl.
 wf_t_e(abs(XLTs, Eb@Lb:Tb), L, T) :- !,
-        dpush_format('wf_t_e.abs.in :\n~p\n', [abs(XLTs, Eb@Lb:Tb)@L:T]),
+        dpush_write(wf_t_e(abs(XLTs, Eb@Lb:Tb), L, T)-in), dnl,
         wf_l(L),
         wf_t(T),
         XLTs = [_|_],
@@ -125,9 +129,9 @@ wf_t_e(abs(XLTs, Eb@Lb:Tb), L, T) :- !,
             wf_t(Ti)
         ),
         wf_t_e(Eb, Lb, Tb),
-        dpop_format('wf_t_e.abs.out:\n~p\n', [abs(XLTs, Eb@Lb:Tb)@L:T]).
+        dpop_write(wf_t_e(abs(XLTs, Eb@Lb:Tb), L, T)-out), dnl.
 wf_t_e(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T) :- !,
-        dpush_format('wf_t_e.ite.in :\n~p\n', [ite(E1@L1:T1, E2@L2:T2, E3@L3:T3)@L:T]),
+        dpush_write(wf_t_e(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T)-in), dnl,
         wf_l(L),
         wf_t(T),
         T2 == T3,
@@ -135,9 +139,9 @@ wf_t_e(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T) :- !,
         wf_t_e(E1, L1, T1),
         wf_t_e(E2, L2, T2),
         wf_t_e(E3, L3, T3),
-        dpop_format('wf_t_e.ite.out:\n~p\n', [ite(E1@L1:T1, E2@L2:T2, E3@L3:T3)@L:T]).
+        dpop_write(wf_t_e(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T)-out), dnl.
 wf_t_e(let(X@Lx:Tx, E1@L1:T1, E2@L2:T2), L, T) :- !,
-        dpush_format('wf_t_e.let.in :\n~p\n', [let(X@Lx:Tx, E1@L1:T1, E2@L2:T2)@L:T]),
+        dpush_write(wf_t_e(let(X@Lx:Tx, E1@L1:T1, E2@L2:T2), L, T)-in), dnl,
         wf_l(L),
         wf_t(T),
         ml_id(X),
@@ -145,13 +149,13 @@ wf_t_e(let(X@Lx:Tx, E1@L1:T1, E2@L2:T2), L, T) :- !,
         wf_t(Tx),
         wf_t_e(E1, L1, T1),
         wf_t_e(E2, L2, T2),
-        dpop_format('wf_t_e.let.out:\n~p\n', [let(X@Lx:Tx, E1@L1:T1, E2@L2:T2)@L:T]).
+        dpop_write(wf_t_e(let(X@Lx:Tx, E1@L1:T1, E2@L2:T2), L, T)-out), dnl.
 wf_t_e(E, L, T) :- !,
-        dpush_format('wf_t_e.const/ident.in : ~p\n', [E@L:T]),
+        dpush_write(wf_t_e(E, L, T)-in), dnl,
         wf_l(L),
         wf_t(T),
         ( ml_const(E) ; ml_id(E) ),
-        dpop_format('wf_t_e.const/ident.out: ~p\n', [E@L:T]).
+        dpop_write(wf_t_e(E, L, T)-out), dnl.
 
 /*
 wf_l(+L)
@@ -194,9 +198,20 @@ user:portray(N:(T1->T2)) :-
         print(T2),
         write(')').
 user:portray((T1->T2)) :-
-        print(T1),
+        paren_t(T1),
         write(' -> '),
         print(T2).
+
+/*
+paren_t(+T)
+*/
+paren_t(T) :-
+        (   nullary_type(T) ->
+            print(T)
+        ;   write('('),
+            print(T),
+            write(')')
+        ).
 
 pp_const_parenthesis(+).
 pp_const_parenthesis(-).
@@ -209,17 +224,6 @@ pp_const_parenthesis(<).
 pp_const_parenthesis(>=).
 pp_const_parenthesis(<=).
 pp_const_parenthesis(&&).
-
-/*
-paren_t(+T)
-*/
-paren_t(T) :-
-        (   nullary_type(T) ->
-            print(T)
-        ;   write('('),
-            print(T),
-            write(')')
-        ).
 
 /*
 pp_t_e(+E, +T, +I)
@@ -278,7 +282,7 @@ pp_t_e(E, T, I) :- !,
             write('('),
             write(E),
             write(')')
-        ;   ml_string(E) ->
+        ;   string(E) ->
             format("\"~s\"", [E])
         ;   ( ml_const(E) ; ml_id(E) ) ->
             write(E)
@@ -343,7 +347,7 @@ pp_n_e(E, N, T, I) :- !,
             write('('),
             write(E),
             write(')')
-        ;   ml_string(E) ->
+        ;   string(E) ->
             format("\"~s\"", [E])
         ;   ( ml_const(E) ; ml_id(E) ) ->
             write(E)
@@ -358,14 +362,59 @@ pp_n_e(E, N, T, I) :- !,
 /*
 t_e_to_n_e(+ELT, -ELN)
 */
-typed_exp_to_named_exp(E@L:T, ELN) :-
-        t_e_to_n_e1(E, L, T, _Fresh, empty, ELN).
+typed_exp_to_named_exp(E@L:T, ELNT) :-
+        t_e_to_n_e1(E, L, T, _Fresh, empty, ELNT).
+
+/*
+choose_names(+NTenv, +NTloc, -NT)
+*/
+choose_names(X:S, Y:T, R) :-
+        (   compound(S) ->
+            S = (NS1->NS2),
+            T = (NT1->NT2),
+            choose_names(NS1, NT1, R1),
+            choose_names(NS2, NT2, R2),
+            R = X:(R1->R2)
+        ;   R = Y:T
+        ).
 
 /*
 t_e_to_n_e1(+E, +L, +T, +N, +Env, -ELN)
 */
-t_e_to_n_e1(_E, _L, _T, _N, _Env, _ELN) :-
-        throw('NYI: t_e_to_n_e1/6').
+t_e_to_n_e1(app(_Ef@_Lf:_Tf, _ELTs), _L, _T, _N, _Env, _E@_L:_NT) :-
+        false.
+t_e_to_n_e1(E, L, T, N, Env, E@L:NT) :-
+        dpush_write(t_e_to_n_e1(E, L, T, N, Env, E@L:NT)-in), dnl,
+        (   ml_id(E) ->
+            (   function_type(T) ->
+                format_atom('~p_~p', [E, N], EN),
+                name_type(EN, T, NTloc),
+                avl_fetch(E, Env, NTenv),
+                choose_names(NTenv, NTloc, NT)
+            ;   name_type(N, T, NT)
+            )
+        ;   string(E) ->
+            format_atom('~s_~p', [E, N], EN),
+            name_type(EN, T, NT)
+        ;   ml_const(E) ->
+            format_atom('~p_~p', [E, N], EN),
+            name_type(EN, T, NT)
+        ),
+        dpop_write(t_e_to_n_e1(E, L, T, N, Env, E@L:NT)-out), dnl.
+
+/*
+name_type(+N, +T, -NT)
+*/
+name_type(N, T, N:R) :-
+        (   function_type(T) ->
+            T = (T1->T2),
+            format_atom('~pa', [N], N1),
+            format_atom('~pb', [N], N2),
+            name_type(N1, T1, NT1),
+            name_type(N2, T2, NT2),
+            R = (NT1->NT2)
+        ;   R = T
+        ).
 
 
 % **********************************************************************
@@ -406,5 +455,5 @@ summarize(FileIn, _FileOut) :-
         lprint('\n'),
         lprint('* Named expression:\n'),
         lprint(ELN),
-        dprint('\n').
+        lprint('\n').
 % Summarize the expression
