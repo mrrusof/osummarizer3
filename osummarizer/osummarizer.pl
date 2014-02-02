@@ -1,4 +1,4 @@
-% Modified: Wed Jan 29 15:48:54 CET 2014
+% Modified: Sun Feb  2 13:23:13 CET 2014
 
 :- use_module('log.pl', [start_log/0,
                          lprint/1]).
@@ -6,9 +6,10 @@
                            dpush_write/1,
                            dpop_write/1,
                            dnl/0]).
+:- use_module('ext/utils/misc.pl', [format_atom/3]).
 :- use_module(library(avl), [avl_fetch/3,
                              avl_store/4]).
-:- use_module('ext/utils/misc.pl', [format_atom/3]).
+:- use_module(library(lists), [rev/2]).
 
 :- multifile user:portray/1.
 
@@ -362,65 +363,163 @@ pp_n_e(E, N, T, I) :- !,
 /*
 t_e_to_n_e(+ELT, -ELN)
 */
-typed_exp_to_named_exp(E@L:T, ELNT) :-
-        t_e_to_n_e1(E, L, T, _Fresh, empty, ELNT).
+typed_exp_to_named_exp(E@L:T, ELN) :-
+        t_e_to_n_e1(E, L, T, v, empty, ELN).
 
 /*
-choose_names(+NTenv, +NTloc, -NT)
+t_e_to_n_e1(+E, +L, +T, +X, +Env, -ELN)
+*/
+t_e_to_n_e1(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T, X, Env, ite(R1, R2, R3)@L:N) :- !,
+        dpush_write(t_e_to_n_e1(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T, X, Env, ite(R1, R2, R3)@L:N)-in),
+        format_atom('c_~p', [X], X1),
+        t_e_to_n_e1(E1, L1, T1, X1, Env, R1),
+        t_e_to_n_e1(E2, L2, T2, X,  Env, R2),
+        t_e_to_n_e1(E3, L3, T3, X,  Env, R3),
+        name_type(X, T, N),
+        dpop_write(t_e_to_n_e1(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T, X, Env, ite(R1, R2, R3)@L:N)-out).
+t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre) :- !,
+        dpush_write(t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre)-in), dnl,
+        (   foreach(Xi@Li:Ti, XLTs),
+            foreach(Xi@Li:Ni, XLNs),
+            fromto(Env, InEnv, OutEnv, Envb)
+        do  name_type(Xi, Ti, Ni),
+            avl_store(Xi, InEnv, Ni, OutEnv)
+        ),
+        format_atom('ret_~p', [X], Xb),
+        t_e_to_n_e1(Eb, Lb, Tb, Xb, Envb, Ebr@Lbr:Nbr),
+        rev(XLNs, RevXLNs),
+        length(XLNs, Count),
+        (   foreach(_Xj@_Lj:Nj, RevXLNs),
+            fromto(Nbr, InNbr, Fj:(Nj -> InNbr), _:Npre),
+            fromto(Count, InCount, OutCount, _),
+            param(X)
+        do  OutCount is InCount - 1,
+            format_atom('f~d_~p', [OutCount, X], Fj)
+        ),
+        dpop_write(t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre)-out), dnl.
+t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N) :- !,
+        dpush_write(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N)-in), dnl,
+        t_e_to_n_e1(Ef, Lf, Tf, X, Env, Efr@Lfr:Nfr),
+        named_type_to_params(Nfr, Params),
+        (   foreach(Ei@Li:Ti, ELTs),
+            fromto(Params, [Xi:_|Rest], Rest, _),
+            foreach(Ri, Rs),
+            param(Env)
+        do  t_e_to_n_e1(Ei, Li, Ti, Xi, Env, Ri)
+        ),
+        length(ELTs, Count),
+        rename_return(Count, X, Nfr, Nfrr),
+        remove_params(Count, Nfrr, N),
+        dpop_write(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N)-out), dnl.
+t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, E1rL1r:N1, E2rL2r:N2)@L:N2) :- !,
+        dpush_write(t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, E1rL1r:N1, E2rL2r:N2)@L:N2)-in), dnl,
+        t_e_to_n_e1(E1, L1, T1, Y, Env, E1rL1r:N1),
+        avl_store(Y, Env, N1, InEnv),
+        t_e_to_n_e1(E2, L2, T1, X, InEnv, E2rL2r:N2),
+        dpop_write(t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, E1rL1r:N1, E2rL2r:N2)@L:N2)-out), dnl.
+t_e_to_n_e1(E, L, T, X, Env, E@L:N) :- !,
+        dpush_write(t_e_to_n_e1(E, L, T, X, Env, E@L:N)-in), dnl,
+        (   ml_id(E) ->
+            (   function_type(T) ->
+                format_atom('~p_~p', [E, X], EX),
+                name_type(EX, T, Nloc),
+                avl_fetch(E, Env, Nenv),
+                choose_names(Nenv, Nloc, N)
+            ;   N = X:T
+            )
+        ;   ml_const(E) ->
+            (   function_type(T) ->
+                format_atom('~p_~p', [E, X], EX),
+                name_type(EX, T, N)
+            ;   N = X:T
+            )
+        ),
+        dpop_write(t_e_to_n_e1(E, L, T, X, Env, E@L:N)-out), dnl.
+
+/*
+name_type(+X, +T, -N)
+*/
+name_type(X, T, X:R) :-
+        (   function_type(T) ->
+            n_t1('', X, T, _:R)
+        ;   R = T
+        ).
+n_t1(P, X, T, Y:R) :-
+        format_atom('~p_~p', [P, X], Y),
+        (   function_type(T) ->
+            T = (T1->T2),
+            format_atom('~pa', [P], P1),
+            format_atom('~pb', [P], P2),
+            n_t1(P1, X, T1, N1),
+            n_t1(P2, X, T2, N2),
+            R = (N1->N2)
+        ;   R = T
+        ).
+
+/*
+choose_names(+Nenv, +Nloc, -Nres)
 */
 choose_names(X:S, Y:T, R) :-
         (   compound(S) ->
-            S = (NS1->NS2),
-            T = (NT1->NT2),
-            choose_names(NS1, NT1, R1),
-            choose_names(NS2, NT2, R2),
+            S = (S1->S2),
+            T = (T1->T2),
+            choose_names(S1, T1, R1),
+            choose_names(S2, T2, R2),
             R = X:(R1->R2)
         ;   R = Y:T
         ).
 
 /*
-t_e_to_n_e1(+E, +L, +T, +N, +Env, -ELN)
+named_type_to_params(+N, -Params)
 */
-t_e_to_n_e1(app(_Ef@_Lf:_Tf, _ELTs), _L, _T, _N, _Env, _E@_L:_NT) :-
-        false.
-t_e_to_n_e1(E, L, T, N, Env, E@L:NT) :-
-        dpush_write(t_e_to_n_e1(E, L, T, N, Env, E@L:NT)-in), dnl,
-        (   ml_id(E) ->
-            (   function_type(T) ->
-                format_atom('~p_~p', [E, N], EN),
-                name_type(EN, T, NTloc),
-                avl_fetch(E, Env, NTenv),
-                choose_names(NTenv, NTloc, NT)
-            ;   name_type(N, T, NT)
-            )
-        ;   string(E) ->
-            format_atom('~s_~p', [E, N], EN),
-            name_type(EN, T, NT)
-        ;   ml_const(E) ->
-            format_atom('~p_~p', [E, N], EN),
-            name_type(EN, T, NT)
-        ),
-        dpop_write(t_e_to_n_e1(E, L, T, N, Env, E@L:NT)-out), dnl.
+named_type_to_params(X:T, [R|Rs]) :-
+	(   compound(T), T = (R->T2) ->
+            named_type_to_params(T2, Rs)
+	;   R = X:T,
+	    Rs = []
+	).
 
 /*
-name_type(+N, +T, -NT)
+rename_return(+Pos, +X, +N, -NewN)
 */
-name_type(N, T, N:R) :-
-        (   function_type(T) ->
-            T = (T1->T2),
-            format_atom('~pa', [N], N1),
-            format_atom('~pb', [N], N2),
-            name_type(N1, T1, NT1),
-            name_type(N2, T2, NT2),
-            R = (NT1->NT2)
-        ;   R = T
+rename_return(Pos, X, Y:T, NewN) :-
+        (   Pos > 0 ->
+            (   compound(T),
+                T = (N1->N2) ->
+                Posp is Pos - 1,
+                rename_return(Posp, X, N2, NewN2),
+                NewN = Y:(N1->NewN2)
+            )
+        ;   NewN = X:T
         ).
+
+/*
+remove_params(Count, N, R) :-
+*/
+remove_params(Count, N, R) :-
+	(   Count > 0 ->
+	    N = _:(_->N2),
+	    Count1 is Count-1,
+	    remove_params(Count1, N2, R)
+	;   R = N
+	).
+
 
 
 % **********************************************************************
-% Summarizing
+% Summarization
 
-% TODO
+/*
+summarize(+E@L:N)
+*/
+summarize(E@L:N) :-
+        summ1(E, L, N, true, DP),
+        dformat('\nMain predicate: ~p\n\n', [DP]).
+
+summ1(E, L, N, true, DP) :-
+        false.
+
+
 
 
 % **********************************************************************
