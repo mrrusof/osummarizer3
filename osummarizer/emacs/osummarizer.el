@@ -8,13 +8,14 @@
 (defun osum-unit-test ()
   "Perform unit testing for OSUMMARIZER"
   (interactive)
-  (if (and (eq 'prolog-mode major-mode) (get-buffer "unit.pl"))
+  ;; (if (and (eq 'prolog-mode major-mode) (get-buffer "unit.pl"))
       (let ((cb (current-buffer)))
         (set-buffer "unit.pl")
         (prolog-consult-buffer)
         (recenter-top-bottom 'top)
-        (switch-to-buffer-other-window cb))))
-(add-hook 'after-save-hook 'osum-unit-test)
+        (switch-to-buffer-other-window cb)))
+(global-set-key (kbd "C-c u") 'osum-unit-test)
+;; (add-hook 'after-save-hook 'osum-unit-test)
 ;; (remove-hook 'after-save-hook 'osum-unit-test)
 
 ;; Prolog mode for the following files
