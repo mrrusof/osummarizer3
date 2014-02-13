@@ -646,13 +646,6 @@ mk_ctx_constr(N, Ks, (CtxPred :- Body)) :-
         ;   Ks = [K|Kss] ->
             scanlist(mk_conj, Kss, K, Body)
         ).
-
-/*
-mk_summ_constr(+N, +Kb, -SummCstr)
-*/
-mk_summ_constr(_N, _Kb, ((_SummPred :- (_Kb, _CtxPred)))) :-
-        false.
-
 /*
 mk_conj(+A, +B, -Conj)
 */
