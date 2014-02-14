@@ -10,8 +10,7 @@
 :- use_module(library(avl), [avl_fetch/3,
                              avl_store/4]).
 :- use_module(library(lists), [rev/2,
-                               maplist/3,
-                               scanlist/4]).
+                               maplist/3]).
 :- use_module(library(ordsets), [list_to_ord_set/2,
                                  ord_union/3,
                                  ord_add_element/3]).
