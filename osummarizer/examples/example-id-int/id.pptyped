@@ -1,0 +1,14 @@
+(let
+  id1:(int -> int)
+=
+  (fun
+    x2:int
+  ->
+    x2:int
+  ):(int -> int)
+in
+  (
+    id1:(int -> int)
+    3:int
+  ):int
+):int
