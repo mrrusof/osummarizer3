@@ -1,5 +1,3 @@
-% Modified: Fri Feb 14 00:35:07 CET 2014
-
 %
 % There are unit tests for the following submodules of osummarizer.
 %

@@ -1,5 +1,3 @@
-% Modified: Fri Feb 14 00:35:07 CET 2014
-
 :- use_module('log.pl', [start_log/0,
                          lprint/1]).
 :- use_module('debug.pl', [start_debug/0,
@@ -579,8 +577,10 @@ n_e_to_s1(abs(XLNs, Eb@Lb:Nb), L, N, K, true, S) :- !,
         mk_summ_cstr(N, DKb, SummCstr),
         ord_add_element(Sb, SummCstr, S),
         dpush_write(n_e_to_s1(abs(XLNs, Eb@Lb:Nb), L, N, K, DK, S)-out), dnl.
-n_e_to_s1(ite(_E1L1N1, _E2L2N2, _E3L3N3), _L, _N, _K, _DK, _S) :- !,
-        false.
+n_e_to_s1(ite(E1L1N1, E2L2N2, E3L3N3), L, N, K, DK, S) :- !,
+        dpush_write(n_e_to_s1(ite(E1L1N1, E2L2N2, E3L3N3), L, N, K, DK, S)-in), dnl,
+        
+        dpush_write(n_e_to_s1(ite(E1L1N1, E2L2N2, E3L3N3), L, N, K, DK, S)-out), dnl.
 n_e_to_s1(let(_XLxNx, _E1L1N1, _E2L2N2), _L, _N, _K, _DK, _S) :- !,
         false.
 n_e_to_s1(E, L, X:T, K, DK, []) :- !,
@@ -660,6 +660,7 @@ mk_ctx_cstr(N, K, (CtxPred :- K)) :-
         maplist(type_name, NFormals, Formals),
         maplist(uppercase_atom, Formals, UFormals),
         CtxPred =.. [Sy|UFormals].
+
 /*
 mk_conj(+Ks, -K)
 */
