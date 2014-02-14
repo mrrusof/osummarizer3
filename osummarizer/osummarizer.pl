@@ -11,6 +11,7 @@
                                maplist/3]).
 :- use_module(library(ordsets), [list_to_ord_set/2,
                                  ord_union/3,
+                                 ord_union/2,
                                  ord_add_element/3]).
 
 :- multifile user:portray/1.
@@ -577,9 +578,13 @@ n_e_to_s1(abs(XLNs, Eb@Lb:Nb), L, N, K, true, S) :- !,
         mk_summ_cstr(N, DKb, SummCstr),
         ord_add_element(Sb, SummCstr, S),
         dpush_write(n_e_to_s1(abs(XLNs, Eb@Lb:Nb), L, N, K, DK, S)-out), dnl.
-n_e_to_s1(ite(E1L1N1, E2L2N2, E3L3N3), L, N, K, DK, S) :- !,
+n_e_to_s1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, N, K, DK, S) :- !,
         dpush_write(n_e_to_s1(ite(E1L1N1, E2L2N2, E3L3N3), L, N, K, DK, S)-in), dnl,
-        
+        n_e_to_s1(E1, L1, N1, K, X1=V1, S1),
+        n_e_to_s1(E2, L2, N2, K, DK2, S2),
+        n_e_to_s1(E3, L3, N3, K, DK3, S3),
+        ord_union([S1, S2, S3], S),
+        DK = (V1, DK2 ; \+V1, DK3),
         dpush_write(n_e_to_s1(ite(E1L1N1, E2L2N2, E3L3N3), L, N, K, DK, S)-out), dnl.
 n_e_to_s1(let(_XLxNx, _E1L1N1, _E2L2N2), _L, _N, _K, _DK, _S) :- !,
         false.
