@@ -573,8 +573,12 @@ n_e_to_s1(app(Ef@Lf:Nf, ELNs), L, N, K, DK, S) :- !,
             apply_equations(DKf, Eqs, DK)
         ),
         dpush_write(n_e_to_s1(app(Ef@Lf:Nf, ELNs), L, N, K, DK, S)-out), dnl.
-n_e_to_s1(abs(_XLNs, _Eb@_Lb:_Nb), _L, _N, _K, _DK, _S) :- !,
-        false.
+n_e_to_s1(abs(XLNs, Eb@Lb:Nb), L, N, K, true, S) :- !,
+        dpush_write(n_e_to_s1(abs(XLNs, Eb@Lb:Nb), L, N, K, DK, S)-in), dnl,
+        n_e_to_s1(Eb, Lb, Nb, K, DKb, Sb),
+        mk_summ_cstr(N, DKb, SummCstr),
+        ord_add_element(Sb, SummCstr, S),
+        dpush_write(n_e_to_s1(abs(XLNs, Eb@Lb:Nb), L, N, K, DK, S)-out), dnl.
 n_e_to_s1(ite(_E1L1N1, _E2L2N2, _E3L3N3), _L, _N, _K, _DK, _S) :- !,
         false.
 n_e_to_s1(let(_XLxNx, _E1L1N1, _E2L2N2), _L, _N, _K, _DK, _S) :- !,
@@ -632,6 +636,21 @@ apply_equations(K, Eqs, R) :-
         ),
         R =.. [F|Vs].
 
+/*
+mk_summ_cstr(+N, +K, -SummCstr)
+*/
+mk_summ_cstr(N, K, (SummPred :- (K, CtxPred))) :-
+        summ_sy(N, SSy),
+        formals_return(N, NFormalsRet),
+        maplist(type_name, NFormalsRet, FormalsRet),
+        maplist(uppercase_atom, FormalsRet, UFormalsRet),
+        SummPred =.. [SSy|UFormalsRet],
+        ctx_sy(N, CSy),
+        formals(N, NFormals),
+        maplist(type_name, NFormals, Formals),
+        maplist(uppercase_atom, Formals, UFormals),
+        CtxPred =.. [CSy|UFormals].
+        
 /*
 mk_ctx_cstr(+N, +K, -CtxCstr)
 */
