@@ -549,15 +549,16 @@ n_e_to_s1(app(Ef@Lf:Nf, ELNs), L, N, K, DK, S) :- !,
             (   foreach(Ei@Li:Ni, ELNs),
                 fromto([], InS, OutS, Ss),
                 fromto(empty, InEqs, OutEqs, Eqs),
-                fromto([], InKs, [Xi=Vi|InKs], Ks),
+                foreach(Xi=Vi, Ks),
                 param(K)
             do  n_e_to_s1(Ei, Li, Ni, K, (Xi=Vi), Si),
                 ord_union(InS, Si, OutS),
                 avl_store(Xi, InEqs, Vi, OutEqs)
             ),
-            mk_ctx_constr(Nf, Ks, CtxCstr),
+            mk_conj(Ks, Kctx),
+            mk_ctx_cstr(Nf, Kctx, CtxCstr),
             ord_union(Sf, Ss, S1),
-            ord_add_element(CtxCstr, S1, S),
+            ord_add_element(S1, CtxCstr, S),
             apply_equations(DKf, Eqs, DK)
         ;   ml_const(Ef) ->                            % APP-CONST-BOOL
             n_e_to_s1(Ef, Lf, Nf, K, DKf, Sf),
@@ -633,23 +634,26 @@ apply_equations(K, Eqs, R) :-
         R =.. [F|Vs].
 
 /*
-mk_ctx_constr(+N, +Ks, -CtxCstr)
+mk_ctx_cstr(+N, +K, -CtxCstr)
 */
-mk_ctx_constr(N, Ks, (CtxPred :- Body)) :-
+mk_ctx_cstr(N, K, (CtxPred :- K)) :-
         ctx_sy(N, Sy),
         formals(N, NFormals),
         maplist(type_name, NFormals, Formals),
         maplist(uppercase_atom, Formals, UFormals),
-        CtxPred =.. [Sy|UFormals],
-        (   Ks == [] ->
-            Body = true
-        ;   Ks = [K|Kss] ->
-            scanlist(mk_conj, Kss, K, Body)
-        ).
+        CtxPred =.. [Sy|UFormals].
 /*
-mk_conj(+A, +B, -Conj)
+mk_conj(+Ks, -K)
 */
-mk_conj(A, B, (A, B)).
+mk_conj(Ks, K) :-
+        (   Ks == [] ->
+            K = true
+        ;   Ks = [K1|Kss] ->
+            (   foreach(Ki, Kss),
+                fromto(K1, InK, (InK, Ki), K)
+            do  true
+            )
+        ).
 
 /*
 summ_sy(+N, -Sy)
