@@ -624,6 +624,8 @@ n_e_to_s1(E, L, X:T, Env, K, DK, []) :- !,
                     uppercase_atom(Y, Yu),
                     DK = (Yu=Call)
                 )
+            ;   T == bool ->
+                DK = E
             ;   uppercase_atom(X, Xu),
                 DK = (Xu=E)
             )

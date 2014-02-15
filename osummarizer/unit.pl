@@ -651,7 +651,7 @@ pos_unname_type_1 :-
 pos_summ_const_true :-
         unit_test('Positive test summarizing const true',
                   (   n_e_to_s1(true, loc('max.ml', 0, 0, 0, 0, 0, 0), r:bool, empty, true, DP, []),
-                      DP == ('R'=true) )).
+                      DP == true )).
 pos_summ_const_10 :-
         unit_test('Positive test summarizing const 10',
                   (   n_e_to_s1(10, loc('max.ml', 0, 0, 0, 0, 0, 0), r:int, empty, true, DP, []),
