@@ -8,7 +8,7 @@
   ):id1:(x2:int -> ret_id1:int)
 in
   (
-    id1:(a_id1_v:int -> v:int)
+    id1:id1:(a_id1_v:int -> v:int)
     3:a_id1_v:int
   ):v:int
 ):v:int
