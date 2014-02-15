@@ -739,7 +739,19 @@ pos_summ_let_nullary :-
                       DP == ('X'=1, 'V'='X') )).
 pos_summ_let_function :-
         unit_test('Positive test summarizing let function',
-                  (   false )).
+                   (   E@L:N = let('id1'@loc('id.ml', 0, 0, 0, 0, 0, 0):(x2:int -> ret_id:int),
+                                   abs(['x2'@loc('id.ml', 0, 0, 0, 0, 0, 0):x2:int],
+                                       'x2'@loc('id.ml', 0, 0, 0, 0, 0, 0):ret_id:int
+                                       )@loc('id.ml', 0, 0, 0, 0, 0, 0):(x2:int -> ret_id:int),
+                                   app('id1'@loc('id.ml', 0, 0, 0, 0, 0, 0):(a_id1_v:int -> v:int),
+                                       [3@loc('id.ml', 0, 0, 0, 0, 0, 0):a_id1_vint]
+                                      )@loc('id.ml', 0, 0, 0, 0, 0, 0):v:int
+                                  )@loc('id.ml', 0, 0, 0, 0, 0, 0):v:int,
+                      n_e_to_s1(E, L, N, true, DP, S),
+                       DP == 'id1_int->int'(3, 'V'),
+                       list_to_ord_set(S, So),
+                       list_to_ord_set([ ('id1_int->int'('X2', 'RET_ID1') :- 'RET_ID1'='X2', 'ctx_id1_int->int'('X2')),
+                                         ('ctx_id1_int->int'('X2') :- 'X2'=3) ], So) )).
 pos_summ_max :-
         unit_test('Positive test summarizing max',
                   (   E@L:N = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int)),
