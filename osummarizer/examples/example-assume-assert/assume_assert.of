@@ -1,0 +1,25 @@
+let('f1'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> unit),
+    abs(['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int],
+        let('_3'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
+            assume(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
+                       ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int,
+                        0@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int
+                       ]
+                   )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
+            )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
+            assert(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
+                       ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int,
+                        0@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int
+                       ]
+                   )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
+            )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit
+        )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit
+        )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> unit),
+        app('f1'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> unit),
+            [app('Obj.magic'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(unit -> int),
+                 [unit@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit
+                 ]
+             )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int
+            ]
+        )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit
+    )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit.
