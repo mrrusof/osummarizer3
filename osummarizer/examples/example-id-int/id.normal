@@ -1,0 +1,1 @@
+let id1 = fun (x2 : int) -> x2 in id1 3
