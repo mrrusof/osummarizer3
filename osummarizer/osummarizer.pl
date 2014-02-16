@@ -588,9 +588,11 @@ n_e_to_s1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, N, Env, K, DK, S) :- !,
         dpop_write(n_e_to_s1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, N, Env, K, DK, S)-ite-out), dnl.
 n_e_to_s1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S) :- !,
         dpush_write(n_e_to_s1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S)-let-in), dnl,
-        n_e_to_s1(E1, L1, N1, Env, K, true, S1),
-        n_e_to_s1(E2, L2, N2, Env, K, DK, S2),
+        n_e_to_s1(E1, L1, N1, Env, K, DK1, S1),
+        n_e_to_s1(E2, L2, N2, Env, K, DK2, S2),
         ord_union([S1, S2], S),
+        mk_conj([DK1, DK2], DKpre),
+        remove_true(DKpre, DK),
         dpop_write(n_e_to_s1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S)-let-out), dnl.
 n_e_to_s1(E, L, X:T, Env, K, DK, []) :- !,
         dpush_write(n_e_to_s1(E, L, X:T, Env, K, DK, [])-cst-id-in), dnl,
@@ -648,6 +650,22 @@ apply_equations(K, Eqs, R) :-
         R =.. [F|Vs].
 
 /*
+remove_true(+K, -R)
+*/
+remove_true(K, R) :-
+        (   compound(K), K =.. [','|[A, B]] ->
+            (   A == true ->
+                R = B
+            ;   B == true ->
+                R = A
+            ;   remove_true(A, A1),
+                remove_true(B, B1),
+                R = (A1, B1)
+            )
+        ;   R = K
+        ).
+
+/*
 mk_summ_cstr(+N, +K, -SummCstr)
 */
 mk_summ_cstr(N, K, (SummPred :- (K, CtxPred))) :-
@@ -661,7 +679,7 @@ mk_summ_cstr(N, K, (SummPred :- (K, CtxPred))) :-
         maplist(type_name, NFormals, Formals),
         maplist(uppercase_atom, Formals, UFormals),
         CtxPred =.. [CSy|UFormals].
-        
+
 /*
 mk_ctx_cstr(+N, +K, -CtxCstr)
 */
