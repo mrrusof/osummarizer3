@@ -6,7 +6,7 @@
 % 3. Naming of typed expressions
 % 4. Pretty printing of named expressions
 % 5. Summarization of named expressions
-% 6. Pretty printing of summary constraints
+% 6. Pretty printing of constraints
 %
 
 :- ['osummarizer.pl'].
@@ -86,14 +86,20 @@ pos_wf_t_e_ite :-
                                     x@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
                                     y@loc('max.ml', 0, 0, 0, 0, 0, 0):int
                                    )@loc('max.ml', 0, 0, 0, 0, 0, 0):int )).
-
 pos_wf_t_e_let :-
         unit_test("Positive test WF let",
                   wf_typed_exp( let(x@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
                                     1@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
                                     x@loc('max.ml', 0, 0, 0, 0, 0, 0):int
                                    )@loc('max.ml', 0, 0, 0, 0, 0, 0):int )).
-
+pos_wf_t_e_assert :-
+        unit_test("Positive test WF assert",
+                  wf_typed_exp( assert(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
+                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit )).
+pos_wf_t_e_assume :-
+        unit_test("Positive test WF assume",
+                  wf_typed_exp( assume(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
+                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit )).
 pos_wf_t_e_max :-
         unit_test("Positive test WF max",
                   wf_typed_exp( let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
@@ -115,7 +121,6 @@ pos_wf_t_e_max :-
                                         ]
                                        )@loc('max.ml', 0, 0, 0, 0, 0, 0):int
                                    )@loc('max.ml', 0, 0, 0, 0, 0, 0):int )).
-
 neg_wf_t_e_app_no_param :-
         unit_test("Negative test WF app no param",
                   \+ wf_typed_exp( app(
@@ -127,6 +132,30 @@ neg_wf_t_e_abs_no_param :-
                   \+ wf_typed_exp( abs([],
                                        x@loc('id.ml', 0, 0, 0, 0, 0, 0):int
                                       )@loc('id.ml', 0, 0, 0, 0, 0, 0):(int -> int) )).
+neg_wf_t_e_assert_1 :-
+        unit_test("Negative test WF assert 1",
+                  \+ wf_typed_exp( assert(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
+                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool )).
+neg_wf_t_e_assert_2 :-
+        unit_test("Negative test WF assert 2",
+                  \+ wf_typed_exp( assert(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
+                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int )).
+neg_wf_t_e_assert_3 :-
+        unit_test("Negative test WF assert 3",
+                  \+ wf_typed_exp( assert(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
+                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):_ )).
+neg_wf_t_e_assume_1 :-
+        unit_test("Negative test WF assume 1",
+                  \+ wf_typed_exp( assume(true@loc('assume_assume.ml', 0, 0, 0, 0, 0, 0):bool
+                                      )@loc('assume_assume.ml', 0, 0, 0, 0, 0, 0):bool )).
+neg_wf_t_e_assume_2 :-
+        unit_test("Negative test WF assume 2",
+                  \+ wf_typed_exp( assume(true@loc('assume_assume.ml', 0, 0, 0, 0, 0, 0):bool
+                                      )@loc('assume_assume.ml', 0, 0, 0, 0, 0, 0):int )).
+neg_wf_t_e_assume_3 :-
+        unit_test("Negative test WF assume 3",
+                  \+ wf_typed_exp( assume(true@loc('assume_assume.ml', 0, 0, 0, 0, 0, 0):bool
+                                      )@loc('assume_assume.ml', 0, 0, 0, 0, 0, 0):_ )).
 
 wf_t_e :-
         pos_wf_t_e_const_true,
@@ -142,9 +171,17 @@ wf_t_e :-
         pos_wf_t_e_abs_snd,
         pos_wf_t_e_ite,
         pos_wf_t_e_let,
+        pos_wf_t_e_assert,
+        pos_wf_t_e_assume,
         pos_wf_t_e_max,
         neg_wf_t_e_app_no_param,
-        neg_wf_t_e_abs_no_param.
+        neg_wf_t_e_abs_no_param,
+        neg_wf_t_e_assert_1,
+        neg_wf_t_e_assert_2,
+        neg_wf_t_e_assert_3,
+        neg_wf_t_e_assume_1,
+        neg_wf_t_e_assume_2,
+        neg_wf_t_e_assume_3.
 
 
 % **********************************************************************
@@ -230,6 +267,18 @@ pos_pp_typed_let :-
                                )@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
                       format_to_codes("~p", [Exp], Codes),
                       atom_codes('(let\n  x:int\n=\n  1:int\nin\n  x:int\n):int', Codes) )).
+pos_pp_typed_assert :-
+        unit_test("Positive test PP typed assert",
+                  (   Exp = assert(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
+                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
+                      format_to_codes("~p", [Exp], Codes),
+                      atom_codes('(assert(\n  true:bool\n):unit', Codes) )).
+pos_pp_typed_assume :-
+        unit_test("Positive test PP typed assume",
+                  (   Exp = assume(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
+                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
+                      format_to_codes("~p", [Exp], Codes),
+                      atom_codes('(assume(\n  true:bool\n):unit', Codes) )).
 pos_pp_typed_max :-
         unit_test("Positive test PP typed max",
                   (   Exp = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
@@ -269,6 +318,8 @@ pp_typed :-
         pos_pp_typed_abs_snd,
         pos_pp_typed_ite,
         pos_pp_typed_let,
+        pos_pp_typed_assert,
+        pos_pp_typed_assume,
         pos_pp_typed_max.
 
 
@@ -435,6 +486,12 @@ pos_naming_let :-
                                1@loc('max.ml', 0, 0, 0, 0, 0, 0):x:int,
                                x@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int
                               )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int )).
+pos_naming_assert :-
+        unit_test("Positive test naming assert",
+                  false ).
+pos_naming_assume :-
+        unit_test("Positive test naming assume",
+                  false ).
 pos_naming_max :-
         unit_test("Positive test naming max",
                   (   E@L:T = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
@@ -503,6 +560,8 @@ naming :-
         pos_naming_abs_snd,
         pos_naming_ite,
         pos_naming_let,
+        pos_naming_assert,
+        pos_naming_assume,
         pos_naming_max.
 
 
@@ -590,6 +649,12 @@ pos_pp_named_let :-
                                )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int,
                       format_to_codes("~p", [Exp], Codes),
                       atom_codes('(let\n  x:x:int\n=\n  1:x:int\nin\n  x:v:int\n):v:int', Codes) )).
+pos_pp_named_assert :-
+        unit_test("Positive test PP named assert",
+                  false ).
+pos_pp_named_assume :-
+        unit_test("Positive test PP named assume",
+                  false ).
 pos_pp_named_max :-
         unit_test("Positive test PP named max",
                   (   Exp = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int)),
@@ -627,6 +692,8 @@ pp_named :-
         pos_pp_named_abs_snd,
         pos_pp_named_ite,
         pos_pp_named_let,
+        pos_pp_named_assert,
+        pos_pp_named_assume,
         pos_pp_named_max.
 
 
@@ -656,39 +723,39 @@ pos_unname_type_1 :-
                                      (    (     i->     i)->          (      i->      i)->     i ) ) )).
 pos_summ_const_true :-
         unit_test("Positive test summarizing const true",
-                  (   n_e_to_s_c1(true, loc('max.ml', 0, 0, 0, 0, 0, 0), r:bool, empty, true, DP, []),
+                  (   n_e_to_c1(true, loc('max.ml', 0, 0, 0, 0, 0, 0), r:bool, empty, true, DP, []),
                       DP == true )).
 pos_summ_const_10 :-
         unit_test("Positive test summarizing const 10",
-                  (   n_e_to_s_c1(10, loc('max.ml', 0, 0, 0, 0, 0, 0), r:int, empty, true, DP, []),
+                  (   n_e_to_c1(10, loc('max.ml', 0, 0, 0, 0, 0, 0), r:int, empty, true, DP, []),
                       DP == ('R'=10) )).
 pos_summ_const_hola :-
         unit_test("Positive test summarizing const \"hola\"",
-                  (   n_e_to_s_c1("hola", loc('max.ml', 0, 0, 0, 0, 0, 0), str:string, empty, true, DP, []),
+                  (   n_e_to_c1("hola", loc('max.ml', 0, 0, 0, 0, 0, 0), str:string, empty, true, DP, []),
                       DP == ('STR'="hola") )).
 pos_summ_const_plus :-
         unit_test("Positive test summarizing const +",
-                  (   n_e_to_s_c1('+', loc('max.ml', 0, 0, 0, 0, 0, 0), 'plus_r':('a_plus_r':int -> 'b_plus_r':('ba_plus_r':int -> 'bb_plus_r':int)), empty, true, DP, []),
+                  (   n_e_to_c1('+', loc('max.ml', 0, 0, 0, 0, 0, 0), 'plus_r':('a_plus_r':int -> 'b_plus_r':('ba_plus_r':int -> 'bb_plus_r':int)), empty, true, DP, []),
                       DP == ('BB_PLUS_R' = 'A_PLUS_R' + 'BA_PLUS_R') )).
 pos_summ_const_gt :-
         unit_test("Positive test summarizing const >",
-                  (   n_e_to_s_c1('>', loc('max.ml', 0, 0, 0, 0, 0, 0), 'gt_c_ret_max1':('a_gt_c_ret_max1':int -> 'b_gt_c_ret_max1':('ba_gt_c_ret_max1':int -> 'bb_gt_c_ret_max1':bool)), empty, true, DP, []),
+                  (   n_e_to_c1('>', loc('max.ml', 0, 0, 0, 0, 0, 0), 'gt_c_ret_max1':('a_gt_c_ret_max1':int -> 'b_gt_c_ret_max1':('ba_gt_c_ret_max1':int -> 'bb_gt_c_ret_max1':bool)), empty, true, DP, []),
                       DP == ('A_GT_C_RET_MAX1' > 'BA_GT_C_RET_MAX1') )).
 pos_summ_id_x :-
         unit_test("Positive test summarizing id x",
-                  (   n_e_to_s_c1(x, loc('max.ml', 0, 0, 0, 0, 0, 0), r:int, empty, true, DP, []),
+                  (   n_e_to_c1(x, loc('max.ml', 0, 0, 0, 0, 0, 0), r:int, empty, true, DP, []),
                       DP == ('R'='X') )).
 pos_summ_id_inc :-
         unit_test("Positive test summarizing id inc",
-                  (   n_e_to_s_c1(inc, loc('max.ml', 0, 0, 0, 0, 0, 0), inc:(a_inc_x:int -> b_inc_x:int), empty, true, DP, []),
+                  (   n_e_to_c1(inc, loc('max.ml', 0, 0, 0, 0, 0, 0), inc:(a_inc_x:int -> b_inc_x:int), empty, true, DP, []),
                       DP == 'inc_int->int'('A_INC_X', 'B_INC_X') )).
 pos_summ_id_pos :-
         unit_test("Positive test summarizing id pos",
-                  (   n_e_to_s_c1(pos, loc('max.ml', 0, 0, 0, 0, 0, 0), pos:(a_pos_x:int -> b_pos_x:bool), empty, true, DP, []),
+                  (   n_e_to_c1(pos, loc('max.ml', 0, 0, 0, 0, 0, 0), pos:(a_pos_x:int -> b_pos_x:bool), empty, true, DP, []),
                       DP == 'pos_int->bool'('A_POS_X') )).
 pos_summ_id_max1 :-
         unit_test("Positive test summarizing id max1",
-                  (   n_e_to_s_c1(max1, loc('max.ml', 0, 0, 0, 0, 0, 0), max1:(a_max1_v:int -> f1_max1:(ba_max1_v:int -> bb_max1_v:int)), empty, true, DP, []),
+                  (   n_e_to_c1(max1, loc('max.ml', 0, 0, 0, 0, 0, 0), max1:(a_max1_v:int -> f1_max1:(ba_max1_v:int -> bb_max1_v:int)), empty, true, DP, []),
                       DP == 'max1_int->int->int'('A_MAX1_V', 'BA_MAX1_V', 'BB_MAX1_V') )).
 pos_summ_app_gt :-
         unit_test("Positive test summarizing app >",
@@ -697,7 +764,7 @@ pos_summ_app_gt :-
                                   [x2@loc('max.ml', 0, 0, 0, 0, 0, 0):'a_gt_c_ret_max1':int,
                                    y3@loc('max.ml', 0, 0, 0, 0, 0, 0):'ba_gt_c_ret_max1':int]
                                  )@loc('max.ml', 0, 0, 0, 0, 0, 0):c_ret_max1:bool,
-                      n_e_to_s_c1(E, L, N, empty, true, DP, []),
+                      n_e_to_c1(E, L, N, empty, true, DP, []),
                       DP == ('X2' > 'Y3') )).
 pos_summ_app_max1 :-
         unit_test("Positive test summarizing app max1",
@@ -705,7 +772,7 @@ pos_summ_app_max1 :-
                                    [3@loc('max.ml', 0, 0, 0, 0, 0, 0):a_max1_v:int,
                                     1@loc('max.ml', 0, 0, 0, 0, 0, 0):ba_max1_v:int]
                                   )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int,
-                      n_e_to_s_c1(E, L, N, empty, true, DP, S),
+                      n_e_to_c1(E, L, N, empty, true, DP, S),
                       DP == 'max1_int->int->int'(3, 1, 'V'),
                       list_to_ord_set(S, So),
                       list_to_ord_set([('ctx_max1_int->int->int'('A_MAX1_V', 'BA_MAX1_V') :- 'A_MAX1_V'=3, 'BA_MAX1_V'=1)], So) )).
@@ -714,7 +781,7 @@ pos_summ_abs_id :-
                   (   E@L:N = abs([x2@loc('id.ml', 0, 0, 0, 0, 0, 0):x2:int],
                                   x2@loc('id.ml', 0, 0, 0, 0, 0, 0):ret_id1:int
                                  )@loc('id.ml', 0, 0, 0, 0, 0, 0):id1:(x2:int -> ret_id1:int),
-                      n_e_to_s_c1(E, L, N, empty, true, true, S),
+                      n_e_to_c1(E, L, N, empty, true, true, S),
                       list_to_ord_set(S, So),
                       list_to_ord_set([ ('id1_int->int'('X2', 'RET_ID1') :- 'RET_ID1'='X2', 'ctx_id1_int->int'('X2')) ], So) )).
 pos_summ_abs_snd :-
@@ -722,7 +789,7 @@ pos_summ_abs_snd :-
                   (   E@L:N = abs([x@loc('snd.ml', 0, 0, 0, 0, 0, 0):x:int, y@loc('snd.ml', 0, 0, 0, 0, 0, 0):y:int],
                                   y@loc('snd.ml', 0, 0, 0, 0, 0, 0):ret_snd:int
                                  )@loc('snd.ml', 0, 0, 0, 0, 0, 0):snd:(x:int -> f1_snd:(y:int -> ret_snd:int)),
-                      n_e_to_s_c1(E, L, N, empty, true, true, S),
+                      n_e_to_c1(E, L, N, empty, true, true, S),
                       list_to_ord_set(S, So),
                       list_to_ord_set([ ('snd_int->int->int'('X','Y','RET_SND') :- 'RET_SND'='Y', 'ctx_snd_int->int->int'('X','Y')) ], So) )).
 pos_summ_ite_nullary :-
@@ -731,7 +798,7 @@ pos_summ_ite_nullary :-
                                x@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int,
                                y@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int
                               )@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int,
-                      n_e_to_s_c1(E, L, N, empty, true, DP, []),
+                      n_e_to_c1(E, L, N, empty, true, DP, []),
                       DP == (true, 'RET'='X'; \+true, 'RET'='Y') )).
 pos_summ_ite_function :-
         unit_test("Positive test summarizing ite function",
@@ -742,7 +809,7 @@ pos_summ_let_nullary :-
                                   1@loc('max.ml', 0, 0, 0, 0, 0, 0):x:int,
                                   x@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int
                                  )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int,
-                      n_e_to_s_c1(E, L, N, empty, true, DP, []),
+                      n_e_to_c1(E, L, N, empty, true, DP, []),
                       DP == ('X'=1, 'V'='X') )).
 pos_summ_let_function :-
         unit_test("Positive test summarizing let function",
@@ -754,11 +821,17 @@ pos_summ_let_function :-
                                       [3@loc('id.ml', 0, 0, 0, 0, 0, 0):a_id1_v:int]
                                      )@loc('id.ml', 0, 0, 0, 0, 0, 0):v:int
                                  )@loc('id.ml', 0, 0, 0, 0, 0, 0):v:int,
-                       n_e_to_s_c1(E, L, N, empty, true, DP, S),
+                       n_e_to_c1(E, L, N, empty, true, DP, S),
                        DP == 'id1_int->int'(3, 'V'),
                        list_to_ord_set(S, So),
                        list_to_ord_set([ ('id1_int->int'('X2', 'RET_ID1') :- 'RET_ID1'='X2', 'ctx_id1_int->int'('X2')),
                                          ('ctx_id1_int->int'('A_ID1_V') :- 'A_ID1_V'=3) ], So) )).
+pos_summ_assert :-
+        unit_test("Positive test summarizing assert",
+                  false ).
+pos_summ_assume :-
+        unit_test("Positive test summarizing assume",
+                  false ).
 pos_summ_max :-
         unit_test("Positive test summarizing max",
                   (   E@L:N = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int)),
@@ -777,7 +850,7 @@ pos_summ_max :-
                                        1@loc('max.ml', 0, 0, 0, 0, 0, 0):ba_max1_v:int]
                                      )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int
                                  )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int,
-                      n_e_to_s_c1(E, L, N, empty, true, 'max1_int->int->int'(3, 1, 'V'), S),
+                      n_e_to_c1(E, L, N, empty, true, 'max1_int->int->int'(3, 1, 'V'), S),
                       list_to_ord_set(S, So),
                       list_to_ord_set([ ('max1_int->int->int'('X2', 'Y3', 'RET_MAX1') :- ('X2'>'Y3', 'RET_MAX1'='X2' ; \+'X2'>'Y3', 'RET_MAX1'='Y3'), 'ctx_max1_int->int->int'('X2', 'Y3')),
                                         ('ctx_max1_int->int->int'('A_MAX1_V', 'BA_MAX1_V') :- 'A_MAX1_V'=3, 'BA_MAX1_V'=1) ], So) )).
@@ -806,6 +879,8 @@ summarization :-
         pos_summ_ite_function,
         pos_summ_let_nullary,
         pos_summ_let_function,
+        pos_summ_assert,
+        pos_summ_assume,
         pos_summ_max.
 
 
@@ -837,13 +912,21 @@ pos_pp_cstr_snd :-
                   (   SC = ('snd_int->int->int'('X','Y','RET_SND') :- ('RET_SND'='Y', 'ctx_snd_int->int->int'('X','Y'))),
                       format_to_codes("~p", [SC], Codes),
                       format_to_codes("'snd_int->int->int'(X, Y, RET_SND) :- RET_SND=Y, 'ctx_snd_int->int->int'(X, Y).", [], Codes) )).
+pos_pp_cstr_assume :-
+        unit_test("Positive test pp cstr assume",
+                  false ).
+pos_pp_cstr_assert :-
+        unit_test("Positive test pp cstr assert",
+                  false ).
 
 pp_cstr :-
         pos_pp_cstr_id1,
         pos_pp_cstr_ctx_id1,
         pos_pp_cstr_max1,
         pos_pp_cstr_ctx_max1,
-        pos_pp_cstr_snd.
+        pos_pp_cstr_snd,
+        pos_pp_cstr_assume,
+        pos_pp_cstr_assert.
 
 
 % **********************************************************************

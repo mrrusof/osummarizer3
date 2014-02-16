@@ -154,6 +154,18 @@ wf_t_e(let(X@Lx:Tx, E1@L1:T1, E2@L2:T2), L, T) :- !,
         wf_t_e(E1, L1, T1),
         wf_t_e(E2, L2, T2),
         dpop_write(wf_t_e(let(X@Lx:Tx, E1@L1:T1, E2@L2:T2), L, T)-out), dnl.
+wf_t_e(assert(Ec@Lc:Tc), L, T) :- !,
+        dpush_write(wf_t_e(assert(Ec@Lc:Tc), L, T)-assert-in), dnl,
+        wf_t_e(Ec, Lc, Tc),
+        wf_l(L),
+        T == unit,
+        dpop_write(wf_t_e(assert(Ec@Lc:Tc), L, T)-assert-out), dnl.
+wf_t_e(assume(Ec@Lc:Tc), L, T) :- !,
+        dpush_write(wf_t_e(assume(Ec@Lc:Tc), L, T)-assume-in), dnl,
+        wf_t_e(Ec, Lc, Tc),
+        wf_l(L),
+        T == unit,
+        dpop_write(wf_t_e(assume(Ec@Lc:Tc), L, T)-assume-out), dnl.
 wf_t_e(E, L, T) :- !,
         dpush_write(wf_t_e(E, L, T)-in), dnl,
         wf_l(L),
@@ -313,6 +325,18 @@ pp_t_e(let(X@_:Tx, E1@_:T1, E2@_:T2), T, I) :- !,
         pp_t_e(E1, T1, J),
         format('\n~sin\n', [I]),
         pp_t_e(E2, T2, J),
+        format('\n~s):', [I]),
+        paren_t(T).
+pp_t_e(assert(Ec@_:Tc), T, I) :- !,
+        append(I, "  ", J),
+        format('~s(assert(\n', [I]),
+        pp_t_e(Ec, Tc, J),
+        format('\n~s):', [I]),
+        paren_t(T).
+pp_t_e(assume(Ec@_:Tc), T, I) :- !,
+        append(I, "  ", J),
+        format('~s(assume(\n', [I]),
+        pp_t_e(Ec, Tc, J),
         format('\n~s):', [I]),
         paren_t(T).
 pp_t_e(E, T, I) :- !,
@@ -561,25 +585,25 @@ ml_const_to_name('||', or).
 % Summarization of named expressions
 
 /*
-named_exp_to_summary_constraints(+E@L:N, -Ss)
+named_exp_to_constraints(+E@L:N, -Ss)
 */
-named_exp_to_summary_constraints(E@L:N, S) :-
+named_exp_to_constraints(E@L:N, S) :-
         n_e_to_s_c1(E, L, N, empty, true, DP, S),
         dformat('\nMain predicate: ~p\n\n', [DP]).
 
 /*
-n_e_to_s_c1(+E, +L, +N, +Env, +K, -DK, -S)
+n_e_to_c1(+E, +L, +N, +Env, +K, -DK, -S)
 */
-n_e_to_s_c1(app(Ef@Lf:Nf, ELNs), L, N, Env, K, DK, S) :- !,
-        dpush_write(n_e_to_s_c1(app(Ef@Lf:Nf, ELNs), L, N, Env, K, DK, S)-app-in), dnl,
+n_e_to_c1(app(Ef@Lf:Nf, ELNs), L, N, Env, K, DK, S) :- !,
+        dpush_write(n_e_to_c1(app(Ef@Lf:Nf, ELNs), L, N, Env, K, DK, S)-app-in), dnl,
         (   ml_id(Ef) ->                               % APP-IDENT
-            n_e_to_s_c1(Ef, Lf, Nf, Env, K, DKf, Sf),
+            n_e_to_c1(Ef, Lf, Nf, Env, K, DKf, Sf),
             (   foreach(Ei@Li:Ni, ELNs),
                 fromto([], InS, OutS, Ss),
                 fromto(empty, InEqs, OutEqs, Eqs),
                 foreach(Xi=Vi, Ks),
                 param(Env, K)
-            do  n_e_to_s_c1(Ei, Li, Ni, Env, K, (Xi=Vi), Si),
+            do  n_e_to_c1(Ei, Li, Ni, Env, K, (Xi=Vi), Si),
                 ord_union(InS, Si, OutS),
                 avl_store(Xi, InEqs, Vi, OutEqs)
             ),
@@ -589,43 +613,43 @@ n_e_to_s_c1(app(Ef@Lf:Nf, ELNs), L, N, Env, K, DK, S) :- !,
             ord_add_element(S1, CtxCstr, S),
             apply_equations(DKf, Eqs, DK)
         ;   ml_const(Ef) ->                            % APP-CONST-BOOL
-            n_e_to_s_c1(Ef, Lf, Nf, Env, K, DKf, Sf),
+            n_e_to_c1(Ef, Lf, Nf, Env, K, DKf, Sf),
             (   foreach(Ei@Li:Ni, ELNs),
                 fromto([], InS, OutS, Ss),
                 fromto(empty, InEqs, OutEqs, Eqs),
                 param(Env, K)
-            do  n_e_to_s_c1(Ei, Li, Ni, Env, K, (Xi=Vi), Si),
+            do  n_e_to_c1(Ei, Li, Ni, Env, K, (Xi=Vi), Si),
                 ord_union(InS, Si, OutS),
                 avl_store(Xi, InEqs, Vi, OutEqs)
             ),
             ord_union(Sf, Ss, S),
             apply_equations(DKf, Eqs, DK)
         ),
-        dpop_write(n_e_to_s_c1(app(Ef@Lf:Nf, ELNs), L, N, Env, K, DK, S)-app-out), dnl.
-n_e_to_s_c1(abs(XLNs, Eb@Lb:Nb), L, N, Env, K, true, S) :- !,
-        dpush_write(n_e_to_s_c1(abs(XLNs, Eb@Lb:Nb), L, N, Env, K, true, S)-abs-in), dnl,
-        n_e_to_s_c1(Eb, Lb, Nb, Env, K, DKb, Sb),
+        dpop_write(n_e_to_c1(app(Ef@Lf:Nf, ELNs), L, N, Env, K, DK, S)-app-out), dnl.
+n_e_to_c1(abs(XLNs, Eb@Lb:Nb), L, N, Env, K, true, S) :- !,
+        dpush_write(n_e_to_c1(abs(XLNs, Eb@Lb:Nb), L, N, Env, K, true, S)-abs-in), dnl,
+        n_e_to_c1(Eb, Lb, Nb, Env, K, DKb, Sb),
         mk_summ_cstr(N, DKb, SummCstr),
         ord_add_element(Sb, SummCstr, S),
-        dpop_write(n_e_to_s_c1(abs(XLNs, Eb@Lb:Nb), L, N, Env, K, true, S)-abs-out), dnl.
-n_e_to_s_c1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, N, Env, K, DK, S) :- !,
-        dpush_write(n_e_to_s_c1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, N, Env, K, DK, S)-ite-in), dnl,
-        n_e_to_s_c1(E1, L1, N1, Env, K, DK1, S1),
-        n_e_to_s_c1(E2, L2, N2, Env, K, DK2, S2),
-        n_e_to_s_c1(E3, L3, N3, Env, K, DK3, S3),
+        dpop_write(n_e_to_c1(abs(XLNs, Eb@Lb:Nb), L, N, Env, K, true, S)-abs-out), dnl.
+n_e_to_c1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, N, Env, K, DK, S) :- !,
+        dpush_write(n_e_to_c1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, N, Env, K, DK, S)-ite-in), dnl,
+        n_e_to_c1(E1, L1, N1, Env, K, DK1, S1),
+        n_e_to_c1(E2, L2, N2, Env, K, DK2, S2),
+        n_e_to_c1(E3, L3, N3, Env, K, DK3, S3),
         ord_union([S1, S2, S3], S),
         DK = (DK1, DK2 ; \+DK1, DK3),
-        dpop_write(n_e_to_s_c1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, N, Env, K, DK, S)-ite-out), dnl.
-n_e_to_s_c1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S) :- !,
-        dpush_write(n_e_to_s_c1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S)-let-in), dnl,
-        n_e_to_s_c1(E1, L1, N1, Env, K, DK1, S1),
-        n_e_to_s_c1(E2, L2, N2, Env, K, DK2, S2),
-        ord_union([S1, S2], S),
+        dpop_write(n_e_to_c1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, N, Env, K, DK, S)-ite-out), dnl.
+n_e_to_c1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S) :- !,
+        dpush_write(n_e_to_c1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S)-let-in), dnl,
+        n_e_to_c1(E1, L1, N1, Env, K, DK1, S1),
+        n_e_to_c1(E2, L2, N2, Env, K, DK2, S2),
+        ord_union(S1, S2, S),
         mk_conj([DK1, DK2], DKpre),
         remove_true(DKpre, DK),
-        dpop_write(n_e_to_s_c1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S)-let-out), dnl.
-n_e_to_s_c1(E, L, X:T, Env, K, DK, []) :- !,
-        dpush_write(n_e_to_s_c1(E, L, X:T, Env, K, DK, [])-cst-id-in), dnl,
+        dpop_write(n_e_to_c1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S)-let-out), dnl.
+n_e_to_c1(E, L, X:T, Env, K, DK, []) :- !,
+        dpush_write(n_e_to_c1(E, L, X:T, Env, K, DK, [])-cst-id-in), dnl,
         (   ml_id(E) ->
             (   function_type(T) ->
                 summ_sy(X:T, SummSy),
@@ -662,7 +686,7 @@ n_e_to_s_c1(E, L, X:T, Env, K, DK, []) :- !,
                 DK = (Xu=E)
             )
         ),
-        dpop_write(n_e_to_s_c1(E, L, X:T, Env, K, DK, [])-cst-id-out), dnl.
+        dpop_write(n_e_to_c1(E, L, X:T, Env, K, DK, [])-cst-id-out), dnl.
 
 /*
 apply_equations(+K, +Eqs, -R)
@@ -838,7 +862,7 @@ summarize(FileIn, _FileOut) :-
         lprint(ELN),
         lprint('\n'),
 % Summarize the expression
-        named_exp_to_summary_constraints(ELN, Ss),
+        named_exp_to_constraints(ELN, Ss),
 % Output the summarized program
         (   foreach(S, Ss)
         do  print(S),
