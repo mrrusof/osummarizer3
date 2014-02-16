@@ -329,15 +329,27 @@ pp_t_e(let(X@_:Tx, E1@_:T1, E2@_:T2), T, I) :- !,
         paren_t(T).
 pp_t_e(assert(Ec@_:Tc), T, I) :- !,
         append(I, "  ", J),
-        format('~s(assert(\n', [I]),
+        (   ( Ec == true ; Ec == false ) ->
+            format('~s(assert(\n', [I])
+        ;   format('~s(assert\n', [I])
+        ),
         pp_t_e(Ec, Tc, J),
-        format('\n~s):', [I]),
+        (   ( Ec == true ; Ec == false ) ->
+            format('\n~s)):', [I])
+        ;   format('\n~s):', [I])
+        ),
         paren_t(T).
 pp_t_e(assume(Ec@_:Tc), T, I) :- !,
         append(I, "  ", J),
-        format('~s(assume(\n', [I]),
+        (   ( Ec == true ; Ec == false ) ->
+            format('~s(assume(\n', [I])
+        ;   format('~s(assume\n', [I])
+        ),
         pp_t_e(Ec, Tc, J),
-        format('\n~s):', [I]),
+        (   ( Ec == true ; Ec == false ) ->
+            format('\n~s)):', [I])
+        ;   format('\n~s):', [I])
+        ),
         paren_t(T).
 pp_t_e(E, T, I) :- !,
         format('~s', [I]),

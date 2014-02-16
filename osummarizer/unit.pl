@@ -267,18 +267,40 @@ pos_pp_typed_let :-
                                )@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
                       format_to_codes("~p", [Exp], Codes),
                       atom_codes('(let\n  x:int\n=\n  1:int\nin\n  x:int\n):int', Codes) )).
-pos_pp_typed_assert :-
-        unit_test("Positive test PP typed assert",
+pos_pp_typed_assert_1 :-
+        unit_test("Positive test PP typed assert 1",
                   (   Exp = assert(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
                                       )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
                       format_to_codes("~p", [Exp], Codes),
-                      atom_codes('(assert(\n  true:bool\n):unit', Codes) )).
-pos_pp_typed_assume :-
-        unit_test("Positive test PP typed assume",
+                      atom_codes('(assert(\n  true:bool\n)):unit', Codes) )).
+pos_pp_typed_assert_2 :-
+        unit_test("Positive test PP typed assert 2",
+                  (   Exp = assert(
+                                   app(
+                                       '>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
+                                       [x@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int,
+                                        y@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int]
+                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
+                                  )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
+                      format_to_codes("~p", [Exp], Codes),
+                      atom_codes('(assert\n  (\n    (>):(int -> int -> bool)\n    x:int\n    y:int\n  ):bool\n):unit', Codes) )).
+pos_pp_typed_assume_1 :-
+        unit_test("Positive test PP typed assume 1",
                   (   Exp = assume(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
                                       )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
                       format_to_codes("~p", [Exp], Codes),
-                      atom_codes('(assume(\n  true:bool\n):unit', Codes) )).
+                      atom_codes('(assume(\n  true:bool\n)):unit', Codes) )).
+pos_pp_typed_assume_2 :-
+        unit_test("Positive test PP typed assume 2",
+                  (   Exp = assume(
+                                   app(
+                                       '>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
+                                       [x@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int,
+                                        y@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int]
+                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
+                                  )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
+                      format_to_codes("~p", [Exp], Codes),
+                      atom_codes('(assume\n  (\n    (>):(int -> int -> bool)\n    x:int\n    y:int\n  ):bool\n):unit', Codes) )).
 pos_pp_typed_max :-
         unit_test("Positive test PP typed max",
                   (   Exp = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
@@ -318,8 +340,10 @@ pp_typed :-
         pos_pp_typed_abs_snd,
         pos_pp_typed_ite,
         pos_pp_typed_let,
-        pos_pp_typed_assert,
-        pos_pp_typed_assume,
+        pos_pp_typed_assert_1,
+        pos_pp_typed_assert_2,
+        pos_pp_typed_assume_1,
+        pos_pp_typed_assume_2,
         pos_pp_typed_max.
 
 
