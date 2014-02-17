@@ -267,14 +267,15 @@ pos_pp_typed_let :-
                                )@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
                       format_to_codes("~p", [Exp], Codes),
                       atom_codes('(let\n  x:int\n=\n  1:int\nin\n  x:int\n):int', Codes) )).
-pos_pp_typed_assert_1 :-
-        unit_test("Positive test PP typed assert 1",
-                  (   Exp = assert(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
-                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
+pos_pp_typed_assert_true :-
+        unit_test("Positive test PP typed assert true",
+                  (   Exp = assert(
+                                   true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
+                                  )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
                       format_to_codes("~p", [Exp], Codes),
                       atom_codes('(assert(\n  true:bool\n)):unit', Codes) )).
-pos_pp_typed_assert_2 :-
-        unit_test("Positive test PP typed assert 2",
+pos_pp_typed_assert_gt :-
+        unit_test("Positive test PP typed assert gt",
                   (   Exp = assert(
                                    app(
                                        '>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
@@ -284,14 +285,15 @@ pos_pp_typed_assert_2 :-
                                   )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
                       format_to_codes("~p", [Exp], Codes),
                       atom_codes('(assert\n  (\n    (>):(int -> int -> bool)\n    x:int\n    y:int\n  ):bool\n):unit', Codes) )).
-pos_pp_typed_assume_1 :-
-        unit_test("Positive test PP typed assume 1",
-                  (   Exp = assume(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
-                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
+pos_pp_typed_assume_true :-
+        unit_test("Positive test PP typed assume true",
+                  (   Exp = assume(
+                                   true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
+                                  )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
                       format_to_codes("~p", [Exp], Codes),
                       atom_codes('(assume(\n  true:bool\n)):unit', Codes) )).
-pos_pp_typed_assume_2 :-
-        unit_test("Positive test PP typed assume 2",
+pos_pp_typed_assume_gt :-
+        unit_test("Positive test PP typed assume gt",
                   (   Exp = assume(
                                    app(
                                        '>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
@@ -340,10 +342,10 @@ pp_typed :-
         pos_pp_typed_abs_snd,
         pos_pp_typed_ite,
         pos_pp_typed_let,
-        pos_pp_typed_assert_1,
-        pos_pp_typed_assert_2,
-        pos_pp_typed_assume_1,
-        pos_pp_typed_assume_2,
+        pos_pp_typed_assert_true,
+        pos_pp_typed_assert_gt,
+        pos_pp_typed_assume_true,
+        pos_pp_typed_assume_gt,
         pos_pp_typed_max.
 
 
@@ -510,12 +512,54 @@ pos_naming_let :-
                                1@loc('max.ml', 0, 0, 0, 0, 0, 0):x:int,
                                x@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int
                               )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int )).
-pos_naming_assert :-
-        unit_test("Positive test naming assert",
-                  false ).
-pos_naming_assume :-
-        unit_test("Positive test naming assume",
-                  false ).
+pos_naming_assert_true :-
+        unit_test("Positive test naming assert true",
+                  (   E@L:T = assert(
+                                     true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
+                                    )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
+                      t_e_to_n_e1(E, L, T, ret_f1, empty, R),
+                      R == assert(
+                                  true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ase_ret_f1:bool
+                                 )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit )).
+pos_naming_assert_gt :-
+        unit_test("Positive test naming assert gt",
+                  (   E@L:T = assert(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
+                                         ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int,
+                                          0@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int
+                                         ]
+                                        )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool                                     
+                                    )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
+                      t_e_to_n_e1(E, L, T, ret_f1, empty, R),
+                      R == assert(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):gt_ase_ret_f1:(a_gt_ase_ret_f1:int -> b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int -> ase_ret_f1:bool)),
+                                      ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):a_gt_ase_ret_f1:int,
+                                       0@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ba_gt_ase_ret_f1:int
+                                      ]
+                                     )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ase_ret_f1:bool
+                                 )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit )).
+pos_naming_assume_true :-
+        unit_test("Positive test naming assume true",
+                  (   E@L:T = assume(
+                                     true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
+                                    )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
+                      t_e_to_n_e1(E, L, T, ret_f1, empty, R),
+                      R == assume(
+                                  true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):asu_ret_f1:bool
+                                 )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit )).
+pos_naming_assume_gt :-
+        unit_test("Positive test naming assume gt",
+                  (   E@L:T = assume(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
+                                         ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int,
+                                          0@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int
+                                         ]
+                                        )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool                                     
+                                    )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
+                      t_e_to_n_e1(E, L, T, ret_f1, empty, R),
+                      R == assume(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):gt_asu_ret_f1:(a_gt_asu_ret_f1:int -> b_gt_asu_ret_f1:(ba_gt_asu_ret_f1:int -> asu_ret_f1:bool)),
+                                      ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):a_gt_asu_ret_f1:int,
+                                       0@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ba_gt_asu_ret_f1:int
+                                      ]
+                                     )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):asu_ret_f1:bool
+                                 )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit )).
 pos_naming_max :-
         unit_test("Positive test naming max",
                   (   E@L:T = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
@@ -584,8 +628,10 @@ naming :-
         pos_naming_abs_snd,
         pos_naming_ite,
         pos_naming_let,
-        pos_naming_assert,
-        pos_naming_assume,
+        pos_naming_assert_true,
+        pos_naming_assert_gt,
+        pos_naming_assume_true,
+        pos_naming_assume_gt,
         pos_naming_max.
 
 
@@ -673,12 +719,40 @@ pos_pp_named_let :-
                                )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int,
                       format_to_codes("~p", [Exp], Codes),
                       atom_codes('(let\n  x:x:int\n=\n  1:x:int\nin\n  x:v:int\n):v:int', Codes) )).
-pos_pp_named_assert :-
-        unit_test("Positive test PP named assert",
-                  false ).
-pos_pp_named_assume :-
-        unit_test("Positive test PP named assume",
-                  false ).
+pos_pp_named_assert_true :-
+        unit_test("Positive test PP named assert true",
+                  (   Exp = assert(
+                                   true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ase_ret_f1:bool
+                                  )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit,
+                      format_to_codes("~p", [Exp], Codes),
+                      atom_codes('(assert(\n  true:ase_ret_f1:bool\n)):ret_f1:unit', Codes) )).
+pos_pp_named_assert_gt :-
+        unit_test("Positive test PP named assert gt",
+                  (   Exp = assert(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):gt_ase_ret_f1:(a_gt_ase_ret_f1:int -> b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int -> ase_ret_f1:bool)),
+                                      ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):a_gt_ase_ret_f1:int,
+                                       0@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ba_gt_ase_ret_f1:int
+                                      ]
+                                     )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ase_ret_f1:bool
+                                 )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit,
+                      format_to_codes("~p", [Exp], Codes),
+                      atom_codes('(assert\n  (\n    (>):gt_ase_ret_f1:(a_gt_ase_ret_f1:int -> b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int -> ase_ret_f1:bool))\n    x2:a_gt_ase_ret_f1:int\n    0:ba_gt_ase_ret_f1:int\n  ):ase_ret_f1:bool\n):ret_f1:unit', Codes)  )).
+pos_pp_named_assume_true :-
+        unit_test("Positive test PP named assume true",
+                  (   Exp = assume(
+                                   true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):asu_ret_f1:bool
+                                  )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit,
+                      format_to_codes("~p", [Exp], Codes),
+                      atom_codes('(assume(\n  true:asu_ret_f1:bool\n)):ret_f1:unit', Codes) )).
+pos_pp_named_assume_gt :-
+        unit_test("Positive test PP named assume gt",
+                  (   Exp = assume(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):gt_asu_ret_f1:(a_gt_asu_ret_f1:int -> b_gt_asu_ret_f1:(ba_gt_asu_ret_f1:int -> asu_ret_f1:bool)),
+                                      ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):a_gt_asu_ret_f1:int,
+                                       0@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ba_gt_asu_ret_f1:int
+                                      ]
+                                     )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):asu_ret_f1:bool
+                                 )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit,
+                      format_to_codes("~p", [Exp], Codes),
+                      atom_codes('(assume\n  (\n    (>):gt_asu_ret_f1:(a_gt_asu_ret_f1:int -> b_gt_asu_ret_f1:(ba_gt_asu_ret_f1:int -> asu_ret_f1:bool))\n    x2:a_gt_asu_ret_f1:int\n    0:ba_gt_asu_ret_f1:int\n  ):asu_ret_f1:bool\n):ret_f1:unit', Codes)  )).
 pos_pp_named_max :-
         unit_test("Positive test PP named max",
                   (   Exp = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int)),
@@ -716,8 +790,10 @@ pp_named :-
         pos_pp_named_abs_snd,
         pos_pp_named_ite,
         pos_pp_named_let,
-        pos_pp_named_assert,
-        pos_pp_named_assume,
+        pos_pp_named_assert_true,
+        pos_pp_named_assert_gt,
+        pos_pp_named_assume_true,
+        pos_pp_named_assume_gt,
         pos_pp_named_max.
 
 
@@ -850,11 +926,21 @@ pos_summ_let_function :-
                        list_to_ord_set(S, So),
                        list_to_ord_set([ ('id1_int->int'('X2', 'RET_ID1') :- 'RET_ID1'='X2', 'ctx_id1_int->int'('X2')),
                                          ('ctx_id1_int->int'('A_ID1_V') :- 'A_ID1_V'=3) ], So) )).
-pos_summ_assert :-
-        unit_test("Positive test summarizing assert",
+pos_summ_assert_true :-
+        unit_test("Positive test summarizing assert true",
+                  (   E@L:N = assert(
+                                     true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ase_ret_f1:bool
+                                    )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit,
+                       n_e_to_c1(E, L, N, empty, true, true, S),
+                      S == [ (true :- true) ] )).
+pos_summ_assert_gt :-
+        unit_test("Positive test summarizing assert gt",
                   false ).
-pos_summ_assume :-
-        unit_test("Positive test summarizing assume",
+pos_summ_assume_true :-
+        unit_test("Positive test summarizing assume true",
+                  false ).
+pos_summ_assume_gt :-
+        unit_test("Positive test summarizing assume gt",
                   false ).
 pos_summ_max :-
         unit_test("Positive test summarizing max",
@@ -903,8 +989,10 @@ summarization :-
         pos_summ_ite_function,
         pos_summ_let_nullary,
         pos_summ_let_function,
-        pos_summ_assert,
-        pos_summ_assume,
+        pos_summ_assert_true,
+        pos_summ_assert_gt,
+        pos_summ_assume_true,
+        pos_summ_assume_gt,
         pos_summ_max.
 
 
@@ -936,13 +1024,12 @@ pos_pp_cstr_snd :-
                   (   SC = ('snd_int->int->int'('X','Y','RET_SND') :- ('RET_SND'='Y', 'ctx_snd_int->int->int'('X','Y'))),
                       format_to_codes("~p", [SC], Codes),
                       format_to_codes("'snd_int->int->int'(X, Y, RET_SND) :- RET_SND=Y, 'ctx_snd_int->int->int'(X, Y).", [], Codes) )).
-pos_pp_cstr_assume :-
-        unit_test("Positive test pp cstr assume",
-                  false ).
 pos_pp_cstr_assert :-
         unit_test("Positive test pp cstr assert",
                   false ).
-
+pos_pp_cstr_assume :-
+        unit_test("Positive test pp cstr assume",
+                  false ).
 pp_cstr :-
         pos_pp_cstr_id1,
         pos_pp_cstr_ctx_id1,
