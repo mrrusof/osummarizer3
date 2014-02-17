@@ -641,7 +641,7 @@ named_exp_to_constraints(+E@L:N, -Ss)
 */
 named_exp_to_constraints(E@L:N, S) :-
         n_e_to_c1(E, L, N, empty, true, DP, S),
-        lformat('\n*Main predicate:\n~p\n\n', [DP]).
+        lformat('\n* Main path conjunct:\n~p\n\n', [DP]).
 
 /*
 n_e_to_c1(+E, +L, +N, +Env, +K, -DK, -S)
@@ -719,18 +719,7 @@ n_e_to_c1(E, L, X:T, Env, K, DK, []) :- !,
         dpush_portray_clause(n_e_to_c1(E, L, X:T, Env, K, DK, [])-id-cst-in),
         (   ml_id(E) ->
             (   function_type(T) ->
-                summ_sy(X:T, SummSy),
-                return(X:T, _:R),
-                (   R == bool ->
-                    formals(X:T, NFormals),
-                    maplist(name_of_type, NFormals, Formals),
-                    maplist(uppercase_atom, Formals, UFormals),
-                    DK =.. [SummSy|UFormals]
-                ;   formals_return(X:T, NFormalsRet),
-                    maplist(name_of_type, NFormalsRet, FormalsRet),
-                    maplist(uppercase_atom, FormalsRet, UFormalsRet),
-                    DK =.. [SummSy|UFormalsRet]
-                )
+                mk_summ_pred(X:T, DK)
             ;   uppercase_atom(X, Xu),
                 uppercase_atom(E, Eu),
                 DK = (Xu=Eu)
@@ -832,7 +821,7 @@ ctx_sy(N, Sy) :-
         unname_type(N, T),
         N = X:_,
         format_atom('ctx_~w_~w', [X, T], Sy).
-
+        
 /*
 remove_true(+K, -R)
 */
