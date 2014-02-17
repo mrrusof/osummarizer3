@@ -541,25 +541,25 @@ pos_naming_assume_true :-
                   (   E@L:T = assume(
                                      true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
                                     )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
-                      t_e_to_n_e1(E, L, T, ret_f1, empty, R),
+                      t_e_to_n_e1(E, L, T, '_3', empty, R),
                       R == assume(
-                                  true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):asu_ret_f1:bool
-                                 )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit )).
+                                  true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):asu__3:bool
+                                 )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):'_3':unit )).
 pos_naming_assume_gt :-
         unit_test("Positive test naming assume gt",
                   (   E@L:T = assume(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
                                          ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int,
-                                          0@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int
+                                          1@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int
                                          ]
                                         )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool                                     
                                     )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
-                      t_e_to_n_e1(E, L, T, ret_f1, empty, R),
-                      R == assume(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):gt_asu_ret_f1:(a_gt_asu_ret_f1:int -> b_gt_asu_ret_f1:(ba_gt_asu_ret_f1:int -> asu_ret_f1:bool)),
-                                      ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):a_gt_asu_ret_f1:int,
-                                       0@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ba_gt_asu_ret_f1:int
+                      t_e_to_n_e1(E, L, T, '_3', empty, R),
+                      R == assume(app(> @loc('assume_assert.ml',0,0,0,0,0,0):gt_asu__3:(a_gt_asu__3:int->b_gt_asu__3:(ba_gt_asu__3:int->asu__3:bool)),
+                                      [x2@loc('assume_assert.ml',0,0,0,0,0,0):a_gt_asu__3:int,
+                                       1@loc('assume_assert.ml',0,0,0,0,0,0):ba_gt_asu__3:int
                                       ]
-                                     )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):asu_ret_f1:bool
-                                 )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit )).
+                                     )@loc('assume_assert.ml',0,0,0,0,0,0):asu__3:bool
+                                 )@loc('assume_assert.ml',0,0,0,0,0,0):'_3':unit )).
 pos_naming_max :-
         unit_test("Positive test naming max",
                   (   E@L:T = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
@@ -739,20 +739,20 @@ pos_pp_named_assert_gt :-
 pos_pp_named_assume_true :-
         unit_test("Positive test PP named assume true",
                   (   Exp = assume(
-                                   true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):asu_ret_f1:bool
-                                  )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit,
+                                   true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):asu__3:bool
+                                  )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):'_3':unit,
                       format_to_codes("~p", [Exp], Codes),
-                      atom_codes('(assume(\n  true:asu_ret_f1:bool\n)):ret_f1:unit', Codes) )).
+                      atom_codes('(assume(\n  true:asu__3:bool\n)):_3:unit', Codes) )).
 pos_pp_named_assume_gt :-
         unit_test("Positive test PP named assume gt",
-                  (   Exp = assume(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):gt_asu_ret_f1:(a_gt_asu_ret_f1:int -> b_gt_asu_ret_f1:(ba_gt_asu_ret_f1:int -> asu_ret_f1:bool)),
-                                      ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):a_gt_asu_ret_f1:int,
-                                       0@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ba_gt_asu_ret_f1:int
+                  (   Exp = assume(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):gt_asu__3:(a_gt_asu__3:int -> b_gt_asu__3:(ba_gt_asu__3:int -> asu__3:bool)),
+                                      ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):a_gt_asu__3:int,
+                                       1@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ba_gt_asu__3:int
                                       ]
-                                     )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):asu_ret_f1:bool
-                                 )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit,
+                                     )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):asu__3:bool
+                                 )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):'_3':unit,
                       format_to_codes("~p", [Exp], Codes),
-                      atom_codes('(assume\n  (\n    (>):gt_asu_ret_f1:(a_gt_asu_ret_f1:int -> b_gt_asu_ret_f1:(ba_gt_asu_ret_f1:int -> asu_ret_f1:bool))\n    x2:a_gt_asu_ret_f1:int\n    0:ba_gt_asu_ret_f1:int\n  ):asu_ret_f1:bool\n):ret_f1:unit', Codes)  )).
+                      atom_codes('(assume\n  (\n    (>):gt_asu__3:(a_gt_asu__3:int -> b_gt_asu__3:(ba_gt_asu__3:int -> asu__3:bool))\n    x2:a_gt_asu__3:int\n    1:ba_gt_asu__3:int\n  ):asu__3:bool\n):_3:unit', Codes)  )).
 pos_pp_named_max :-
         unit_test("Positive test PP named max",
                   (   Exp = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int)),
@@ -941,14 +941,23 @@ pos_summ_assert_gt :-
                                       ]
                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ase_ret_f1:bool
                                  )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit,
-                       n_e_to_c1(E, L, N, empty, 'X2'=1, 'X2'>0, S),
-                      S == [ ('X2'>0 :- 'X2'=1) ] )).
+                      n_e_to_c1(E, L, N, empty, ('X2'>1, 'ctx_f1_int->unit'('X2')), 'X2'>0, S),
+                      S == [ ('X2'>0 :- ('X2'>1, 'ctx_f1_int->unit'('X2'))) ] )).
 pos_summ_assume_true :-
         unit_test("Positive test summarizing assume true",
-                  false ).
+                  (   E@L:N = assume(
+                                     true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):asu_3:bool
+                                    )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):'_3':unit,
+                       n_e_to_c1(E, L, N, empty, true, true, []) )).
 pos_summ_assume_gt :-
         unit_test("Positive test summarizing assume gt",
-                  false ).
+                  (   E@L:N = assume(app(> @loc('assume_assert.ml',0,0,0,0,0,0):gt_asu__3:(a_gt_asu__3:int->b_gt_asu__3:(ba_gt_asu__3:int->asu__3:bool)),
+                                         [x2@loc('assume_assert.ml',0,0,0,0,0,0):a_gt_asu__3:int,
+                                          1@loc('assume_assert.ml',0,0,0,0,0,0):ba_gt_asu__3:int
+                                         ]
+                                        )@loc('assume_assert.ml',0,0,0,0,0,0):asu__3:bool
+                                    )@loc('assume_assert.ml',0,0,0,0,0,0):'_3':unit,
+                      n_e_to_c1(E, L, N, empty, true, 'X2'>1, []) )).
 pos_summ_max :-
         unit_test("Positive test summarizing max",
                   (   E@L:N = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int)),
@@ -971,6 +980,46 @@ pos_summ_max :-
                       list_to_ord_set(S, So),
                       list_to_ord_set([ ('max1_int->int->int'('X2', 'Y3', 'RET_MAX1') :- ('X2'>'Y3', 'RET_MAX1'='X2' ; \+'X2'>'Y3', 'RET_MAX1'='Y3'), 'ctx_max1_int->int->int'('X2', 'Y3')),
                                         ('ctx_max1_int->int->int'('A_MAX1_V', 'BA_MAX1_V') :- 'A_MAX1_V'=3, 'BA_MAX1_V'=1) ], So) )).
+pos_summ_assume_assert :-
+/*
+osummarizer$ ./osummarizer examples/example-assume-assert/assume_assert.of 
+OSUMMARIZER: The summarizer for OCaml
+[examples/example-assume-assert/assume_assert.of]
+'ctx_f1_int->unit'(A_F1_V) :- A_F1_V='Obj.magic'(A_MAGIC_A_F1_V).             <--- Fix me
+X2>0 :- true.                                                                 <--- Fix me
+'f1_int->unit'(X2, RET_F1) :- X2>1, X2>0, 'ctx_f1_int->unit'(X2).
+*/
+        unit_test("Positive test summarizing assume-assert",
+                  (   E@L:N = let(f1@loc('assume_assert.ml',0,0,0,0,0,0):f1:(x2:int->ret_f1:unit),
+                                  abs([x2@loc('assume_assert.ml',0,0,0,0,0,0):x2:int],
+                                      let('_3'@loc('assume_assert.ml',0,0,0,0,0,0):'_3':unit,
+                                          assume(app(> @loc('assume_assert.ml',0,0,0,0,0,0):gt_asu__3:(a_gt_asu__3:int->b_gt_asu__3:(ba_gt_asu__3:int->asu__3:bool)),
+                                                     [x2@loc('assume_assert.ml',0,0,0,0,0,0):a_gt_asu__3:int,
+                                                      1@loc('assume_assert.ml',0,0,0,0,0,0):ba_gt_asu__3:int
+                                                     ]
+                                                    )@loc('assume_assert.ml',0,0,0,0,0,0):asu__3:bool
+                                                )@loc('assume_assert.ml',0,0,0,0,0,0):'_3':unit,
+                                          assert(app(> @loc('assume_assert.ml',0,0,0,0,0,0):gt_ase_ret_f1:(a_gt_ase_ret_f1:int->b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int->ase_ret_f1:bool)),
+                                                     [x2@loc('assume_assert.ml',0,0,0,0,0,0):a_gt_ase_ret_f1:int,
+                                                      0@loc('assume_assert.ml',0,0,0,0,0,0):ba_gt_ase_ret_f1:int
+                                                     ]
+                                                    )@loc('assume_assert.ml',0,0,0,0,0,0):ase_ret_f1:bool
+                                                )@loc('assume_assert.ml',0,0,0,0,0,0):ret_f1:unit
+                                         )@loc('assume_assert.ml',0,0,0,0,0,0):ret_f1:unit
+                                     )@loc('assume_assert.ml',0,0,0,0,0,0):f1:(x2:int->ret_f1:unit),
+                                  app(f1@loc('assume_assert.ml',0,0,0,0,0,0):f1:(a_f1_v:int->v:unit),
+                                      [app('Obj.magic'@loc('assume_assert.ml',0,0,0,0,0,0):magic_a_f1_v:(a_magic_a_f1_v:unit->a_f1_v:int),
+                                           [unit@loc('assume_assert.ml',0,0,0,0,0,0):a_magic_a_f1_v:unit
+                                           ]
+                                          )@loc('assume_assert.ml',0,0,0,0,0,0):a_f1_v:int
+                                      ]
+                                     )@loc('assume_assert.ml',0,0,0,0,0,0):v:unit
+                                 )@loc('assume_assert.ml',0,0,0,0,0,0):v:unit,
+                      n_e_to_c1(E, L, N, empty, true, ('f1_int->unit'('A_F1_V'), 'A_F1_V'='_'), S),
+                      list_to_ord_set(S, So),
+                      list_to_ord_set([ ('f1_int->unit'('X2') :- ('X2'>0, 'X2'>1, 'ctx_f1_int->unit'('X2'))),
+                                        ('X2'>0 :- ('X2' > 1, 'ctx_f1_int->unit'('X2'))),
+                                        ('ctx_f1_int->unit'('A_F1_V') :- 'A_F1_V'='_') ], So) )).
 
 summarization :-
         pos_return_1,
@@ -1000,7 +1049,8 @@ summarization :-
         pos_summ_assert_gt,
         pos_summ_assume_true,
         pos_summ_assume_gt,
-        pos_summ_max.
+        pos_summ_max,
+        pos_summ_assume_assert.
 
 
 % **********************************************************************
@@ -1033,17 +1083,16 @@ pos_pp_cstr_snd :-
                       format_to_codes("'snd_int->int->int'(X, Y, RET_SND) :- RET_SND=Y, 'ctx_snd_int->int->int'(X, Y).", [], Codes) )).
 pos_pp_cstr_assert :-
         unit_test("Positive test pp cstr assert",
-                  false ).
-pos_pp_cstr_assume :-
-        unit_test("Positive test pp cstr assume",
-                  false ).
+                  (   SC = ('X2'>0 :- ('X2'>1, 'ctx_f1_int->unit'('X2'))),
+                      format_to_codes("~p", [SC], Codes),
+                      format_to_codes("X2>0 :- X2>1, 'ctx_f1_int->unit'(X2).", [], Codes) )).
+
 pp_cstr :-
         pos_pp_cstr_id1,
         pos_pp_cstr_ctx_id1,
         pos_pp_cstr_max1,
         pos_pp_cstr_ctx_max1,
         pos_pp_cstr_snd,
-        pos_pp_cstr_assume,
         pos_pp_cstr_assert.
 
 

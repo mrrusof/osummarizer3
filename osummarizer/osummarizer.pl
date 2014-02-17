@@ -701,6 +701,15 @@ n_e_to_c1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S) :- !,
         mk_conj([DK1, DK2], DKpre),
         remove_true(DKpre, DK),
         dpop_write(n_e_to_c1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S)-let-out), dnl.
+n_e_to_c1(assert(Ec@Lc:Nc), L, N, Env, K, DKc, S) :- !,
+        dpush_write(n_e_to_c1(assert(Ec@Lc:Nc), L, N, Env, K, DKc, S)-assert-in), dnl,
+        n_e_to_c1(Ec, Lc, Nc, Env, K, DKc, Sc),
+        ord_add_element(Sc, (DKc :- K), S),
+        dpop_write(n_e_to_c1(assert(Ec@Lc:Nc), L, N, Env, K, DKc, S)-assert-out), dnl.
+n_e_to_c1(assume(Ec@Lc:Nc), L, N, Env, K, DKc, S) :- !,
+        dpush_write(n_e_to_c1(assume(Ec@Lc:Nc), L, N, Env, K, DKc, S)-assume-in), dnl,
+        n_e_to_c1(Ec, Lc, Nc, Env, K, DKc, S),
+        dpop_write(n_e_to_c1(assume(Ec@Lc:Nc), L, N, Env, K, DKc, S)-assume-out), dnl.
 n_e_to_c1(E, L, X:T, Env, K, DK, []) :- !,
         dpush_write(n_e_to_c1(E, L, X:T, Env, K, DK, [])-id-cst-in), dnl,
         (   ml_id(E) ->
