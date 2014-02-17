@@ -228,8 +228,8 @@ user:portray(Term) :-
                 do  write(', '),
                     print(Ai)
                 )
-            ;   Term = E@_:N:T ->
-                pp_n_e(E, N, T, "")
+            ;   Term = E@_:X:T ->
+                pp_n_e(E, X, T, "")
             ;   Term = E@_:T ->
                 pp_t_e(E, T, "")
             ;   Term = X:(T1->T2) ->
@@ -366,57 +366,81 @@ pp_t_e(E, T, I) :- !,
         paren_t(T).
 
 /*
-pp_n_e(+E, +N, +T, +I)
+pp_n_e(+E, +X, +T, +I)
 */
-pp_n_e(app(Ef@_:Nf:Tf, ELNs), N, T, I) :- !,
+pp_n_e(app(Ef@_:Xf:Tf, ELNs), X, T, I) :- !,
         append(I, "  ", J),
         format('~s(\n', [I]),
-        pp_n_e(Ef, Nf, Tf, J),
-        (   foreach(Ei@_:Ni:Ti, ELNs),
+        pp_n_e(Ef, Xf, Tf, J),
+        (   foreach(Ei@_:Xi:Ti, ELNs),
             param(J)
         do  write('\n'),
-            pp_n_e(Ei, Ni, Ti, J)
+            pp_n_e(Ei, Xi, Ti, J)
         ),
         format('\n~s):', [I]),
-        print(N:T).
-pp_n_e(abs(XLNs, Eb@_:Nb:Tb), N, T, I) :-
+        print(X:T).
+pp_n_e(abs(YLNs, Eb@_:Xb:Tb), X, T, I) :-
         append(I, "  ", J),
         format('~s(fun\n', [I]),
-        (   XLNs = [X@_:Nx:Tx] ->
-            pp_n_e(X, Nx, Tx, J)
-        ;   XLNs = [Xh@_:Nh:Th|XrLrNr] ->
-            pp_n_e(Xh, Nh, Th, J),
-            (   foreach(X@_:Nx:Tx, XrLrNr),
+        (   YLNs = [Y@_:Xy:Ty] ->
+            pp_n_e(Y, Xy, Ty, J)
+        ;   YLNs = [Yh@_:Xh:Th|YrLrNr] ->
+            pp_n_e(Yh, Xh, Th, J),
+            (   foreach(Y@_:Xy:Ty, YrLrNr),
                 param(J)
             do  write('\n'),
-                pp_n_e(X, Nx, Tx, J)
+                pp_n_e(Y, Xy, Ty, J)
             )
         ),
         format('\n~s->\n', [I]),
-        pp_n_e(Eb, Nb, Tb, J),
+        pp_n_e(Eb, Xb, Tb, J),
         format('\n~s):', [I]),
-        print(N:T).
-pp_n_e(ite(E1@_:N1:T1, E2@_:N2:T2, E3@_:N3:T3), N, T, I) :- !,
+        print(X:T).
+pp_n_e(ite(E1@_:X1:T1, E2@_:X2:T2, E3@_:X3:T3), X, T, I) :- !,
         append(I, "  ", J),
         format('~s(if\n', [I]),
-        pp_n_e(E1, N1, T1, J),
+        pp_n_e(E1, X1, T1, J),
         format('\n~sthen\n', [I]),
-        pp_n_e(E2, N2, T2, J),
+        pp_n_e(E2, X2, T2, J),
         format('\n~selse\n', [I]),
-        pp_n_e(E3, N3, T3, J),
+        pp_n_e(E3, X3, T3, J),
         format('\n~s):', [I]),
-        print(N:T).
-pp_n_e(let(X@_:Nx:Tx, E1@_:N1:T1, E2@_:N2:T2), N, T, I) :- !,
+        print(X:T).
+pp_n_e(let(Y@_:Xy:Tx, E1@_:X1:T1, E2@_:X2:T2), X, T, I) :- !,
         append(I, "  ", J),
         format('~s(let\n', [I]),
-        pp_n_e(X, Nx, Tx, J),
+        pp_n_e(Y, Xy, Tx, J),
         format('\n~s=\n', [I]),
-        pp_n_e(E1, N1, T1, J),
+        pp_n_e(E1, X1, T1, J),
         format('\n~sin\n', [I]),
-        pp_n_e(E2, N2, T2, J),
+        pp_n_e(E2, X2, T2, J),
         format('\n~s):', [I]),
-        print(N:T).
-pp_n_e(E, N, T, I) :- !,
+        print(X:T).
+pp_n_e(assert(Ec@_:Xc:Tc), X, T, I) :- !,
+        append(I, "  ", J),
+        (   ( Ec == true ; Ec == false ) ->
+            format('~s(assert(\n', [I])
+        ;   format('~s(assert\n', [I])
+        ),
+        pp_n_e(Ec, Xc, Tc, J),
+        (   ( Ec == true ; Ec == false ) ->
+            format('\n~s)):', [I])
+        ;   format('\n~s):', [I])
+        ),
+        print(X:T).
+pp_n_e(assume(Ec@_:Xc:Tc), X, T, I) :- !,
+        append(I, "  ", J),
+        (   ( Ec == true ; Ec == false ) ->
+            format('~s(assume(\n', [I])
+        ;   format('~s(assume\n', [I])
+        ),
+        pp_n_e(Ec, Xc, Tc, J),
+        (   ( Ec == true ; Ec == false ) ->
+            format('\n~s)):', [I])
+        ;   format('\n~s):', [I])
+        ),
+        print(X:T).
+pp_n_e(E, X, T, I) :- !,
         format('~s', [I]),
         (   pp_const_parenthesis(E) ->
             write('('),
@@ -428,7 +452,7 @@ pp_n_e(E, N, T, I) :- !,
             write(E)
         ),
         write(':'),
-        print(N:T).
+        print(X:T).
 
 
 % **********************************************************************
@@ -491,8 +515,20 @@ t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, E1rL1r:
         avl_store(Y, Env, N1, InEnv),
         t_e_to_n_e1(E2, L2, T1, X, InEnv, E2rL2r:N2),
         dpop_write(t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, E1rL1r:N1, E2rL2r:N2)@L:N2)-out), dnl.
+t_e_to_n_e1(assert(Ec@Lc:Tc), L, T, X, Env, assert(Rc)@L:N) :- !,
+        dpush_write(t_e_to_n_e1(assert(Ec@Lc:Tc), L, T, X, Env, assert(Rc)@L:N)-in), dnl,
+        format_atom('ase_~p', [X], Xc),
+        t_e_to_n_e1(Ec, Lc, Tc, Xc, Env, Rc),
+        name_type(X, T, N),
+        dpop_write(t_e_to_n_e1(assert(Ec@Lc:Tc), L, T, X, Env, assert(Rc)@L:N)-out), dnl.
+t_e_to_n_e1(assume(Ec@Lc:Tc), L, T, X, Env, assume(Rc)@L:N) :- !,
+        dpush_write(t_e_to_n_e1(assume(Ec@Lc:Tc), L, T, X, Env, assume(Rc)@L:N)-in), dnl,
+        format_atom('asu_~p', [X], Xc),
+        t_e_to_n_e1(Ec, Lc, Tc, Xc, Env, Rc),
+        name_type(X, T, N),
+        dpop_write(t_e_to_n_e1(assume(Ec@Lc:Tc), L, T, X, Env, assume(Rc)@L:N)-out), dnl.
 t_e_to_n_e1(E, L, T, X, Env, E@L:N) :- !,
-        dpush_write(t_e_to_n_e1(E, L, T, X, Env, E@L:N)-in), dnl,
+        dpush_write(t_e_to_n_e1(E, L, T, X, Env, E@L:N)-id-cst-in), dnl,
         (   ml_id(E) ->
             (   function_type(T) ->
                 format_atom('~p_~p', [E, X], EX),
@@ -509,7 +545,7 @@ t_e_to_n_e1(E, L, T, X, Env, E@L:N) :- !,
             ;   N = X:T
             )
         ),
-        dpop_write(t_e_to_n_e1(E, L, T, X, Env, E@L:N)-out), dnl.
+        dpop_write(t_e_to_n_e1(E, L, T, X, Env, E@L:N)-id-cst-out), dnl.
 
 /*
 name_type(+X, +T, -N)
@@ -591,6 +627,7 @@ ml_const_to_name(>=, geq).
 ml_const_to_name(<=, leq).
 ml_const_to_name(&&, and).
 ml_const_to_name('||', or).
+ml_const_to_name('Obj.magic', 'magic').
 
 
 % **********************************************************************
@@ -661,7 +698,7 @@ n_e_to_c1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S) :- !,
         remove_true(DKpre, DK),
         dpop_write(n_e_to_c1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S)-let-out), dnl.
 n_e_to_c1(E, L, X:T, Env, K, DK, []) :- !,
-        dpush_write(n_e_to_c1(E, L, X:T, Env, K, DK, [])-cst-id-in), dnl,
+        dpush_write(n_e_to_c1(E, L, X:T, Env, K, DK, [])-id-cst-in), dnl,
         (   ml_id(E) ->
             (   function_type(T) ->
                 summ_sy(X:T, SummSy),
@@ -698,7 +735,7 @@ n_e_to_c1(E, L, X:T, Env, K, DK, []) :- !,
                 DK = (Xu=E)
             )
         ),
-        dpop_write(n_e_to_c1(E, L, X:T, Env, K, DK, [])-cst-id-out), dnl.
+        dpop_write(n_e_to_c1(E, L, X:T, Env, K, DK, [])-id-cst-out), dnl.
 
 /*
 apply_equations(+K, +Eqs, -R)
