@@ -20,8 +20,9 @@
 % A@B:C == (A@B):C because current_op(N, _, :) ---> N = 550
 :- op(540, xfy, @).
 
+
 % **********************************************************************
-% Syntax and Well-formedness of typed expressions
+% Syntax and well-formedness of typed expressions
 
 /*
 
@@ -615,6 +616,9 @@ remove_formals(Count, N, R) :-
 	;   R = N
 	).
 
+/*
+ml_const_to_name(-Const, +Name)
+*/
 ml_const_to_name(+, plus).
 ml_const_to_name(-, sub).
 ml_const_to_name(*, mult).
@@ -637,7 +641,7 @@ ml_const_to_name('Obj.magic', 'magic').
 named_exp_to_constraints(+E@L:N, -Ss)
 */
 named_exp_to_constraints(E@L:N, S) :-
-        n_e_to_s_c1(E, L, N, empty, true, DP, S),
+        n_e_to_c1(E, L, N, empty, true, DP, S),
         dformat('\nMain predicate: ~p\n\n', [DP]).
 
 /*
