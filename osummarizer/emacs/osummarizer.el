@@ -28,7 +28,10 @@
 ;; (remove-hook 'comint-output-filter-functions 'osum-list-failed)
 
 ;; Prolog mode for the following files
-(setq auto-mode-alist (append '(("\\.qarmc$" . prolog-mode)
+(setq auto-mode-alist (append '(("\\.of$" . prolog-mode)
+                                ("\\.named$" . prolog-mode)
                                 ("\\.hsf$" . prolog-mode)
-                                ("\\.of" . prolog-mode)
-                                ("\\.qscript" . prolog-mode)) auto-mode-alist))
+                                ("\\.qarmc$" . prolog-mode)
+                                ("\\.qscript$" . prolog-mode)) auto-mode-alist))
+
+(add-to-list 'auto-mode-alist '("\\.normal" . tuareg-mode))
