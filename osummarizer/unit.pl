@@ -935,7 +935,14 @@ pos_summ_assert_true :-
                       S == [ (true :- true) ] )).
 pos_summ_assert_gt :-
         unit_test("Positive test summarizing assert gt",
-                  false ).
+                  (   E@L:N = assert(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):gt_ase_ret_f1:(a_gt_ase_ret_f1:int -> b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int -> ase_ret_f1:bool)),
+                                      ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):a_gt_ase_ret_f1:int,
+                                       0@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ba_gt_ase_ret_f1:int
+                                      ]
+                                     )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ase_ret_f1:bool
+                                 )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit,
+                       n_e_to_c1(E, L, N, empty, 'X2'=1, 'X2'>0, S),
+                      S == [ ('X2'>0 :- 'X2'=1) ] )).
 pos_summ_assume_true :-
         unit_test("Positive test summarizing assume true",
                   false ).
