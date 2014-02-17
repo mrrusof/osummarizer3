@@ -3,12 +3,17 @@ all: osummarizer
 osummarizer: osummarizer.sav
 	spld --output="osummarizer" --main=restore --moveable --static --resources-from-sav --resources=osummarizer.sav=/osummarizer/osummarizer.sav
 
-osummarizer.sav: main.pl osummarizer.pl log.pl
+osummarizer.sav: main.pl osummarizer.pl log.pl ext/utils/misc.pl
 	rm -f osummarizer.sav
 	sicstus --goal "compile(main), save_program('osummarizer.sav'), halt." 2>&1 | tee osummarizer.sav.log
-	(! sed '/\[Choices\] treated as local in do-loop but also used outside/D' <osummarizer.sav.log | \
-	   grep -A 1 -e 'singleton variables' -e error -e 'treated as local in do-loop but also used outside') \
+	(! sed -e '/\[Choices\] treated as local in do-loop but also used outside/D' \
+               -e '/suggest renaming or adding param(\[Choices\])/D' \
+               -e '/Approximate lines: 274-286, file: .*ext\/utils\/misc.pl/D' <osummarizer.sav.log | \
+	   grep -n -e '^\!' -e '^\*') \
          || (rm -f osummarizer.sav && false)
+
+ext/utils/misc.pl:
+	./ext/checkout-externals.sh
 
 clean:
 	rm -f *.sav *.sav.log osummarizer 1
