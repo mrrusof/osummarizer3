@@ -468,7 +468,7 @@ typed_exp_to_named_exp(E@L:T, ELN) :-
 t_e_to_n_e1(+E, +L, +T, +X, +Env, -ELN)
 */
 t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N) :- !,
-        dpush_write(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N)-in), dnl,
+        dpush_write(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N)-app-in), dnl,
         t_e_to_n_e1(Ef, Lf, Tf, X, Env, Efr@Lfr:Nfr),
         formals(Nfr, Formals),
         (   foreach(Ei@Li:Ti, ELTs),
@@ -480,9 +480,9 @@ t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N) :- !,
         length(ELTs, Count),
         rename_return(Count, X, Nfr, Nfrr),
         remove_formals(Count, Nfrr, N),
-        dpop_write(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N)-out), dnl.
+        dpop_write(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N)-app-out), dnl.
 t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre) :- !,
-        dpush_write(t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre)-in), dnl,
+        dpush_write(t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre)-abs-in), dnl,
         (   foreach(Xi@Li:Ti, XLTs),
             foreach(Xi@Li:Ni, XLNs),
             fromto(Env, InEnv, OutEnv, Envb)
@@ -500,33 +500,33 @@ t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre) 
         do  OutCount is InCount - 1,
             format_atom('f~d_~p', [OutCount, X], Fj)
         ),
-        dpop_write(t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre)-out), dnl.
+        dpop_write(t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre)-abs-out), dnl.
 t_e_to_n_e1(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T, X, Env, ite(R1, R2, R3)@L:N) :- !,
-        dpush_write(t_e_to_n_e1(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T, X, Env, ite(R1, R2, R3)@L:N)-in),
+        dpush_write(t_e_to_n_e1(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T, X, Env, ite(R1, R2, R3)@L:N)-ite-in),
         format_atom('c_~p', [X], X1),
         t_e_to_n_e1(E1, L1, T1, X1, Env, R1),
         t_e_to_n_e1(E2, L2, T2, X,  Env, R2),
         t_e_to_n_e1(E3, L3, T3, X,  Env, R3),
         name_type(X, T, N),
-        dpop_write(t_e_to_n_e1(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T, X, Env, ite(R1, R2, R3)@L:N)-out).
+        dpop_write(t_e_to_n_e1(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T, X, Env, ite(R1, R2, R3)@L:N)-ite-out).
 t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, E1rL1r:N1, E2rL2r:N2)@L:N2) :- !,
-        dpush_write(t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, E1rL1r:N1, E2rL2r:N2)@L:N2)-in), dnl,
+        dpush_write(t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, E1rL1r:N1, E2rL2r:N2)@L:N2)-let-in), dnl,
         t_e_to_n_e1(E1, L1, T1, Y, Env, E1rL1r:N1),
         avl_store(Y, Env, N1, InEnv),
         t_e_to_n_e1(E2, L2, T1, X, InEnv, E2rL2r:N2),
-        dpop_write(t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, E1rL1r:N1, E2rL2r:N2)@L:N2)-out), dnl.
+        dpop_write(t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, E1rL1r:N1, E2rL2r:N2)@L:N2)-let-out), dnl.
 t_e_to_n_e1(assert(Ec@Lc:Tc), L, T, X, Env, assert(Rc)@L:N) :- !,
-        dpush_write(t_e_to_n_e1(assert(Ec@Lc:Tc), L, T, X, Env, assert(Rc)@L:N)-in), dnl,
+        dpush_write(t_e_to_n_e1(assert(Ec@Lc:Tc), L, T, X, Env, assert(Rc)@L:N)-assert-in), dnl,
         format_atom('ase_~p', [X], Xc),
         t_e_to_n_e1(Ec, Lc, Tc, Xc, Env, Rc),
         name_type(X, T, N),
-        dpop_write(t_e_to_n_e1(assert(Ec@Lc:Tc), L, T, X, Env, assert(Rc)@L:N)-out), dnl.
+        dpop_write(t_e_to_n_e1(assert(Ec@Lc:Tc), L, T, X, Env, assert(Rc)@L:N)-assert-out), dnl.
 t_e_to_n_e1(assume(Ec@Lc:Tc), L, T, X, Env, assume(Rc)@L:N) :- !,
-        dpush_write(t_e_to_n_e1(assume(Ec@Lc:Tc), L, T, X, Env, assume(Rc)@L:N)-in), dnl,
+        dpush_write(t_e_to_n_e1(assume(Ec@Lc:Tc), L, T, X, Env, assume(Rc)@L:N)-assume-in), dnl,
         format_atom('asu_~p', [X], Xc),
         t_e_to_n_e1(Ec, Lc, Tc, Xc, Env, Rc),
         name_type(X, T, N),
-        dpop_write(t_e_to_n_e1(assume(Ec@Lc:Tc), L, T, X, Env, assume(Rc)@L:N)-out), dnl.
+        dpop_write(t_e_to_n_e1(assume(Ec@Lc:Tc), L, T, X, Env, assume(Rc)@L:N)-assume-out), dnl.
 t_e_to_n_e1(E, L, T, X, Env, E@L:N) :- !,
         dpush_write(t_e_to_n_e1(E, L, T, X, Env, E@L:N)-id-cst-in), dnl,
         (   ml_id(E) ->
