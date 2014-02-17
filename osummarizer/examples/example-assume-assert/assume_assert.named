@@ -1,0 +1,25 @@
+let(f1@loc('assume_assert.ml',0,0,0,0,0,0):f1:(x2:int->ret_f1:unit),
+    abs([x2@loc('assume_assert.ml',0,0,0,0,0,0):x2:int],
+        let('_3'@loc('assume_assert.ml',0,0,0,0,0,0):'_3':unit,
+            assume(app(> @loc('assume_assert.ml',0,0,0,0,0,0):gt_asu__3:(a_gt_asu__3:int->b_gt_asu__3:(ba_gt_asu__3:int->asu__3:bool)),
+                       [x2@loc('assume_assert.ml',0,0,0,0,0,0):a_gt_asu__3:int,
+                        1@loc('assume_assert.ml',0,0,0,0,0,0):ba_gt_asu__3:int
+                       ]
+                      )@loc('assume_assert.ml',0,0,0,0,0,0):asu__3:bool
+                  )@loc('assume_assert.ml',0,0,0,0,0,0):'_3':unit,
+            assert(app(> @loc('assume_assert.ml',0,0,0,0,0,0):gt_ase_ret_f1:(a_gt_ase_ret_f1:int->b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int->ase_ret_f1:bool)),
+                       [x2@loc('assume_assert.ml',0,0,0,0,0,0):a_gt_ase_ret_f1:int,
+                        0@loc('assume_assert.ml',0,0,0,0,0,0):ba_gt_ase_ret_f1:int
+                       ]
+                      )@loc('assume_assert.ml',0,0,0,0,0,0):ase_ret_f1:bool
+                  )@loc('assume_assert.ml',0,0,0,0,0,0):ret_f1:unit
+           )@loc('assume_assert.ml',0,0,0,0,0,0):ret_f1:unit
+       )@loc('assume_assert.ml',0,0,0,0,0,0):f1:(x2:int->ret_f1:unit),
+    app(f1@loc('assume_assert.ml',0,0,0,0,0,0):f1:(a_f1_v:int->v:unit),
+        [app('Obj.magic'@loc('assume_assert.ml',0,0,0,0,0,0):magic_a_f1_v:(a_magic_a_f1_v:unit->a_f1_v:int),
+             [unit@loc('assume_assert.ml',0,0,0,0,0,0):a_magic_a_f1_v:unit
+             ]
+            )@loc('assume_assert.ml',0,0,0,0,0,0):a_f1_v:int
+        ]
+       )@loc('assume_assert.ml',0,0,0,0,0,0):v:unit
+   )@loc('assume_assert.ml',0,0,0,0,0,0):v:unit.

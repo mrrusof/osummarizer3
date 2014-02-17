@@ -11,7 +11,7 @@
         (
           (>):(int -> int -> bool)
           x2:int
-          0:int
+          1:int
         ):bool
       ):unit
     in

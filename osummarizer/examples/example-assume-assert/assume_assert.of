@@ -3,7 +3,7 @@ let('f1'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> unit),
         let('_3'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,
             assume(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
                        ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int,
-                        0@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int
+                        1@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int
                        ]
                    )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
             )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit,

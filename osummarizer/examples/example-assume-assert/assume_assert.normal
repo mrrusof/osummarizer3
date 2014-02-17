@@ -1,5 +1,5 @@
 let f1 =
   fun x2 ->
-    let _3 = assume (x2 > 0)
+    let _3 = assume (x2 > 1)
     in assert (x2 > 0))
 in f1 (Obj.magic ())

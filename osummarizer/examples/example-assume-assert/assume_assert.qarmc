@@ -1,0 +1,5 @@
+'f1_int->unit'(X2) :- X2>0, X2>1, 'ctx_f1_int->unit'(X2).
+
+X2 > 0 :- X2 > 1, 'ctx_f1_int->unit'(X2).
+
+'ctx_f1_int->unit'(X2) :- X2=_.
