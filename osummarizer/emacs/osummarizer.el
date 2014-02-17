@@ -4,19 +4,28 @@
 (font-lock-add-keywords 'prolog-inferior-mode '(("FAILED" . font-lock-warning-face)))
 (font-lock-add-keywords 'prolog-inferior-mode '(("Negative" . font-lock-warning-face)))
 
-;; Do unit testing on save of *.pl
 (defun osum-unit-test ()
   "Perform unit testing for OSUMMARIZER"
   (interactive)
   ;; (if (and (eq 'prolog-mode major-mode) (get-buffer "unit.pl"))
-      (let ((cb (current-buffer)))
-        (set-buffer "unit.pl")
-        (prolog-consult-buffer)
-        (recenter-top-bottom 'top)
-        (switch-to-buffer-other-window cb)))
+  (let ((cb (current-buffer)))
+    (ignore-errors
+      (set-buffer "*prolog*")
+      (ignore-errors (comint-send-eof))
+      (beginning-of-buffer)
+      (ignore-errors  (delete-matching-lines ".*")))
+    (set-buffer "unit.pl")
+    (add-hook 'comint-output-filter-functions 'osum-list-failed)
+    (prolog-consult-buffer)
+    (comint-send-eof)
+    (switch-to-buffer-other-window cb) ))
 (global-set-key (kbd "C-c u") 'osum-unit-test)
-;; (add-hook 'after-save-hook 'osum-unit-test)
-;; (remove-hook 'after-save-hook 'osum-unit-test)
+
+(defun osum-list-failed (x)
+  "Catch failing tests for OSUMMARIZER"
+  (interactive)
+  (list-matching-lines "FAILED") )
+;; (remove-hook 'comint-output-filter-functions 'osum-list-failed)
 
 ;; Prolog mode for the following files
 (setq auto-mode-alist (append '(("\\.qarmc$" . prolog-mode)
