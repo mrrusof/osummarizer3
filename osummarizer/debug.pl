@@ -44,7 +44,7 @@ push_indention(Out) :-
         bb_put(debug_indention, I),
         (   foreach(N, I),
             param(Out)
-        do  format(Out, '~d\t', [N])
+        do  format(Out, '~d  ', [N])
         ).
 pop_indention(Out) :-
         bb_get(debug_indention, Iold),
@@ -55,7 +55,7 @@ pop_indention(Out) :-
         bb_put(debug_indention, I),
         (   foreach(N, Iold),
             param(Out)
-        do  dformat(Out, '~d\t', [N])
+        do  dformat(Out, '~d  ', [N])
         ).
 
 dnl :-  (   bb_get(debug, 1) ->

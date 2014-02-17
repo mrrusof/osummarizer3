@@ -44,7 +44,7 @@ push_indention(Out) :-
         bb_put(log_indention, I),
         (   foreach(N, I),
             param(Out)
-        do  format(Out, '~d\t', [N])
+        do  format(Out, '~d  ', [N])
         ).
 pop_indention(Out) :-
         bb_get(log_indention, Iold),
@@ -55,7 +55,7 @@ pop_indention(Out) :-
         bb_put(log_indention, I),
         (   foreach(N, Iold),
             param(Out)
-        do  lformat(Out, '~d\t', [N])
+        do  lformat(Out, '~d  ', [N])
         ).
 
 lnl :-  (   bb_get(log, 1) ->
