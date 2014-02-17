@@ -802,10 +802,10 @@ pp_named :-
 
 pos_return_1 :-
         unit_test("Positive test return 1",
-                  (   return(f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)), bb_f:i) )).
+                  return(f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)), bb_f:i) ).
 pos_return_2 :-
         unit_test("Positive test return 2",
-                  (   return(f:(g:(x:int -> y:bool) -> h:(z:int -> u:bool)), u:bool) )).
+                  return(f:(g:(x:int -> y:bool) -> h:(z:int -> u:bool)), u:bool) ).
 pos_formals_return_1 :-
         unit_test("Positive test formals_return 1",
                   (   formals_return(f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)), R),
@@ -816,11 +816,14 @@ pos_formals_return_2 :-
                       R == [g:(x:int->y:bool), z:int, u:bool] )).
 pos_uppercase_atom_1 :-
         unit_test("Positive test uppercase_atom 1",
-                  (   uppercase_atom(str, 'STR') )).
+                  uppercase_atom(str, 'STR') ).
 pos_unname_type_1 :-
         unit_test("Positive test unname_type 1",
-                  (   unname_type(v1:(v11:(v111:i->v112:i)->v12:(v121:(v1211:i->v1212:i)->v122:i)),
-                                     (    (     i->     i)->          (      i->      i)->     i ) ) )).
+                  unname_type(v1:(v11:(v111:i->v112:i)->v12:(v121:(v1211:i->v1212:i)->v122:i)),
+                                 (    (     i->     i)->          (      i->      i)->     i ) )).
+pos_remove_true_1 :-
+        unit_test("Positive test remove_true 1",
+                  remove_true(('X2'>1,'ctx_f1_int->unit'('X2'),true), ('X2'>1,'ctx_f1_int->unit'('X2'))) ).
 pos_summ_const_true :-
         unit_test("Positive test summarizing const true",
                   (   n_e_to_c1(true, loc('max.ml', 0, 0, 0, 0, 0, 0), r:bool, empty, true, DP, []),
@@ -866,6 +869,12 @@ pos_summ_app_gt :-
                                  )@loc('max.ml', 0, 0, 0, 0, 0, 0):c_ret_max1:bool,
                       n_e_to_c1(E, L, N, empty, true, DP, []),
                       DP == ('X2' > 'Y3') )).
+pos_summ_app_obj_magic :-
+        unit_test("Positive test summarizing app Obj.magic",
+                  (   E@L:N = app('Obj.magic'@loc('assume_assert.ml',0,0,0,0,0,0):magic_a_f1_v:(a_magic_a_f1_v:unit->a_f1_v:int),
+                                  [unit@loc('assume_assert.ml',0,0,0,0,0,0):a_magic_a_f1_v:unit]
+                                 )@loc('assume_assert.ml',0,0,0,0,0,0):a_f1_v:int,
+                      n_e_to_c1(E, L, N, empty, true, 'A_F1_V'='_', []) )).
 pos_summ_app_max1 :-
         unit_test("Positive test summarizing app max1",
                   (   E@L:N = app('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(a_max1_v:int -> f1_max1:(ba_max1_v:int -> v:int)),
@@ -910,7 +919,7 @@ pos_summ_let_nullary :-
                                   x@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int
                                  )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int,
                       n_e_to_c1(E, L, N, empty, true, DP, []),
-                      DP == ('X'=1, 'V'='X') )).
+                      DP == ('V'='X', 'X'=1) )).
 pos_summ_let_function :-
         unit_test("Positive test summarizing let function",
                   (   E@L:N = let('id1'@loc('id.ml', 0, 0, 0, 0, 0, 0):id1:(x2:int -> ret_id1:int),
@@ -926,6 +935,25 @@ pos_summ_let_function :-
                        list_to_ord_set(S, So),
                        list_to_ord_set([ ('id1_int->int'('X2', 'RET_ID1') :- 'RET_ID1'='X2', 'ctx_id1_int->int'('X2')),
                                          ('ctx_id1_int->int'('A_ID1_V') :- 'A_ID1_V'=3) ], So) )).
+pos_summ_let_assume_assert :-
+        unit_test("Positive test summarizing let assume-assert",
+                  (   E@L:N = let('_3'@loc('assume_assert.ml',0,0,0,0,0,0):'_3':unit,
+                                          assume(app(> @loc('assume_assert.ml',0,0,0,0,0,0):gt_asu__3:(a_gt_asu__3:int->b_gt_asu__3:(ba_gt_asu__3:int->asu__3:bool)),
+                                                     [x2@loc('assume_assert.ml',0,0,0,0,0,0):a_gt_asu__3:int,
+                                                      1@loc('assume_assert.ml',0,0,0,0,0,0):ba_gt_asu__3:int
+                                                     ]
+                                                    )@loc('assume_assert.ml',0,0,0,0,0,0):asu__3:bool
+                                                )@loc('assume_assert.ml',0,0,0,0,0,0):'_3':unit,
+                                          assert(app(> @loc('assume_assert.ml',0,0,0,0,0,0):gt_ase_ret_f1:(a_gt_ase_ret_f1:int->b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int->ase_ret_f1:bool)),
+                                                     [x2@loc('assume_assert.ml',0,0,0,0,0,0):a_gt_ase_ret_f1:int,
+                                                      0@loc('assume_assert.ml',0,0,0,0,0,0):ba_gt_ase_ret_f1:int
+                                                     ]
+                                                    )@loc('assume_assert.ml',0,0,0,0,0,0):ase_ret_f1:bool
+                                                )@loc('assume_assert.ml',0,0,0,0,0,0):ret_f1:unit
+                                         )@loc('assume_assert.ml',0,0,0,0,0,0):ret_f1:unit,
+                      n_e_to_c1(E, L, N, empty, 'ctx_f1_int->unit'('X2'), DP, S),
+                      DP == ('X2'>0,'X2'>1),
+                      S == [ ('X2'>0 :- ('X2'>1, 'ctx_f1_int->unit'('X2'))) ] )).
 pos_summ_assert_true :-
         unit_test("Positive test summarizing assert true",
                   (   E@L:N = assert(
@@ -987,7 +1015,7 @@ OSUMMARIZER: The summarizer for OCaml
 [examples/example-assume-assert/assume_assert.of]
 'ctx_f1_int->unit'(A_F1_V) :- A_F1_V='Obj.magic'(A_MAGIC_A_F1_V).             <--- Fix me
 X2>0 :- true.                                                                 <--- Fix me
-'f1_int->unit'(X2, RET_F1) :- X2>1, X2>0, 'ctx_f1_int->unit'(X2).
+'f1_int->unit'(X2, RET_F1) :- X2>1, X2>0, 'ctx_f1_int->unit'(X2).             <--- Fix me
 */
         unit_test("Positive test summarizing assume-assert",
                   (   E@L:N = let(f1@loc('assume_assert.ml',0,0,0,0,0,0):f1:(x2:int->ret_f1:unit),
@@ -1028,6 +1056,7 @@ summarization :-
         pos_formals_return_2,
         pos_uppercase_atom_1,
         pos_unname_type_1,
+        pos_remove_true_1,
         pos_summ_const_true,
         pos_summ_const_10,
         pos_summ_const_hola,
@@ -1038,6 +1067,7 @@ summarization :-
         pos_summ_id_pos,
         pos_summ_id_max1,
         pos_summ_app_gt,
+        pos_summ_app_obj_magic,
         pos_summ_app_max1,
         pos_summ_abs_id,
         pos_summ_abs_snd,
@@ -1045,6 +1075,7 @@ summarization :-
         pos_summ_ite_function,
         pos_summ_let_nullary,
         pos_summ_let_function,
+        pos_summ_let_assume_assert,
         pos_summ_assert_true,
         pos_summ_assert_gt,
         pos_summ_assume_true,

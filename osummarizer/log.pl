@@ -1,8 +1,12 @@
 :- module(log, [start_log/0, stop_log/0,
                 if_log/1, if_log_nn/1,
-                lnl/0, lwrite/1, lwrite/2,
+                lnl/0,
+                lwrite/1, lwrite/2,
                 lpush_write/1, lpush_write/2,
                 lpop_write/1, lpop_write/2,
+                lportray_clause/1, lportray_clause/2,
+                lpush_portray_clause/1, lpush_portray_clause/2,
+                lpop_portray_clause/1, lpop_portray_clause/2,
                 lprint/1, lprint/2,
                 lpush_print/1, lpush_print/2,
                 lpop_print/1, lpop_print/2,
@@ -82,6 +86,28 @@ lpop_write(Out, A) :-
         (   bb_get(log, 1) ->
             pop_indention(Out),
             write(Out, A)
+        ;   true
+        ).
+
+lportray_clause(A) :- lportray_clause(user_output, A).
+lportray_clause(Out, A) :-
+	(   bb_get(debug, 1) ->
+	    portray_clause(Out, A)
+	;   true
+	).
+
+lpush_portray_clause(A) :- lpush_portray_clause(user_output, A).
+lpush_portray_clause(Out, A) :-
+	(   bb_get(debug, 1) ->
+            push_indention(Out),
+            portray_clause(Out, A)
+        ;   true
+        ).
+lpop_portray_clause(A) :- lpop_portray_clause(user_output, A).
+lpop_portray_clause(Out, A) :-
+        (   bb_get(debug, 1) ->
+            pop_indention(Out),
+            potray_clause(Out, A)
         ;   true
         ).
 
