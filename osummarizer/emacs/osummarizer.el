@@ -1,4 +1,7 @@
-;; Color words PASSED and FAILED in prolog interpreter
+;; Installation: place the following in your .emacs
+;; (load "~/myresearch/phd/osummarizer3/osummarizer/emacs/osummarizer.el")
+
+;; Coloring for prolog interpreter
 (font-lock-add-keywords 'prolog-inferior-mode '(("PASSED" . font-lock-type-face)))
 (font-lock-add-keywords 'prolog-inferior-mode '(("Positive" . font-lock-type-face)))
 (font-lock-add-keywords 'prolog-inferior-mode '(("FAILED" . font-lock-warning-face)))
@@ -15,16 +18,16 @@
       (beginning-of-buffer)
       (ignore-errors  (delete-matching-lines ".*")))
     (set-buffer "unit.pl")
-    (add-hook 'comint-output-filter-functions 'osum-list-failed)
     (prolog-consult-buffer)
     (comint-send-eof)
     (switch-to-buffer-other-window cb) ))
 (global-set-key (kbd "C-c u") 'osum-unit-test)
 
 (defun osum-list-failed (x)
-  "Catch failing tests for OSUMMARIZER"
+  "List failed unit tests for OSUMMARIZER"
   (interactive)
   (list-matching-lines "FAILED") )
+;; (add-hook 'comint-output-filter-functions 'osum-list-failed)
 ;; (remove-hook 'comint-output-filter-functions 'osum-list-failed)
 
 ;; Prolog mode for the following files
@@ -34,4 +37,5 @@
                                 ("\\.qarmc$" . prolog-mode)
                                 ("\\.qscript$" . prolog-mode)) auto-mode-alist))
 
+;; Tuareg mode for the following files
 (add-to-list 'auto-mode-alist '("\\.normal" . tuareg-mode))
