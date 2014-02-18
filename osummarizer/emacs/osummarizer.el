@@ -19,7 +19,6 @@
       (ignore-errors  (delete-matching-lines ".*")))
     (set-buffer "unit.pl")
     (prolog-consult-buffer)
-    (comint-send-eof)
     (switch-to-buffer-other-window cb) ))
 (global-set-key (kbd "C-c u") 'osum-unit-test)
 
