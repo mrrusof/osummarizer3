@@ -1,0 +1,4 @@
+let main1 = fun u2 ->
+  let x3 = if Obj.magic () then 1 else 2
+  in assert (x3 > 0)
+in main1 (Obj.magic ())

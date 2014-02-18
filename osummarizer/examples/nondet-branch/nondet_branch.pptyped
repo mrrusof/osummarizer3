@@ -1,0 +1,42 @@
+(let
+  main1:(unit -> unit)
+=
+  (fun
+    u2:unit
+  ->
+    (let
+      x3:int
+    =
+      (if
+        (
+          (>=):(int -> int -> bool)
+          (
+            Obj.magic:(unit -> int)
+            unit:unit
+          ):int
+          1:int
+        ):bool
+      then
+        1:int
+      else
+        2:int
+      ):int
+    in
+      (assert
+        (
+          (>):(int -> int -> bool)
+          x3:int
+          0:int
+        ):bool
+      ):unit
+    ):unit
+  ):(unit -> unit)
+in
+  (
+    main1:(unit -> unit)
+    (
+      Obj.magic:(unit -> unit)
+      unit:unit
+    ):unit
+  ):unit
+):unit

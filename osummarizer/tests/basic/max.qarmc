@@ -1,2 +1,0 @@
-'ctx_max1_int->int->int'(A_MAX1_V, BA_MAX1_V) :- A_MAX1_V=3, BA_MAX1_V=1.
-'max1_int->int->int'(X2, Y3, RET_MAX1) :- (X2>Y3, RET_MAX1=X2 ; \+X2>Y3, RET_MAX1=Y3), 'ctx_max1_int->int->int'(X2, Y3).

@@ -1,0 +1,31 @@
+let('main1'@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):(unit -> unit),
+    abs([u2@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):unit
+        ],
+        let('x3'@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):int,
+            ite(app('>='@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
+                    [app('Obj.magic'@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):(unit -> int),
+                         [unit@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):unit
+                         ]
+                        )@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):int,
+                     1@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):int
+                    ]
+                   )@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):bool,
+                1@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):int,
+                2@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):int
+               )@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):int,
+            assert(app('>'@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
+                       ['x3'@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):int,
+                        0@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):int
+                       ]
+                      )@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):bool
+                  )@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):unit
+           )@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):unit
+       )@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):(unit -> unit),
+    app('main1'@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):(unit -> unit),
+        [app('Obj.magic'@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):(unit -> unit),
+             [unit@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):unit
+             ]
+            )@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):unit
+        ]
+       )@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):unit
+   )@loc('nondet_branch.ml', 0, 0, 0, 0, 0, 0):unit.
