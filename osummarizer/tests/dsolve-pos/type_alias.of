@@ -1,0 +1,68 @@
+let('n4'@loc('type_alias_for_pretty.ml', 3, 2, 3, 4, 65, 67):int,
+    app('read_int'@loc('type_alias_for_pretty.ml', 4, 9, 4, 17, 117, 125):(unit -> int),
+        [unit@loc('type_alias_for_pretty.ml', 4, 18, 4, 20, 126, 128):unit]
+    )@loc('type_alias_for_pretty.ml', 4, 9, 4, 20, 117, 128):(unit -> int),
+    let('f15'@loc('type_alias_for_pretty.ml', 6, 2, 6, 5, 175, 178):int,
+        abs(['x6'@loc('type_alias_for_pretty.ml', 6, 7, 6, 9, 180, 182):int],
+        app('+'@loc('type_alias_for_pretty.ml', 6, 22, 6, 23, 195, 196):int,
+            ['x6'@loc('type_alias_for_pretty.ml', 6, 19, 6, 21, 192, 194):int,
+             1@loc('type_alias_for_pretty.ml', 6, 24, 6, 25, 197, 198):int
+            ]
+        )@loc('type_alias_for_pretty.ml', 6, 19, 6, 25, 192, 198):int
+        )@loc('type_alias_for_pretty.ml', 6, 6, 6, 25, 179, 198):int,
+        let('_17'@loc('type_alias_for_pretty.ml', 8, 2, 8, 5, 245, 248):unit,
+            assert(app('<='@loc('type_alias_for_pretty.ml', 10, 15, 10, 17, 306, 308):int,
+                       ['n4'@loc('type_alias_for_pretty.ml', 10, 12, 10, 14, 303, 305):(int -> int -> bool),
+                        app('f15'@loc('type_alias_for_pretty.ml', 11, 21, 11, 24, 369, 372):int,
+                            ['n4'@loc('type_alias_for_pretty.ml', 11, 25, 11, 27, 373, 375):int
+                            ]
+                        )@loc('type_alias_for_pretty.ml', 11, 21, 11, 27, 369, 375):int
+                       ]
+                   )@loc('type_alias_for_pretty.ml', 10, 12, 11, 28, 303, 376):(int -> int -> bool)
+            )@loc('type_alias_for_pretty.ml', 10, 4, 11, 29, 295, 377):unit,
+            let('f28'@loc('type_alias_for_pretty.ml', 13, 2, 13, 5, 425, 428):t,
+                abs(['x9'@loc('type_alias_for_pretty.ml', 13, 7, 13, 9, 430, 432):t
+                ],
+                app('+'@loc('type_alias_for_pretty.ml', 13, 20, 13, 21, 443, 444):int,
+                    ['x9'@loc('type_alias_for_pretty.ml', 13, 17, 13, 19, 440, 442):int,
+                     1@loc('type_alias_for_pretty.ml', 13, 22, 13, 23, 445, 446):int
+                    ]
+                )@loc('type_alias_for_pretty.ml', 13, 17, 13, 23, 440, 446):int
+                )@loc('type_alias_for_pretty.ml', 13, 6, 13, 23, 429, 446):t,
+                let('_210'@loc('type_alias_for_pretty.ml', 15, 2, 15, 6, 495, 499):unit,
+                    assert(app('<='@loc('type_alias_for_pretty.ml', 17, 15, 17, 17, 559, 561):int,
+                               ['n4'@loc('type_alias_for_pretty.ml', 17, 12, 17, 14, 556, 558):(int -> int -> bool),
+                                app('f28'@loc('type_alias_for_pretty.ml', 18, 21, 18, 24, 624, 627):t,
+                                    ['n4'@loc('type_alias_for_pretty.ml', 18, 25, 18, 27, 628, 630):t
+                                    ]
+                                )@loc('type_alias_for_pretty.ml', 18, 21, 18, 27, 624, 630):t
+                               ]
+                           )@loc('type_alias_for_pretty.ml', 17, 12, 18, 28, 556, 631):(int -> int -> bool)
+                    )@loc('type_alias_for_pretty.ml', 17, 4, 18, 29, 548, 632):unit,
+                    let('f311'@loc('type_alias_for_pretty.ml', 20, 2, 20, 6, 681, 685):(t -> t),
+                        abs(['x12'@loc('type_alias_for_pretty.ml', 20, 8, 20, 11, 687, 690):t
+                        ],
+                        app('+'@loc('type_alias_for_pretty.ml', 20, 27, 20, 28, 706, 707):int,
+                            ['x12'@loc('type_alias_for_pretty.ml', 20, 23, 20, 26, 702, 705):(t -> int -> t),
+                             1@loc('type_alias_for_pretty.ml', 20, 29, 20, 30, 708, 709):int
+                            ]
+                        )@loc('type_alias_for_pretty.ml', 20, 23, 20, 30, 702, 709):(t -> int -> t)
+                        )@loc('type_alias_for_pretty.ml', 20, 7, 20, 30, 686, 709):t,
+                        let('_313'@loc('type_alias_for_pretty.ml', 22, 2, 22, 6, 758, 762):unit,
+                            assert(app('<='@loc('type_alias_for_pretty.ml', 24, 15, 24, 17, 822, 824):t,
+                                       ['n4'@loc('type_alias_for_pretty.ml', 24, 12, 24, 14, 819, 821):(t -> t -> bool),
+                                        app('f311'@loc('type_alias_for_pretty.ml', 25, 21, 25, 25, 887, 891):t,
+                                            ['n4'@loc('type_alias_for_pretty.ml', 25, 26, 25, 28, 892, 894):t
+                                            ]
+                                        )@loc('type_alias_for_pretty.ml', 25, 21, 25, 28, 887, 894):t
+                                       ]
+                                   )@loc('type_alias_for_pretty.ml', 24, 12, 25, 29, 819, 895):(t -> t -> bool)
+                            )@loc('type_alias_for_pretty.ml', 24, 4, 25, 30, 811, 896):unit,
+                            unit@loc('type_alias_for_pretty.ml', 26, 8, 26, 10, 907, 909):unit
+                        )@loc('type_alias_for_pretty.ml', 21, 0, 25, 30, 712, 896):t
+                    )@loc('type_alias_for_pretty.ml', 19, 0, 20, 30, 635, 709):t
+                )@loc('type_alias_for_pretty.ml', 14, 0, 18, 29, 449, 632):t
+            )@loc('type_alias_for_pretty.ml', 12, 0, 13, 23, 380, 446):t
+        )@loc('type_alias_for_pretty.ml', 7, 0, 11, 29, 201, 377):t
+    )@loc('type_alias_for_pretty.ml', 5, 0, 6, 25, 131, 198):t
+)@loc('type_alias_for_pretty.ml', 2, 0, 4, 20, 21, 128):t.

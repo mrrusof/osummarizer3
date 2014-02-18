@@ -1,0 +1,164 @@
+ltr([('ins2'@loc('pmrisort_for_pretty.ml', 2, 2, 2, 6, 46, 50):(list(A) -> A -> list(A)),
+      abs(['l21'@loc('pmrisort_for_pretty.ml', 2, 7, 2, 10, 51, 54):list(A),
+           'x22'@loc('pmrisort_for_pretty.ml', 2, 11, 2, 14, 55, 58):A
+      ],
+      mae('l21'@loc('pmrisort_for_pretty.ml', 3, 8, 3, 11, 69, 72):list(A),
+          [('List.nil'@loc('pmrisort_for_pretty.ml', 4, 4, 4, 6, 82, 84):list(A),
+           true@loc('pmrisort_for_pretty.ml', 4, 4, 4, 21, 82, 99):bool,
+           app('List.cons'@loc('pmrisort_for_pretty.ml', 4, 11, 4, 20, 89, 98):(A -> list(A) -> list(A)),
+               ['x22'@loc('pmrisort_for_pretty.ml', 4, 11, 4, 14, 89, 92):A,
+                'List.nil'@loc('pmrisort_for_pretty.ml', 4, 18, 4, 20, 96, 98):list(A)
+               ]
+           )@loc('pmrisort_for_pretty.ml', 4, 11, 4, 20, 89, 98):list(A)),
+           (app('List.cons'@loc('pmrisort_for_pretty.ml', 5, 4, 5, 15, 104, 115):(A -> list(A) -> list(A)),
+                ['h23'@loc('pmrisort_for_pretty.ml', 5, 4, 5, 7, 104, 107):A,
+                 'xs24'@loc('pmrisort_for_pretty.ml', 5, 11, 5, 15, 111, 115):list(A)
+                 ]
+                )@loc('pmrisort_for_pretty.ml', 5, 4, 5, 15, 104, 115):list(A),
+           true@loc('pmrisort_for_pretty.ml', 5, 4, 9, 35, 104, 260):bool,
+           ite(app('<'@loc('pmrisort_for_pretty.ml', 6, 13, 6, 14, 132, 133):(A -> A -> bool),
+                   ['x22'@loc('pmrisort_for_pretty.ml', 6, 9, 6, 12, 128, 131):A,
+                    'h23'@loc('pmrisort_for_pretty.ml', 6, 15, 6, 18, 134, 137):A
+                   ]
+               )@loc('pmrisort_for_pretty.ml', 6, 9, 6, 18, 128, 137):bool,
+               app('List.cons'@loc('pmrisort_for_pretty.ml', 7, 11, 7, 29, 149, 167):(A -> list(A) -> list(A)),
+                   ['x22'@loc('pmrisort_for_pretty.ml', 7, 11, 7, 14, 149, 152):A,
+                    app('List.cons'@loc('pmrisort_for_pretty.ml', 7, 18, 7, 29, 156, 167):(A -> list(A) -> list(A)),
+                        ['h23'@loc('pmrisort_for_pretty.ml', 7, 18, 7, 21, 156, 159):A,
+                         'xs24'@loc('pmrisort_for_pretty.ml', 7, 25, 7, 29, 163, 167):list(A)
+                        ]
+                    )@loc('pmrisort_for_pretty.ml', 7, 18, 7, 29, 156, 167):list(A)
+                   ]
+               )@loc('pmrisort_for_pretty.ml', 7, 11, 7, 29, 149, 167):list(A),
+               app('List.cons'@loc('pmrisort_for_pretty.ml', 8, 11, 9, 35, 179, 260):(A -> list(A) -> list(A)),
+                   ['h23'@loc('pmrisort_for_pretty.ml', 8, 11, 8, 14, 179, 182):A,
+                    app('ins2'@loc('pmrisort_for_pretty.ml', 9, 21, 9, 25, 246, 250):(list(A) -> A -> list(A)),
+                        ['xs24'@loc('pmrisort_for_pretty.ml', 9, 26, 9, 30, 251, 255):list(A),
+                         'x22'@loc('pmrisort_for_pretty.ml', 9, 31, 9, 34, 256, 259):A
+                        ]
+                    )@loc('pmrisort_for_pretty.ml', 9, 21, 9, 34, 246, 259):list(A)
+                   ]
+               )@loc('pmrisort_for_pretty.ml', 8, 11, 9, 35, 179, 260):list(A)
+           )@loc('pmrisort_for_pretty.ml', 6, 6, 9, 35, 125, 260):list(A))
+          ]
+      )@loc('pmrisort_for_pretty.ml', 3, 2, 9, 35, 63, 260):list(A)
+      )@loc('pmrisort_for_pretty.ml', 2, 7, 9, 35, 51, 260):(list(A) -> A -> list(A))
+      )
+    ],
+    ltr([('rev3'@loc('pmrisort_for_pretty.ml', 11, 2, 11, 6, 311, 315):(list(A) -> list(A) -> list(A)),
+          abs(['xs17'@loc('pmrisort_for_pretty.ml', 11, 7, 11, 11, 316, 320):list(A),
+               'ys18'@loc('pmrisort_for_pretty.ml', 11, 12, 11, 16, 321, 325):list(A)
+          ],
+          mae('xs17'@loc('pmrisort_for_pretty.ml', 12, 8, 12, 12, 336, 340):list(A),
+              [('List.nil'@loc('pmrisort_for_pretty.ml', 13, 4, 13, 6, 350, 352):list(A),
+               true@loc('pmrisort_for_pretty.ml', 13, 4, 13, 14, 350, 360):bool,
+               'ys18'@loc('pmrisort_for_pretty.ml', 13, 10, 13, 14, 356, 360):list(A)),
+               (app('List.cons'@loc('pmrisort_for_pretty.ml', 14, 4, 14, 16, 365, 377):(A -> list(A) -> list(A)),
+                    [
+                     'x19'@loc('pmrisort_for_pretty.ml', 14, 4, 14, 7, 365, 368):A,
+                     'xs_20'@loc('pmrisort_for_pretty.ml', 14, 11, 14, 16, 372, 377):list(A)
+                     ]
+                    )@loc('pmrisort_for_pretty.ml', 14, 4, 14, 16, 365, 377):list(A),
+               true@loc('pmrisort_for_pretty.ml', 14, 4, 17, 21, 365, 503):bool,
+               app('rev3'@loc('pmrisort_for_pretty.ml', 16, 8, 16, 12, 433, 437):(list(A) -> list(A) -> list(A)),
+                   ['xs_20'@loc('pmrisort_for_pretty.ml', 16, 13, 16, 18, 438, 443):list(A),
+                    app('List.cons'@loc('pmrisort_for_pretty.ml', 17, 9, 17, 20, 491, 502):(A -> list(A) -> list(A)),
+                        ['x19'@loc('pmrisort_for_pretty.ml', 17, 9, 17, 12, 491, 494):A,
+                         'ys18'@loc('pmrisort_for_pretty.ml', 17, 16, 17, 20, 498, 502):list(A)
+                        ]
+                    )@loc('pmrisort_for_pretty.ml', 17, 9, 17, 20, 491, 502):list(A)
+                   ]
+               )@loc('pmrisort_for_pretty.ml', 16, 8, 17, 21, 433, 503):list(A))
+              ]
+          )@loc('pmrisort_for_pretty.ml', 12, 2, 17, 21, 330, 503):list(A)
+          )@loc('pmrisort_for_pretty.ml', 11, 7, 17, 21, 316, 503):(list(A) -> list(A) -> list(A))
+          )
+        ],
+        let('insert_sort4'@loc('pmrisort_for_pretty.ml', 19, 2, 19, 14, 550, 562):(list(A) -> list(A)),
+            abs(['lst5'@loc('pmrisort_for_pretty.ml', 19, 15, 19, 19, 563, 567):list(A)
+            ],
+            app('List.fold_left'@loc('pmrisort_for_pretty.ml', 21, 4, 21, 18, 614, 628):((list(A) -> A -> list(A)) -> list(A) -> list(A) -> list(A)),
+                ['ins2'@loc('pmrisort_for_pretty.ml', 21, 19, 21, 23, 629, 633):(list(A) -> A -> list(A)),
+                 'List.nil'@loc('pmrisort_for_pretty.ml', 21, 24, 21, 26, 634, 636):list(A),
+                 'lst5'@loc('pmrisort_for_pretty.ml', 21, 27, 21, 31, 637, 641):list(A)
+                ]
+            )@loc('pmrisort_for_pretty.ml', 21, 4, 21, 31, 614, 641):list(A)
+            )@loc('pmrisort_for_pretty.ml', 19, 15, 21, 31, 563, 641):(list(A) -> list(A)),
+            ltr([('check6'@loc('pmrisort_for_pretty.ml', 23, 2, 23, 8, 692, 698):(list(A) -> unit),
+                  abs(['l11'@loc('pmrisort_for_pretty.ml', 23, 9, 23, 12, 699, 702):list(A)
+                  ],
+                  mae('l11'@loc('pmrisort_for_pretty.ml', 24, 8, 24, 11, 713, 716):list(A),
+                      [('List.nil'@loc('pmrisort_for_pretty.ml', 25, 4, 25, 6, 726, 728):list(A),
+                       true@loc('pmrisort_for_pretty.ml', 25, 4, 25, 12, 726, 734):bool,
+                       unit@loc('pmrisort_for_pretty.ml', 25, 10, 25, 12, 732, 734):unit),
+                       (app('List.cons'@loc('pmrisort_for_pretty.ml', 26, 6, 26, 15, 741, 750):(A -> list(A) -> list(A)),
+                            [
+                             'x12'@loc('pmrisort_for_pretty.ml', 26, 6, 26, 9, 741, 744):A,
+                             'List.nil'@loc('pmrisort_for_pretty.ml', 26, 13, 26, 15, 748, 750):list(A)
+                             ]
+                            )@loc('pmrisort_for_pretty.ml', 26, 6, 26, 15, 741, 750):list(A),
+                       true@loc('pmrisort_for_pretty.ml', 26, 4, 26, 23, 739, 758):bool,
+                       unit@loc('pmrisort_for_pretty.ml', 26, 21, 26, 23, 756, 758):unit),
+                       (app('List.cons'@loc('pmrisort_for_pretty.ml', 27, 4, 27, 22, 763, 781):(A -> list(A) -> list(A)),
+                            [
+                             'x13'@loc('pmrisort_for_pretty.ml', 27, 4, 27, 7, 763, 766):A,
+                             app('List.cons'@loc('pmrisort_for_pretty.ml', 27, 11, 27, 22, 770, 781):(A -> list(A) -> list(A)),
+                                 [
+                                  'y14'@loc('pmrisort_for_pretty.ml', 27, 11, 27, 14, 770, 773):A,
+                                  'ys15'@loc('pmrisort_for_pretty.ml', 27, 18, 27, 22, 777, 781):list(A)
+                                  ]
+                                 )@loc('pmrisort_for_pretty.ml', 27, 11, 27, 22, 770, 781):list(A)
+                             ]
+                            )@loc('pmrisort_for_pretty.ml', 27, 4, 27, 22, 763, 781):list(A),
+                       true@loc('pmrisort_for_pretty.ml', 27, 4, 34, 25, 763, 1064):bool,
+                       let('_116'@loc('pmrisort_for_pretty.ml', 29, 9, 29, 13, 843, 847):unit,
+                           assert(app('<='@loc('pmrisort_for_pretty.ml', 30, 30, 30, 32, 918, 920):(A -> A -> bool),
+                                      ['x13'@loc('pmrisort_for_pretty.ml', 30, 26, 30, 29, 914, 917):A,
+                                       'y14'@loc('pmrisort_for_pretty.ml', 30, 33, 30, 36, 921, 924):A
+                                      ]
+                                  )@loc('pmrisort_for_pretty.ml', 30, 26, 30, 36, 914, 924):bool
+                           )@loc('pmrisort_for_pretty.ml', 30, 18, 30, 37, 906, 925):unit,
+                           app('check6'@loc('pmrisort_for_pretty.ml', 33, 11, 33, 17, 994, 1000):(list(A) -> unit),
+                               [app('List.cons'@loc('pmrisort_for_pretty.ml', 34, 12, 34, 23, 1051, 1062):(A -> list(A) -> list(A)),
+                                    ['y14'@loc('pmrisort_for_pretty.ml', 34, 12, 34, 15, 1051, 1054):A,
+                                     'ys15'@loc('pmrisort_for_pretty.ml', 34, 19, 34, 23, 1058, 1062):list(A)
+                                    ]
+                                )@loc('pmrisort_for_pretty.ml', 34, 12, 34, 23, 1051, 1062):list(A)
+                               ]
+                           )@loc('pmrisort_for_pretty.ml', 33, 11, 34, 24, 994, 1063):unit
+                       )@loc('pmrisort_for_pretty.ml', 28, 7, 34, 24, 792, 1063):unit)
+                      ]
+                  )@loc('pmrisort_for_pretty.ml', 24, 2, 34, 25, 707, 1064):unit
+                  )@loc('pmrisort_for_pretty.ml', 23, 9, 34, 25, 699, 1064):(list(A) -> unit)
+                  )
+                ],
+                let('test7'@loc('pmrisort_for_pretty.ml', 36, 2, 36, 7, 1111, 1116):(list(A) -> unit),
+                    abs(['l8'@loc('pmrisort_for_pretty.ml', 36, 8, 36, 10, 1117, 1119):list(A)
+                    ],
+                    let('l_9'@loc('pmrisort_for_pretty.ml', 38, 4, 38, 7, 1170, 1173):list(A),
+                        app('insert_sort4'@loc('pmrisort_for_pretty.ml', 39, 12, 39, 24, 1226, 1238):(list(A) -> list(A)),
+                            ['l8'@loc('pmrisort_for_pretty.ml', 39, 25, 39, 27, 1239, 1241):list(A)
+                            ]
+                        )@loc('pmrisort_for_pretty.ml', 39, 12, 39, 27, 1226, 1241):list(A),
+                        let('l__10'@loc('pmrisort_for_pretty.ml', 41, 4, 41, 9, 1293, 1298):list(A),
+                            app('rev3'@loc('pmrisort_for_pretty.ml', 42, 14, 42, 18, 1353, 1357):(list(A) -> list(A) -> list(A)),
+                                ['l_9'@loc('pmrisort_for_pretty.ml', 42, 19, 42, 22, 1358, 1361):list(A),
+                                 'List.nil'@loc('pmrisort_for_pretty.ml', 42, 23, 42, 25, 1362, 1364):list(A)
+                                ]
+                            )@loc('pmrisort_for_pretty.ml', 42, 14, 42, 25, 1353, 1364):list(A),
+                            app('check6'@loc('pmrisort_for_pretty.ml', 45, 6, 45, 12, 1418, 1424):(list(A) -> unit),
+                                [app('insert_sort4'@loc('pmrisort_for_pretty.ml', 46, 16, 46, 28, 1480, 1492):(list(A) -> list(A)),
+                                     ['l8'@loc('pmrisort_for_pretty.ml', 46, 29, 46, 31, 1493, 1495):list(A)
+                                     ]
+                                 )@loc('pmrisort_for_pretty.ml', 46, 16, 46, 31, 1480, 1495):list(A)
+                                ]
+                            )@loc('pmrisort_for_pretty.ml', 45, 6, 46, 32, 1418, 1496):unit
+                        )@loc('pmrisort_for_pretty.ml', 40, 2, 46, 32, 1247, 1496):unit
+                    )@loc('pmrisort_for_pretty.ml', 37, 2, 46, 32, 1124, 1496):unit
+                    )@loc('pmrisort_for_pretty.ml', 36, 8, 46, 32, 1117, 1496):(list(A) -> unit),
+                    unit@loc('pmrisort_for_pretty.ml', 47, 8, 47, 10, 1507, 1509):unit
+                )@loc('pmrisort_for_pretty.ml', 35, 0, 46, 32, 1067, 1496):list(A)
+            )@loc('pmrisort_for_pretty.ml', 22, 0, 34, 25, 644, 1064):list(A)
+        )@loc('pmrisort_for_pretty.ml', 18, 0, 21, 31, 506, 641):list(A)
+    )@loc('pmrisort_for_pretty.ml', 10, 0, 17, 21, 263, 503):list(A)
+)@loc('pmrisort_for_pretty.ml', 1, 0, 9, 35, 0, 260):list(A).

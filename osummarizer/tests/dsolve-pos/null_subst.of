@@ -1,0 +1,50 @@
+let('show2'@loc('null_subst_for_pretty.ml', 2, 2, 2, 7, 43, 48):(int -> int),
+    abs(['x3'@loc('null_subst_for_pretty.ml', 2, 9, 2, 11, 50, 52):int],
+    'x3'@loc('null_subst_for_pretty.ml', 2, 21, 2, 23, 62, 64):int
+    )@loc('null_subst_for_pretty.ml', 2, 8, 2, 23, 49, 64):(int -> int),
+    let('f04'@loc('null_subst_for_pretty.ml', 4, 2, 4, 5, 111, 114):(unit -> int),
+        abs(['z5'@loc('null_subst_for_pretty.ml', 4, 7, 4, 9, 116, 118):unit
+        ], 0@loc('null_subst_for_pretty.ml', 4, 20, 4, 21, 129, 130):int
+        )@loc('null_subst_for_pretty.ml', 4, 6, 4, 21, 115, 130):(unit -> int),
+        let('make_int6'@loc('null_subst_for_pretty.ml', 6, 2, 6, 11, 178, 187):(int -> int),
+            abs(['n7'@loc('null_subst_for_pretty.ml', 6, 12, 6, 14, 188, 190):int
+            ],
+            ite(app('='@loc('null_subst_for_pretty.ml', 7, 8, 7, 9, 201, 202):(int -> int -> bool),
+                    ['n7'@loc('null_subst_for_pretty.ml', 7, 5, 7, 7, 198, 200):int,
+                     0@loc('null_subst_for_pretty.ml', 7, 10, 7, 11, 203, 204):int
+                    ]
+                )@loc('null_subst_for_pretty.ml', 7, 5, 7, 11, 198, 204):bool,
+                app('f04'@loc('null_subst_for_pretty.ml', 10, 6, 10, 9, 316, 319):(unit -> int),
+                    [unit@loc('null_subst_for_pretty.ml', 10, 10, 10, 12, 320, 322):unit
+                    ]
+                )@loc('null_subst_for_pretty.ml', 10, 6, 10, 12, 316, 322):int,
+                'n7'@loc('null_subst_for_pretty.ml', 11, 7, 11, 9, 330, 332):int
+            )@loc('null_subst_for_pretty.ml', 7, 2, 11, 9, 195, 332):int
+            )@loc('null_subst_for_pretty.ml', 6, 12, 11, 9, 188, 332):(int -> int),
+            let('check8'@loc('null_subst_for_pretty.ml', 13, 2, 13, 8, 381, 387):(int -> unit),
+                abs(['n9'@loc('null_subst_for_pretty.ml', 13, 9, 13, 11, 388, 390):int
+                ],
+                assert(app('='@loc('null_subst_for_pretty.ml', 15, 15, 15, 16, 450, 451):(int -> int -> bool),
+                           ['n9'@loc('null_subst_for_pretty.ml', 15, 12, 15, 14, 447, 449):int,
+                            app('make_int6'@loc('null_subst_for_pretty.ml', 16, 20, 16, 29, 513, 522):(int -> int),
+                                ['n9'@loc('null_subst_for_pretty.ml', 16, 30, 16, 32, 523, 525):int
+                                ]
+                            )@loc('null_subst_for_pretty.ml', 16, 20, 16, 32, 513, 525):int
+                           ]
+                       )@loc('null_subst_for_pretty.ml', 15, 12, 16, 33, 447, 526):bool
+                )@loc('null_subst_for_pretty.ml', 15, 4, 16, 34, 439, 527):unit
+                )@loc('null_subst_for_pretty.ml', 13, 9, 16, 34, 388, 527):(int -> unit),
+                let('_110'@loc('null_subst_for_pretty.ml', 18, 2, 18, 6, 576, 580):unit,
+                    app('check8'@loc('null_subst_for_pretty.ml', 20, 4, 20, 10, 629, 635):(int -> unit),
+                        [app('Obj.magic'@loc('null_subst_for_pretty.ml', 21, 14, 21, 23, 691, 700):(unit -> int),
+                             [unit@loc('null_subst_for_pretty.ml', 21, 24, 21, 26, 701, 703):unit
+                             ]
+                         )@loc('null_subst_for_pretty.ml', 21, 14, 21, 26, 691, 703):int
+                        ]
+                    )@loc('null_subst_for_pretty.ml', 20, 4, 21, 27, 629, 704):unit,
+                    unit@loc('null_subst_for_pretty.ml', 22, 8, 22, 10, 715, 717):unit
+                )@loc('null_subst_for_pretty.ml', 17, 0, 21, 27, 530, 704):unit
+            )@loc('null_subst_for_pretty.ml', 12, 0, 16, 34, 335, 527):unit
+        )@loc('null_subst_for_pretty.ml', 5, 0, 11, 9, 133, 332):unit
+    )@loc('null_subst_for_pretty.ml', 3, 0, 4, 21, 67, 130):unit
+)@loc('null_subst_for_pretty.ml', 1, 0, 2, 23, 0, 64):unit.

@@ -1,0 +1,36 @@
+ltr([('sum1'@loc('sum_for_pretty.ml', 3, 2, 3, 6, 72, 76):(int -> int),
+      abs(['x3'@loc('sum_for_pretty.ml', 3, 7, 3, 9, 77, 79):int],
+      ite(app('<='@loc('sum_for_pretty.ml', 4, 8, 4, 10, 90, 92):(int -> int -> bool),
+              ['x3'@loc('sum_for_pretty.ml', 4, 5, 4, 7, 87, 89):int,
+               0@loc('sum_for_pretty.ml', 4, 11, 4, 12, 93, 94):int
+              ]
+          )@loc('sum_for_pretty.ml', 4, 5, 4, 12, 87, 94):bool,
+          0@loc('sum_for_pretty.ml', 4, 18, 4, 19, 100, 101):int,
+          app('+'@loc('sum_for_pretty.ml', 4, 28, 4, 29, 110, 111):(int -> int -> int),
+              ['x3'@loc('sum_for_pretty.ml', 4, 25, 4, 27, 107, 109):int,
+               app('sum1'@loc('sum_for_pretty.ml', 5, 33, 5, 37, 177, 181):(int -> int),
+                   [app('-'@loc('sum_for_pretty.ml', 5, 42, 5, 43, 186, 187):(int -> int -> int),
+                        ['x3'@loc('sum_for_pretty.ml', 5, 39, 5, 41, 183, 185):int,
+                         1@loc('sum_for_pretty.ml', 5, 44, 5, 45, 188, 189):int
+                        ]
+                    )@loc('sum_for_pretty.ml', 5, 39, 5, 45, 183, 189):int
+                   ]
+               )@loc('sum_for_pretty.ml', 5, 33, 5, 46, 177, 190):int
+              ]
+          )@loc('sum_for_pretty.ml', 4, 25, 5, 47, 107, 191):int
+      )@loc('sum_for_pretty.ml', 4, 2, 5, 47, 84, 191):int
+      )@loc('sum_for_pretty.ml', 3, 7, 5, 47, 77, 191):(int -> int)),
+     ('main2'@loc('sum_for_pretty.ml', 7, 2, 7, 7, 229, 234):(int -> unit),
+      abs(['m4'@loc('sum_for_pretty.ml', 7, 8, 7, 10, 235, 237):int],
+      assert(app('<='@loc('sum_for_pretty.ml', 9, 15, 9, 17, 288, 290):(int -> int -> bool),
+                 ['m4'@loc('sum_for_pretty.ml', 9, 12, 9, 14, 285, 287):int,
+                  app('sum1'@loc('sum_for_pretty.ml', 10, 21, 10, 25, 344, 348):(int -> int),
+                      ['m4'@loc('sum_for_pretty.ml', 10, 26, 10, 28, 349, 351):int
+                      ]
+                  )@loc('sum_for_pretty.ml', 10, 21, 10, 28, 344, 351):int
+                 ]
+             )@loc('sum_for_pretty.ml', 9, 12, 10, 29, 285, 352):bool
+      )@loc('sum_for_pretty.ml', 9, 4, 10, 30, 277, 353):unit
+      )@loc('sum_for_pretty.ml', 7, 8, 10, 30, 235, 353):(int -> unit))
+    ], unit@loc('sum_for_pretty.ml', 11, 8, 11, 10, 364, 366):unit
+)@loc('sum_for_pretty.ml', 1, 0, 10, 30, 0, 353):int.

@@ -1,0 +1,76 @@
+ltr([('length2'@loc('as-length_for_pretty.ml', 2, 2, 2, 9, 46, 53):(list(A) -> int),
+      abs(['x11'@loc('as-length_for_pretty.ml', 2, 10, 2, 13, 54, 57):list(A)
+      ],
+      mae('x11'@loc('as-length_for_pretty.ml', 3, 8, 3, 11, 68, 71):list(A),
+          [('List.nil'@loc('as-length_for_pretty.ml', 4, 4, 4, 6, 81, 83):list(A),
+           true@loc('as-length_for_pretty.ml', 4, 4, 4, 11, 81, 88):bool,
+           0@loc('as-length_for_pretty.ml', 4, 10, 4, 11, 87, 88):int),
+           (app('List.cons'@loc('as-length_for_pretty.ml', 5, 4, 5, 15, 93, 104):(A -> list(A) -> list(A)),
+                ['_13'@loc('as-length_for_pretty.ml', 5, 4, 5, 7, 93, 96):A,
+                 'xs12'@loc('as-length_for_pretty.ml', 5, 11, 5, 15, 100, 104):list(A)
+                 ]
+                )@loc('as-length_for_pretty.ml', 5, 4, 5, 15, 93, 104):list(A),
+           true@loc('as-length_for_pretty.ml', 5, 4, 6, 39, 93, 189):bool,
+           app('+'@loc('as-length_for_pretty.ml', 5, 21, 5, 22, 110, 111):(int -> int -> int),
+               [1@loc('as-length_for_pretty.ml', 5, 19, 5, 20, 108, 109):int,
+                app('length2'@loc('as-length_for_pretty.ml', 6, 26, 6, 33, 176, 183):(list(A) -> int),
+                    ['xs12'@loc('as-length_for_pretty.ml', 6, 34, 6, 38, 184, 188):list(A)
+                    ]
+                )@loc('as-length_for_pretty.ml', 6, 26, 6, 38, 176, 188):int
+               ]
+           )@loc('as-length_for_pretty.ml', 5, 19, 6, 39, 108, 189):int)
+          ]
+      )@loc('as-length_for_pretty.ml', 3, 2, 6, 39, 62, 189):int
+      )@loc('as-length_for_pretty.ml', 2, 10, 6, 39, 54, 189):(list(A) -> int))
+    ],
+    ltr([('testlength3'@loc('as-length_for_pretty.ml', 8, 2, 8, 13, 240, 251):(list(A) -> unit),
+          abs(['xs5'@loc('as-length_for_pretty.ml', 8, 14, 8, 17, 252, 255):list(A)
+          ],
+          mae('xs5'@loc('as-length_for_pretty.ml', 9, 8, 9, 11, 266, 269):list(A),
+              [(app('List.cons'@loc('as-length_for_pretty.ml', 10, 4, 10, 19, 279, 294):(A -> list(A) -> list(A)),
+                    [
+                     'x6'@loc('as-length_for_pretty.ml', 10, 4, 10, 6, 279, 281):A,
+                     app('List.cons'@loc('as-length_for_pretty.ml', 10, 10, 10, 19, 285, 294):(A -> list(A) -> list(A)),
+                         [
+                          'y7'@loc('as-length_for_pretty.ml', 10, 10, 10, 12, 285, 287):A,
+                          'zs8'@loc('as-length_for_pretty.ml', 10, 16, 10, 19, 291, 294):list(A)
+                          ]
+                         )@loc('as-length_for_pretty.ml', 10, 10, 10, 19, 285, 294):list(A)
+                     ]
+                    )@loc('as-length_for_pretty.ml', 10, 4, 10, 19, 279, 294):list(A),
+               true@loc('as-length_for_pretty.ml', 10, 4, 17, 39, 279, 579):bool,
+               let('s9'@loc('as-length_for_pretty.ml', 12, 8, 12, 10, 355, 357):int,
+                   app('length2'@loc('as-length_for_pretty.ml', 13, 15, 13, 22, 414, 421):(list(A) -> int),
+                       ['zs8'@loc('as-length_for_pretty.ml', 13, 23, 13, 26, 422, 425):list(A)
+                       ]
+                   )@loc('as-length_for_pretty.ml', 13, 15, 13, 26, 414, 425):int,
+                   assert(app('>='@loc('as-length_for_pretty.ml', 17, 34, 17, 36, 574, 576):(int -> int -> bool),
+                              [app('length2'@loc('as-length_for_pretty.ml', 17, 21, 17, 28, 561, 568):(list(A) -> int),
+                                   ['xs5'@loc('as-length_for_pretty.ml', 17, 29, 17, 32, 569, 572):list(A)
+                                   ]
+                               )@loc('as-length_for_pretty.ml', 17, 21, 17, 32, 561, 572):int,
+                               2@loc('as-length_for_pretty.ml', 17, 37, 17, 38, 577, 578):int
+                              ]
+                          )@loc('as-length_for_pretty.ml', 16, 18, 17, 38, 500, 578):bool
+                   )@loc('as-length_for_pretty.ml', 16, 10, 17, 39, 492, 579):unit
+               )@loc('as-length_for_pretty.ml', 11, 6, 17, 39, 304, 579):unit),
+               ('_10'@loc('as-length_for_pretty.ml', 18, 4, 18, 7, 584, 587):list(A),
+               true@loc('as-length_for_pretty.ml', 18, 4, 18, 13, 584, 593):bool,
+               unit@loc('as-length_for_pretty.ml', 18, 11, 18, 13, 591, 593):unit)
+              ]
+          )@loc('as-length_for_pretty.ml', 9, 2, 18, 13, 260, 593):unit
+          )@loc('as-length_for_pretty.ml', 8, 14, 18, 13, 252, 593):(list(A) -> unit)
+          )
+        ],
+        let('_14'@loc('as-length_for_pretty.ml', 20, 2, 20, 5, 641, 644):unit,
+            app('testlength3'@loc('as-length_for_pretty.ml', 22, 4, 22, 15, 692, 703):(list(_A) -> unit),
+                [app('Obj.magic'@loc('as-length_for_pretty.ml', 23, 19, 23, 28, 763, 772):(unit -> list(_A)),
+                     [unit@loc('as-length_for_pretty.ml', 23, 29, 23, 31, 773, 775):unit
+                     ]
+                 )@loc('as-length_for_pretty.ml', 23, 19, 23, 31, 763, 775):list(_A)
+                ]
+            )@loc('as-length_for_pretty.ml', 22, 4, 23, 32, 692, 776):unit,
+            unit@loc('as-length_for_pretty.ml', 24, 8, 24, 10, 787, 789):unit
+        )@loc('as-length_for_pretty.ml', 19, 0, 23, 32, 596, 776):unit
+    )@loc('as-length_for_pretty.ml', 7, 0, 18, 13, 192, 593):unit
+)@loc('as-length_for_pretty.ml', 1, 0, 6, 39, 0, 189):unit.

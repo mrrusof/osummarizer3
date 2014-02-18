@@ -1,0 +1,23 @@
+let('z1'@loc('pairpat_for_pretty.ml', 2, 2, 2, 4, 40, 42):list(int),
+    app('List.map'@loc('pairpat_for_pretty.ml', 4, 4, 4, 12, 85, 93):(((*(int, int)) -> int) -> list((*(int, int))) -> list(int)),
+        [abs([('x2'@loc('pairpat_for_pretty.ml', 4, 19, 4, 21, 100, 102):int,
+               'y3'@loc('pairpat_for_pretty.ml', 4, 23, 4, 25, 104, 106):int
+              )@loc('pairpat_for_pretty.ml', 4, 19, 4, 25, 100, 106):(*(int, int))
+         ],
+         app('+'@loc('pairpat_for_pretty.ml', 4, 33, 4, 34, 114, 115):(int -> int -> int),
+             ['x2'@loc('pairpat_for_pretty.ml', 4, 30, 4, 32, 111, 113):int,
+              'y3'@loc('pairpat_for_pretty.ml', 4, 35, 4, 37, 116, 118):int
+             ]
+         )@loc('pairpat_for_pretty.ml', 4, 30, 4, 37, 111, 118):int
+         )@loc('pairpat_for_pretty.ml', 4, 18, 4, 37, 99, 118):((*(int, int)) -> int),
+         app('List.cons'@loc('pairpat_for_pretty.ml', 6, 5, 6, 17, 164, 176):((*(int, int)) -> list((*(int, int))) -> list((*(int, int)))),
+             [tup([1@loc('pairpat_for_pretty.ml', 6, 6, 6, 7, 165, 166):int,
+                   2@loc('pairpat_for_pretty.ml', 6, 9, 6, 10, 168, 169):int
+              ])@loc('pairpat_for_pretty.ml', 6, 6, 6, 10, 165, 169):(*(int, int)),
+              'List.nil'@loc('pairpat_for_pretty.ml', 6, 15, 6, 17, 174, 176):list((*(int, int)))
+             ]
+         )@loc('pairpat_for_pretty.ml', 6, 5, 6, 17, 164, 176):list((*(int, int)))
+        ]
+    )@loc('pairpat_for_pretty.ml', 4, 4, 6, 18, 85, 177):list(int),
+    unit@loc('pairpat_for_pretty.ml', 7, 8, 7, 10, 188, 190):unit
+)@loc('pairpat_for_pretty.ml', 1, 0, 6, 18, 0, 177):list((*(int, int))).

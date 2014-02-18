@@ -1,0 +1,73 @@
+ltr([('length1'@loc('tuple-length_for_pretty.ml', 2, 2, 2, 9, 49, 56):(list(A) -> int),
+      abs(['x10'@loc('tuple-length_for_pretty.ml', 2, 10, 2, 13, 57, 60):list(A)
+      ],
+      mae('x10'@loc('tuple-length_for_pretty.ml', 3, 8, 3, 11, 71, 74):list(A),
+          [('List.nil'@loc('tuple-length_for_pretty.ml', 4, 4, 4, 6, 84, 86):list(A),
+           true@loc('tuple-length_for_pretty.ml', 4, 4, 4, 11, 84, 91):bool,
+           0@loc('tuple-length_for_pretty.ml', 4, 10, 4, 11, 90, 91):int),
+           (app('List.cons'@loc('tuple-length_for_pretty.ml', 5, 4, 5, 15, 96, 107):(A -> list(A) -> list(A)),
+                [
+                 '_12'@loc('tuple-length_for_pretty.ml', 5, 4, 5, 7, 96, 99):A,
+                 'xs11'@loc('tuple-length_for_pretty.ml', 5, 11, 5, 15, 103, 107):list(A)
+                 ]
+                )@loc('tuple-length_for_pretty.ml', 5, 4, 5, 15, 96, 107):list(A),
+           true@loc('tuple-length_for_pretty.ml', 5, 4, 6, 39, 96, 195):bool,
+           app('+'@loc('tuple-length_for_pretty.ml', 5, 21, 5, 22, 113, 114):(int -> int -> int),
+               [1@loc('tuple-length_for_pretty.ml', 5, 19, 5, 20, 111, 112):int,
+                app('length1'@loc('tuple-length_for_pretty.ml', 6, 26, 6, 33, 182, 189):(list(A) -> int),
+                    ['xs11'@loc('tuple-length_for_pretty.ml', 6, 34, 6, 38, 190, 194):list(A)
+                    ]
+                )@loc('tuple-length_for_pretty.ml', 6, 26, 6, 38, 182, 194):int
+               ]
+           )@loc('tuple-length_for_pretty.ml', 5, 19, 6, 39, 111, 195):int)
+          ]
+      )@loc('tuple-length_for_pretty.ml', 3, 2, 6, 39, 65, 195):int
+      )@loc('tuple-length_for_pretty.ml', 2, 10, 6, 39, 57, 195):(list(A) -> int)
+      )
+    ],
+    ltr([('testlength2'@loc('tuple-length_for_pretty.ml', 8, 2, 8, 13, 249, 260):(list(A) -> unit),
+          abs(['xs3'@loc('tuple-length_for_pretty.ml', 8, 14, 8, 17, 261, 264):list(A)
+          ],
+          mae(tup(['xs3'@loc('tuple-length_for_pretty.ml', 9, 9, 9, 12, 276, 279):list(A),
+                   3@loc('tuple-length_for_pretty.ml', 9, 14, 9, 15, 281, 282):int
+              ])@loc('tuple-length_for_pretty.ml', 9, 9, 9, 15, 276, 282):(*((list(A)), int)),
+              [((app('List.cons'@loc('tuple-length_for_pretty.ml', 10, 5, 10, 20, 294, 309):(A -> list(A) -> list(A)),
+                     [
+                      'x4'@loc('tuple-length_for_pretty.ml', 10, 5, 10, 7, 294, 296):A,
+                      app('List.cons'@loc('tuple-length_for_pretty.ml', 10, 11, 10, 20, 300, 309):(A -> list(A) -> list(A)),
+                          [
+                           'y5'@loc('tuple-length_for_pretty.ml', 10, 11, 10, 13, 300, 302):A,
+                           'zs6'@loc('tuple-length_for_pretty.ml', 10, 17, 10, 20, 306, 309):list(A)
+                           ]
+                          )@loc('tuple-length_for_pretty.ml', 10, 11, 10, 20, 300, 309):list(A)
+                      ]
+                     )@loc('tuple-length_for_pretty.ml', 10, 5, 10, 20, 294, 309):list(A),
+                 '_8'@loc('tuple-length_for_pretty.ml', 10, 22, 10, 24, 311, 313):int
+               )@loc('tuple-length_for_pretty.ml', 10, 5, 10, 24, 294, 313):(*((list(A)), int)),
+               true@loc('tuple-length_for_pretty.ml', 10, 4, 18, 32, 293, 614):bool,
+               let('s7'@loc('tuple-length_for_pretty.ml', 12, 8, 12, 10, 378, 380):int,
+                   app('length1'@loc('tuple-length_for_pretty.ml', 13, 15, 13, 22, 440, 447):(list(A) -> int),
+                       ['zs6'@loc('tuple-length_for_pretty.ml', 13, 23, 13, 26, 448, 451):list(A)
+                       ]
+                   )@loc('tuple-length_for_pretty.ml', 13, 15, 13, 26, 440, 451):int,
+                   assert(app('>='@loc('tuple-length_for_pretty.ml', 18, 27, 18, 29, 609, 611):(int -> int -> bool),
+                              [app('length1'@loc('tuple-length_for_pretty.ml', 18, 14, 18, 21, 596, 603):(list(A) -> int),
+                                   ['xs3'@loc('tuple-length_for_pretty.ml', 18, 22, 18, 25, 604, 607):list(A)
+                                   ]
+                               )@loc('tuple-length_for_pretty.ml', 18, 14, 18, 25, 596, 607):int,
+                               2@loc('tuple-length_for_pretty.ml', 18, 30, 18, 31, 612, 613):int
+                              ]
+                          )@loc('tuple-length_for_pretty.ml', 17, 11, 18, 31, 539, 613):bool
+                   )@loc('tuple-length_for_pretty.ml', 16, 10, 18, 32, 521, 614):unit
+               )@loc('tuple-length_for_pretty.ml', 11, 6, 18, 32, 324, 614):unit),
+               ('_9'@loc('tuple-length_for_pretty.ml', 19, 4, 19, 6, 619, 621):(*((list(A)), int)),
+               true@loc('tuple-length_for_pretty.ml', 19, 4, 19, 12, 619, 627):bool,
+               unit@loc('tuple-length_for_pretty.ml', 19, 10, 19, 12, 625, 627):unit)
+              ]
+          )@loc('tuple-length_for_pretty.ml', 9, 2, 19, 12, 269, 627):unit
+          )@loc('tuple-length_for_pretty.ml', 8, 14, 19, 12, 261, 627):(list(A) -> unit)
+          )
+        ],
+        unit@loc('tuple-length_for_pretty.ml', 20, 8, 20, 10, 638, 640):unit
+    )@loc('tuple-length_for_pretty.ml', 7, 0, 19, 12, 198, 627):unit
+)@loc('tuple-length_for_pretty.ml', 1, 0, 6, 39, 0, 195):unit.

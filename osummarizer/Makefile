@@ -16,4 +16,4 @@ ext/utils/misc.pl:
 	./ext/checkout-externals.sh
 
 clean:
-	rm -f *.sav *.sav.log osummarizer 1
+	rm -f *.sav *.sav.log osummarizer 1 tests/*/*.qarmc

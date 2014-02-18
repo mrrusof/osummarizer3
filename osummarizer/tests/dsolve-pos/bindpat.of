@@ -1,0 +1,26 @@
+let('bar2'@loc('bindpat_for_pretty.ml', 9, 2, 9, 6, 232, 236):((*(int, int)) -> int),
+    abs([('x3'@loc('bindpat_for_pretty.ml', 9, 8, 9, 10, 238, 240):int,
+          'y4'@loc('bindpat_for_pretty.ml', 9, 12, 9, 14, 242, 244):int
+         )@loc('bindpat_for_pretty.ml', 9, 8, 9, 14, 238, 244):(*(int, int))
+    ],
+    app('+'@loc('bindpat_for_pretty.ml', 9, 21, 9, 22, 251, 252):(int -> int -> int),
+        ['x3'@loc('bindpat_for_pretty.ml', 9, 18, 9, 20, 248, 250):int,
+         'y4'@loc('bindpat_for_pretty.ml', 9, 23, 9, 25, 253, 255):int
+        ]
+    )@loc('bindpat_for_pretty.ml', 9, 18, 9, 25, 248, 255):int
+    )@loc('bindpat_for_pretty.ml', 9, 7, 9, 25, 237, 255):((*(int, int)) -> int),
+    let('_15'@loc('bindpat_for_pretty.ml', 11, 2, 11, 5, 301, 304):list(int),
+        app('List.map'@loc('bindpat_for_pretty.ml', 13, 4, 13, 12, 350, 358):(((*(int, int)) -> int) -> list((*(int, int))) -> list(int)),
+            ['bar2'@loc('bindpat_for_pretty.ml', 13, 13, 13, 17, 359, 363):((*(int, int)) -> int),
+             app('List.cons'@loc('bindpat_for_pretty.ml', 14, 5, 14, 17, 406, 418):((*(int, int)) -> list((*(int, int))) -> list((*(int, int)))),
+                 [tup([2@loc('bindpat_for_pretty.ml', 14, 6, 14, 7, 407, 408):int,
+                       3@loc('bindpat_for_pretty.ml', 14, 9, 14, 10, 410, 411):int
+                  ])@loc('bindpat_for_pretty.ml', 14, 6, 14, 10, 407, 411):(*(int, int)),
+                  'List.nil'@loc('bindpat_for_pretty.ml', 14, 15, 14, 17, 416, 418):list((*(int, int)))
+                 ]
+             )@loc('bindpat_for_pretty.ml', 14, 5, 14, 17, 406, 418):list((*(int, int)))
+            ]
+        )@loc('bindpat_for_pretty.ml', 13, 4, 14, 18, 350, 419):list(int),
+        unit@loc('bindpat_for_pretty.ml', 15, 8, 15, 10, 430, 432):unit
+    )@loc('bindpat_for_pretty.ml', 10, 0, 14, 18, 258, 419):list((*(int, int)))
+)@loc('bindpat_for_pretty.ml', 8, 0, 9, 25, 189, 255):list((*(int, int))).

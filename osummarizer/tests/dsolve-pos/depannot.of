@@ -1,0 +1,26 @@
+let('test2'@loc('depannot_for_pretty.ml', 2, 2, 2, 7, 41, 46):(int -> int -> unit),
+    abs(['a3'@loc('depannot_for_pretty.ml', 2, 9, 2, 11, 48, 50):int,
+         'b4'@loc('depannot_for_pretty.ml', 2, 19, 2, 21, 58, 60):int
+    ],
+    assert(app('<'@loc('depannot_for_pretty.ml', 3, 37, 3, 38, 136, 137):(int -> int -> bool),
+               ['b4'@loc('depannot_for_pretty.ml', 3, 34, 3, 36, 133, 135):int,
+                'a3'@loc('depannot_for_pretty.ml', 3, 39, 3, 41, 138, 140):int
+               ]
+           )@loc('depannot_for_pretty.ml', 3, 34, 3, 41, 133, 140):bool
+    )@loc('depannot_for_pretty.ml', 3, 26, 3, 42, 125, 141):unit
+    )@loc('depannot_for_pretty.ml', 2, 8, 3, 42, 47, 141):(int -> int -> unit),
+    let('_15'@loc('depannot_for_pretty.ml', 5, 2, 5, 5, 186, 189):unit,
+        app('test2'@loc('depannot_for_pretty.ml', 7, 4, 7, 9, 234, 239):(int -> int -> unit),
+            [app('Obj.magic'@loc('depannot_for_pretty.ml', 8, 13, 8, 22, 290, 299):(unit -> int),
+                 [unit@loc('depannot_for_pretty.ml', 8, 23, 8, 25, 300, 302):unit
+                 ]
+             )@loc('depannot_for_pretty.ml', 8, 13, 8, 25, 290, 302):int,
+             app('Obj.magic'@loc('depannot_for_pretty.ml', 10, 7, 10, 16, 352, 361):(unit -> int),
+                 [unit@loc('depannot_for_pretty.ml', 10, 17, 10, 19, 362, 364):unit
+                 ]
+             )@loc('depannot_for_pretty.ml', 10, 7, 10, 19, 352, 364):int
+            ]
+        )@loc('depannot_for_pretty.ml', 7, 4, 10, 20, 234, 365):unit,
+        unit@loc('depannot_for_pretty.ml', 11, 8, 11, 10, 376, 378):unit
+    )@loc('depannot_for_pretty.ml', 4, 0, 10, 20, 144, 365):unit
+)@loc('depannot_for_pretty.ml', 1, 0, 3, 42, 0, 141):unit.

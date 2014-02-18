@@ -1,0 +1,47 @@
+let('assume_zero3'@loc('binder_subs_for_pretty.ml', 2, 2, 2, 14, 44, 56):(int -> unit),
+    abs(['x4'@loc('binder_subs_for_pretty.ml', 2, 15, 2, 17, 57, 59):int],
+    assume(app('='@loc('binder_subs_for_pretty.ml', 3, 33, 3, 34, 134, 135):(int -> int -> bool),
+               ['x4'@loc('binder_subs_for_pretty.ml', 3, 30, 3, 32, 131, 133):int,
+                0@loc('binder_subs_for_pretty.ml', 3, 35, 3, 36, 136, 137):int
+               ]
+           )@loc('binder_subs_for_pretty.ml', 3, 30, 3, 36, 131, 137):bool
+    )@loc('binder_subs_for_pretty.ml', 3, 22, 3, 37, 123, 138):unit
+    )@loc('binder_subs_for_pretty.ml', 2, 15, 3, 37, 57, 138):(int -> unit),
+    let('check5'@loc('binder_subs_for_pretty.ml', 5, 2, 5, 8, 186, 192):((int -> unit) -> int -> unit),
+        abs(['f6'@loc('binder_subs_for_pretty.ml', 5, 10, 5, 12, 194, 196):(int -> unit),
+             'x7'@loc('binder_subs_for_pretty.ml', 5, 28, 5, 30, 212, 214):int
+        ],
+        app('f6'@loc('binder_subs_for_pretty.ml', 7, 4, 7, 6, 262, 264):(int -> unit),
+            ['x7'@loc('binder_subs_for_pretty.ml', 7, 7, 7, 9, 265, 267):int]
+        )@loc('binder_subs_for_pretty.ml', 7, 4, 7, 9, 262, 267):unit
+        )@loc('binder_subs_for_pretty.ml', 5, 9, 7, 9, 193, 267):((int -> unit) -> int -> unit),
+        let('test8'@loc('binder_subs_for_pretty.ml', 9, 2, 9, 7, 316, 321):(int -> unit),
+            abs(['x9'@loc('binder_subs_for_pretty.ml', 9, 8, 9, 10, 322, 324):int
+            ],
+            let('_210'@loc('binder_subs_for_pretty.ml', 11, 5, 11, 9, 379, 383):unit,
+                app('check5'@loc('binder_subs_for_pretty.ml', 12, 14, 12, 20, 440, 446):((int -> unit) -> int -> unit),
+                    ['assume_zero3'@loc('binder_subs_for_pretty.ml', 12, 21, 12, 33, 447, 459):(int -> unit),
+                     'x9'@loc('binder_subs_for_pretty.ml', 12, 34, 12, 36, 460, 462):int
+                    ]
+                )@loc('binder_subs_for_pretty.ml', 12, 14, 12, 36, 440, 462):unit,
+                assert(app('='@loc('binder_subs_for_pretty.ml', 14, 19, 14, 20, 529, 530):(int -> int -> bool),
+                           ['x9'@loc('binder_subs_for_pretty.ml', 14, 16, 14, 18, 526, 528):int,
+                            0@loc('binder_subs_for_pretty.ml', 14, 21, 14, 22, 531, 532):int
+                           ]
+                       )@loc('binder_subs_for_pretty.ml', 14, 16, 14, 22, 526, 532):bool
+                )@loc('binder_subs_for_pretty.ml', 14, 8, 14, 23, 518, 533):unit
+            )@loc('binder_subs_for_pretty.ml', 10, 3, 14, 23, 330, 533):unit
+            )@loc('binder_subs_for_pretty.ml', 9, 8, 14, 24, 322, 534):(int -> unit),
+            let('_111'@loc('binder_subs_for_pretty.ml', 16, 2, 16, 6, 584, 588):unit,
+                app('test8'@loc('binder_subs_for_pretty.ml', 18, 4, 18, 9, 638, 643):(int -> unit),
+                    [app('Obj.magic'@loc('binder_subs_for_pretty.ml', 19, 13, 19, 22, 699, 708):(unit -> int),
+                         [unit@loc('binder_subs_for_pretty.ml', 19, 23, 19, 25, 709, 711):unit
+                         ]
+                     )@loc('binder_subs_for_pretty.ml', 19, 13, 19, 25, 699, 711):int
+                    ]
+                )@loc('binder_subs_for_pretty.ml', 18, 4, 19, 26, 638, 712):unit,
+                unit@loc('binder_subs_for_pretty.ml', 20, 8, 20, 10, 723, 725):unit
+            )@loc('binder_subs_for_pretty.ml', 15, 0, 19, 26, 537, 712):unit
+        )@loc('binder_subs_for_pretty.ml', 8, 0, 14, 24, 270, 534):unit
+    )@loc('binder_subs_for_pretty.ml', 4, 0, 7, 9, 141, 267):unit
+)@loc('binder_subs_for_pretty.ml', 1, 0, 3, 37, 0, 138):unit.

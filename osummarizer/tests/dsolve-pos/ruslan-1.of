@@ -1,0 +1,78 @@
+ltr([('mlength2'@loc('ruslan-1_for_pretty.ml', 2, 2, 2, 10, 45, 53):(list(A) -> int),
+      abs(['l8'@loc('ruslan-1_for_pretty.ml', 2, 11, 2, 13, 54, 56):list(A)],
+      mae('l8'@loc('ruslan-1_for_pretty.ml', 3, 8, 3, 10, 67, 69):list(A),
+          [('List.nil'@loc('ruslan-1_for_pretty.ml', 4, 4, 4, 6, 79, 81):list(A),
+           true@loc('ruslan-1_for_pretty.ml', 4, 4, 4, 11, 79, 86):bool,
+           0@loc('ruslan-1_for_pretty.ml', 4, 10, 4, 11, 85, 86):int),
+           (app('List.cons'@loc('ruslan-1_for_pretty.ml', 5, 4, 5, 13, 91, 100):(A -> list(A) -> list(A)),
+                ['_10'@loc('ruslan-1_for_pretty.ml', 5, 4, 5, 7, 91, 94):A,
+                 't9'@loc('ruslan-1_for_pretty.ml', 5, 11, 5, 13, 98, 100):list(A)
+                 ]
+                )@loc('ruslan-1_for_pretty.ml', 5, 4, 5, 13, 91, 100):list(A),
+           true@loc('ruslan-1_for_pretty.ml', 5, 4, 6, 36, 91, 181):bool,
+           app('+'@loc('ruslan-1_for_pretty.ml', 5, 19, 5, 20, 106, 107):(int -> int -> int),
+               [1@loc('ruslan-1_for_pretty.ml', 5, 17, 5, 18, 104, 105):int,
+                app('mlength2'@loc('ruslan-1_for_pretty.ml', 6, 24, 6, 32, 169, 177):(list(A) -> int),
+                    ['t9'@loc('ruslan-1_for_pretty.ml', 6, 33, 6, 35, 178, 180):list(A)
+                    ]
+                )@loc('ruslan-1_for_pretty.ml', 6, 24, 6, 35, 169, 180):int
+               ]
+           )@loc('ruslan-1_for_pretty.ml', 5, 17, 6, 36, 104, 181):int)
+          ]
+      )@loc('ruslan-1_for_pretty.ml', 3, 2, 6, 36, 61, 181):int
+      )@loc('ruslan-1_for_pretty.ml', 2, 11, 6, 36, 54, 181):(list(A) -> int))
+    ],
+    let('test23'@loc('ruslan-1_for_pretty.ml', 8, 2, 8, 8, 227, 233):(list(A) -> unit),
+        abs(['l2_14'@loc('ruslan-1_for_pretty.ml', 8, 9, 8, 14, 234, 239):list(A)
+        ],
+        mae('l2_14'@loc('ruslan-1_for_pretty.ml', 9, 8, 9, 13, 250, 255):list(A),
+            [('List.nil'@loc('ruslan-1_for_pretty.ml', 10, 4, 10, 6, 265, 267):list(A),
+             true@loc('ruslan-1_for_pretty.ml', 10, 4, 27, 40, 265, 879):bool,
+             let('_15'@loc('ruslan-1_for_pretty.ml', 12, 9, 12, 12, 329, 332):unit,
+                 assert(app('='@loc('ruslan-1_for_pretty.ml', 15, 14, 15, 15, 414, 415):(int -> int -> bool),
+                            [0@loc('ruslan-1_for_pretty.ml', 15, 12, 15, 13, 412, 413):int,
+                             app('*'@loc('ruslan-1_for_pretty.ml', 18, 17, 18, 18, 521, 522):(int -> int -> int),
+                                 [app('mlength2'@loc('ruslan-1_for_pretty.ml', 17, 18, 17, 26, 488, 496):(list(A) -> int),
+                                      ['l2_14'@loc('ruslan-1_for_pretty.ml', 17, 27, 17, 32, 497, 502):list(A)
+                                      ]
+                                  )@loc('ruslan-1_for_pretty.ml', 17, 18, 17, 32, 488, 502):int,
+                                  app('mlength2'@loc('ruslan-1_for_pretty.ml', 19, 22, 19, 30, 584, 592):(list(A) -> int),
+                                      ['l2_14'@loc('ruslan-1_for_pretty.ml', 19, 31, 19, 36, 593, 598):list(A)
+                                      ]
+                                  )@loc('ruslan-1_for_pretty.ml', 19, 22, 19, 36, 584, 598):int
+                                 ]
+                             )@loc('ruslan-1_for_pretty.ml', 16, 15, 19, 37, 431, 599):int
+                            ]
+                        )@loc('ruslan-1_for_pretty.ml', 15, 12, 19, 38, 412, 600):bool
+                 )@loc('ruslan-1_for_pretty.ml', 14, 11, 19, 39, 393, 601):unit,
+                 assert(app('='@loc('ruslan-1_for_pretty.ml', 23, 14, 23, 15, 691, 692):(int -> int -> bool),
+                            [0@loc('ruslan-1_for_pretty.ml', 23, 12, 23, 13, 689, 690):int,
+                             app('*'@loc('ruslan-1_for_pretty.ml', 26, 17, 26, 18, 798, 799):(int -> int -> int),
+                                 [app('mlength2'@loc('ruslan-1_for_pretty.ml', 25, 18, 25, 26, 765, 773):(list(A) -> int),
+                                      ['l2_14'@loc('ruslan-1_for_pretty.ml', 25, 27, 25, 32, 774, 779):list(A)
+                                      ]
+                                  )@loc('ruslan-1_for_pretty.ml', 25, 18, 25, 32, 765, 779):int,
+                                  app('mlength2'@loc('ruslan-1_for_pretty.ml', 27, 22, 27, 30, 861, 869):(list(A) -> int),
+                                      ['l2_14'@loc('ruslan-1_for_pretty.ml', 27, 31, 27, 36, 870, 875):list(A)
+                                      ]
+                                  )@loc('ruslan-1_for_pretty.ml', 27, 22, 27, 36, 861, 875):int
+                                 ]
+                             )@loc('ruslan-1_for_pretty.ml', 24, 15, 27, 37, 708, 876):int
+                            ]
+                        )@loc('ruslan-1_for_pretty.ml', 23, 12, 27, 38, 689, 877):bool
+                 )@loc('ruslan-1_for_pretty.ml', 22, 11, 27, 39, 670, 878):unit
+             )@loc('ruslan-1_for_pretty.ml', 11, 7, 27, 39, 278, 878):unit),
+             (app('List.cons'@loc('ruslan-1_for_pretty.ml', 28, 4, 28, 12, 884, 892):(A -> list(A) -> list(A)),
+                  [
+                   'h6'@loc('ruslan-1_for_pretty.ml', 28, 4, 28, 6, 884, 886):A,
+                   't7'@loc('ruslan-1_for_pretty.ml', 28, 10, 28, 12, 890, 892):list(A)
+                   ]
+                  )@loc('ruslan-1_for_pretty.ml', 28, 4, 28, 12, 884, 892):list(A),
+             true@loc('ruslan-1_for_pretty.ml', 28, 4, 28, 18, 884, 898):bool,
+             unit@loc('ruslan-1_for_pretty.ml', 28, 16, 28, 18, 896, 898):unit)
+            ]
+        )@loc('ruslan-1_for_pretty.ml', 9, 2, 28, 18, 244, 898):unit
+        )@loc('ruslan-1_for_pretty.ml', 8, 9, 28, 18, 234, 898):(list(A) -> unit),
+        unit@loc('ruslan-1_for_pretty.ml', 29, 8, 29, 10, 909, 911):unit
+    )@loc('ruslan-1_for_pretty.ml', 7, 0, 28, 18, 184, 898):unit
+)@loc('ruslan-1_for_pretty.ml', 1, 0, 6, 36, 0, 181):unit.

@@ -1,0 +1,27 @@
+let('fresh2'@loc('test0_for_pretty.ml', 2, 2, 2, 8, 38, 44):(int -> int),
+    abs(['x3'@loc('test0_for_pretty.ml', 2, 9, 2, 11, 45, 47):int],
+    app('+'@loc('test0_for_pretty.ml', 2, 17, 2, 18, 53, 54):(int -> int -> int),
+        ['x3'@loc('test0_for_pretty.ml', 2, 14, 2, 16, 50, 52):int,
+         1@loc('test0_for_pretty.ml', 2, 19, 2, 20, 55, 56):int
+        ]
+    )@loc('test0_for_pretty.ml', 2, 14, 2, 20, 50, 56):int
+    )@loc('test0_for_pretty.ml', 2, 9, 2, 20, 45, 56):(int -> int),
+    let('n04'@loc('test0_for_pretty.ml', 4, 2, 4, 5, 98, 101):int,
+        0@loc('test0_for_pretty.ml', 4, 8, 4, 9, 104, 105):int,
+        let('n15'@loc('test0_for_pretty.ml', 6, 2, 6, 5, 147, 150):int,
+            app('fresh2'@loc('test0_for_pretty.ml', 7, 10, 7, 16, 196, 202):(int -> int),
+                ['n04'@loc('test0_for_pretty.ml', 7, 17, 7, 20, 203, 206):int
+                ]
+            )@loc('test0_for_pretty.ml', 7, 10, 7, 20, 196, 206):int,
+            let('_16'@loc('test0_for_pretty.ml', 9, 2, 9, 5, 249, 252):unit,
+                assert(app('<='@loc('test0_for_pretty.ml', 10, 22, 10, 24, 311, 313):(int -> int -> bool),
+                           ['n04'@loc('test0_for_pretty.ml', 10, 18, 10, 21, 307, 310):int,
+                            'n15'@loc('test0_for_pretty.ml', 10, 25, 10, 28, 314, 317):int
+                           ]
+                       )@loc('test0_for_pretty.ml', 10, 18, 10, 28, 307, 317):bool
+                )@loc('test0_for_pretty.ml', 10, 10, 10, 29, 299, 318):unit,
+                unit@loc('test0_for_pretty.ml', 11, 8, 11, 10, 329, 331):unit
+            )@loc('test0_for_pretty.ml', 8, 0, 10, 29, 209, 318):int
+        )@loc('test0_for_pretty.ml', 5, 0, 7, 20, 108, 206):int
+    )@loc('test0_for_pretty.ml', 3, 0, 4, 9, 59, 105):int
+)@loc('test0_for_pretty.ml', 1, 0, 2, 20, 0, 56):int.

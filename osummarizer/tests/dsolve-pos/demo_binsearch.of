@@ -1,0 +1,92 @@
+let('show1'@loc('demo_binsearch_for_pretty.ml', 2, 2, 2, 7, 47, 52):(A -> unit),
+    abs(['x2'@loc('demo_binsearch_for_pretty.ml', 2, 8, 2, 10, 53, 55):A],
+    unit@loc('demo_binsearch_for_pretty.ml', 2, 13, 2, 15, 58, 60):unit
+    )@loc('demo_binsearch_for_pretty.ml', 2, 8, 2, 15, 53, 60):(A -> unit),
+    let('bs3'@loc('demo_binsearch_for_pretty.ml', 4, 2, 4, 5, 112, 115):(array(A) -> A -> int),
+        abs(['a4'@loc('demo_binsearch_for_pretty.ml', 4, 6, 4, 8, 116, 118):array(A),
+             'v5'@loc('demo_binsearch_for_pretty.ml', 4, 9, 4, 11, 119, 121):A
+        ],
+        ltr([('look6'@loc('demo_binsearch_for_pretty.ml', 6, 4, 6, 9, 181, 186):(int -> int -> int),
+              abs(['lo7'@loc('demo_binsearch_for_pretty.ml', 6, 10, 6, 13, 187, 190):int,
+                   'hi8'@loc('demo_binsearch_for_pretty.ml', 6, 14, 6, 17, 191, 194):int
+              ],
+              ite(app('>='@loc('demo_binsearch_for_pretty.ml', 7, 11, 7, 13, 208, 210):(int -> int -> bool),
+                      ['lo7'@loc('demo_binsearch_for_pretty.ml', 7, 7, 7, 10, 204, 207):int,
+                       app('-'@loc('demo_binsearch_for_pretty.ml', 7, 19, 7, 20, 216, 217):(int -> int -> int),
+                           ['hi8'@loc('demo_binsearch_for_pretty.ml', 7, 15, 7, 18, 212, 215):int,
+                            1@loc('demo_binsearch_for_pretty.ml', 7, 21, 7, 22, 218, 219):int
+                           ]
+                       )@loc('demo_binsearch_for_pretty.ml', 7, 15, 7, 22, 212, 219):int
+                      ]
+                  )@loc('demo_binsearch_for_pretty.ml', 7, 7, 7, 23, 204, 220):bool,
+                  -1@loc('demo_binsearch_for_pretty.ml', 8, 10, 8, 12, 231, 233):int,
+                  let('m9'@loc('demo_binsearch_for_pretty.ml', 11, 9, 11, 11, 307, 309):int,
+                      app('/'@loc('demo_binsearch_for_pretty.ml', 11, 26, 11, 27, 324, 325):(int -> int -> int),
+                          [app('+'@loc('demo_binsearch_for_pretty.ml', 11, 19, 11, 20, 317, 318):(int -> int -> int),
+                               ['hi8'@loc('demo_binsearch_for_pretty.ml', 11, 15, 11, 18, 313, 316):int,
+                                'lo7'@loc('demo_binsearch_for_pretty.ml', 11, 21, 11, 24, 319, 322):int
+                               ]
+                           )@loc('demo_binsearch_for_pretty.ml', 11, 15, 11, 24, 313, 322):int,
+                           2@loc('demo_binsearch_for_pretty.ml', 11, 28, 11, 29, 326, 327):int
+                          ]
+                      )@loc('demo_binsearch_for_pretty.ml', 11, 14, 11, 29, 312, 327):int,
+                      let('x10'@loc('demo_binsearch_for_pretty.ml', 13, 9, 13, 12, 395, 398):A,
+                          app('Array.get'@loc('demo_binsearch_for_pretty.ml', 14, 17, 14, 26, 462, 471):(array(A) -> int -> A),
+                              ['a4'@loc('demo_binsearch_for_pretty.ml', 14, 27, 14, 29, 472, 474):array(A),
+                               'm9'@loc('demo_binsearch_for_pretty.ml', 14, 30, 14, 32, 475, 477):int
+                              ]
+                          )@loc('demo_binsearch_for_pretty.ml', 14, 17, 14, 32, 462, 477):A,
+                          ite(app('<'@loc('demo_binsearch_for_pretty.ml', 16, 15, 16, 16, 503, 504):(A -> A -> bool),
+                                  ['v5'@loc('demo_binsearch_for_pretty.ml', 16, 12, 16, 14, 500, 502):A,
+                                   'x10'@loc('demo_binsearch_for_pretty.ml', 16, 17, 16, 20, 505, 508):A
+                                  ]
+                              )@loc('demo_binsearch_for_pretty.ml', 16, 12, 16, 20, 500, 508):bool,
+                              app('look6'@loc('demo_binsearch_for_pretty.ml', 18, 16, 18, 21, 583, 588):(int -> int -> int),
+                                  ['lo7'@loc('demo_binsearch_for_pretty.ml', 18, 22, 18, 25, 589, 592):int,
+                                   app('-'@loc('demo_binsearch_for_pretty.ml', 18, 30, 18, 31, 597, 598):(int -> int -> int),
+                                       ['m9'@loc('demo_binsearch_for_pretty.ml', 18, 27, 18, 29, 594, 596):int,
+                                        1@loc('demo_binsearch_for_pretty.ml', 18, 32, 18, 33, 599, 600):int
+                                       ]
+                                   )@loc('demo_binsearch_for_pretty.ml', 18, 27, 18, 33, 594, 600):int
+                                  ]
+                              )@loc('demo_binsearch_for_pretty.ml', 18, 16, 18, 34, 583, 601):int,
+                              ite(app('>'@loc('demo_binsearch_for_pretty.ml', 20, 17, 20, 18, 633, 634):(A -> A -> bool),
+                                      ['v5'@loc('demo_binsearch_for_pretty.ml', 20, 14, 20, 16, 630, 632):A,
+                                       'x10'@loc('demo_binsearch_for_pretty.ml', 20, 19, 20, 22, 635, 638):A
+                                      ]
+                                  )@loc('demo_binsearch_for_pretty.ml', 20, 14, 20, 22, 630, 638):bool,
+                                  app('look6'@loc('demo_binsearch_for_pretty.ml', 22, 18, 22, 23, 717, 722):(int -> int -> int),
+                                      [app('+'@loc('demo_binsearch_for_pretty.ml', 22, 28, 22, 29, 727, 728):(int -> int -> int),
+                                           ['m9'@loc('demo_binsearch_for_pretty.ml', 22, 25, 22, 27, 724, 726):int,
+                                            1@loc('demo_binsearch_for_pretty.ml', 22, 30, 22, 31, 729, 730):int
+                                           ]
+                                       )@loc('demo_binsearch_for_pretty.ml', 22, 25, 22, 31, 724, 730):int,
+                                       'hi8'@loc('demo_binsearch_for_pretty.ml', 22, 33, 22, 36, 732, 735):int
+                                      ]
+                                  )@loc('demo_binsearch_for_pretty.ml', 22, 18, 22, 36, 717, 735):int,
+                                  'm9'@loc('demo_binsearch_for_pretty.ml', 23, 16, 23, 18, 752, 754):int
+                              )@loc('demo_binsearch_for_pretty.ml', 20, 11, 23, 18, 627, 754):int
+                          )@loc('demo_binsearch_for_pretty.ml', 16, 9, 23, 18, 497, 754):int
+                      )@loc('demo_binsearch_for_pretty.ml', 12, 7, 23, 18, 338, 754):int
+                  )@loc('demo_binsearch_for_pretty.ml', 10, 7, 23, 18, 251, 754):int
+              )@loc('demo_binsearch_for_pretty.ml', 7, 4, 23, 19, 201, 755):int
+              )@loc('demo_binsearch_for_pretty.ml', 6, 10, 23, 19, 187, 755):(int -> int -> int)
+              )
+            ],
+            app('look6'@loc('demo_binsearch_for_pretty.ml', 26, 6, 26, 11, 815, 820):(int -> int -> int),
+                [0@loc('demo_binsearch_for_pretty.ml', 26, 12, 26, 13, 821, 822):int,
+                 app('-'@loc('demo_binsearch_for_pretty.ml', 28, 27, 28, 28, 902, 903):(int -> int -> int),
+                     [app('Array.length'@loc('demo_binsearch_for_pretty.ml', 28, 10, 28, 22, 885, 897):(array(A) -> int),
+                          ['a4'@loc('demo_binsearch_for_pretty.ml', 28, 23, 28, 25, 898, 900):array(A)
+                          ]
+                      )@loc('demo_binsearch_for_pretty.ml', 28, 10, 28, 25, 885, 900):int,
+                      1@loc('demo_binsearch_for_pretty.ml', 28, 29, 28, 30, 904, 905):int
+                     ]
+                 )@loc('demo_binsearch_for_pretty.ml', 27, 7, 28, 30, 830, 905):int
+                ]
+            )@loc('demo_binsearch_for_pretty.ml', 26, 6, 28, 31, 815, 906):int
+        )@loc('demo_binsearch_for_pretty.ml', 5, 2, 28, 31, 126, 906):int
+        )@loc('demo_binsearch_for_pretty.ml', 4, 6, 28, 31, 116, 906):(array(A) -> A -> int),
+        unit@loc('demo_binsearch_for_pretty.ml', 29, 8, 29, 10, 917, 919):unit
+    )@loc('demo_binsearch_for_pretty.ml', 3, 0, 28, 31, 63, 906):int
+)@loc('demo_binsearch_for_pretty.ml', 1, 0, 2, 15, 0, 60):int.

@@ -1,0 +1,18 @@
+let('f_assert32'@loc('ruslan-0_for_pretty.ml', 2, 2, 2, 12, 41, 51):(A -> int),
+    abs(['l_a3_13'@loc('ruslan-0_for_pretty.ml', 2, 13, 2, 20, 52, 59):A],
+    let('a4'@loc('ruslan-0_for_pretty.ml', 3, 25, 3, 27, 127, 129):list(B),
+        'List.nil'@loc('ruslan-0_for_pretty.ml', 3, 30, 3, 32, 132, 134):list(B),
+        0@loc('ruslan-0_for_pretty.ml', 3, 36, 3, 37, 138, 139):int
+    )@loc('ruslan-0_for_pretty.ml', 2, 23, 3, 37, 62, 139):int
+    )@loc('ruslan-0_for_pretty.ml', 2, 13, 3, 37, 52, 139):(A -> int),
+    let('_15'@loc('ruslan-0_for_pretty.ml', 5, 2, 5, 5, 184, 187):int,
+        app('f_assert32'@loc('ruslan-0_for_pretty.ml', 7, 4, 7, 14, 232, 242):(_A -> int),
+            [app('Obj.magic'@loc('ruslan-0_for_pretty.ml', 8, 18, 8, 27, 298, 307):(unit -> _A),
+                 [unit@loc('ruslan-0_for_pretty.ml', 8, 28, 8, 30, 308, 310):unit
+                 ]
+             )@loc('ruslan-0_for_pretty.ml', 8, 18, 8, 30, 298, 310):_A
+            ]
+        )@loc('ruslan-0_for_pretty.ml', 7, 4, 8, 31, 232, 311):int,
+        unit@loc('ruslan-0_for_pretty.ml', 9, 8, 9, 10, 322, 324):unit
+    )@loc('ruslan-0_for_pretty.ml', 4, 0, 8, 31, 142, 311):unit
+)@loc('ruslan-0_for_pretty.ml', 1, 0, 3, 37, 0, 139):unit.

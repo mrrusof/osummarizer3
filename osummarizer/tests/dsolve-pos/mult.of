@@ -1,0 +1,48 @@
+ltr([('mult1'@loc('mult_for_pretty.ml', 4, 2, 4, 7, 77, 82):(int -> int -> int),
+      abs(['x3'@loc('mult_for_pretty.ml', 4, 8, 4, 10, 83, 85):int,
+           'y4'@loc('mult_for_pretty.ml', 4, 11, 4, 13, 86, 88):int
+      ],
+      ite(app('||'@loc('mult_for_pretty.ml', 5, 15, 5, 17, 106, 108):(bool -> bool -> bool),
+              [app('<='@loc('mult_for_pretty.ml', 5, 9, 5, 11, 100, 102):(int -> int -> bool),
+                   ['x3'@loc('mult_for_pretty.ml', 5, 6, 5, 8, 97, 99):int,
+                    0@loc('mult_for_pretty.ml', 5, 12, 5, 13, 103, 104):int
+                   ]
+               )@loc('mult_for_pretty.ml', 5, 6, 5, 13, 97, 104):bool,
+               app('<='@loc('mult_for_pretty.ml', 5, 22, 5, 24, 113, 115):(int -> int -> bool),
+                   ['y4'@loc('mult_for_pretty.ml', 5, 19, 5, 21, 110, 112):int,
+                    0@loc('mult_for_pretty.ml', 5, 25, 5, 26, 116, 117):int
+                   ]
+               )@loc('mult_for_pretty.ml', 5, 19, 5, 26, 110, 117):bool
+              ]
+          )@loc('mult_for_pretty.ml', 5, 5, 5, 27, 96, 118):bool,
+          0@loc('mult_for_pretty.ml', 6, 7, 6, 8, 126, 127):int,
+          app('+'@loc('mult_for_pretty.ml', 7, 10, 7, 11, 138, 139):(int -> int -> int),
+              ['x3'@loc('mult_for_pretty.ml', 7, 7, 7, 9, 135, 137):int,
+               app('mult1'@loc('mult_for_pretty.ml', 8, 15, 8, 20, 188, 193):(int -> int -> int),
+                   ['x3'@loc('mult_for_pretty.ml', 8, 21, 8, 23, 194, 196):int,
+                    app('-'@loc('mult_for_pretty.ml', 8, 28, 8, 29, 201, 202):(int -> int -> int),
+                        ['y4'@loc('mult_for_pretty.ml', 8, 25, 8, 27, 198, 200):int,
+                         1@loc('mult_for_pretty.ml', 8, 30, 8, 31, 203, 204):int
+                        ]
+                    )@loc('mult_for_pretty.ml', 8, 25, 8, 31, 198, 204):int
+                   ]
+               )@loc('mult_for_pretty.ml', 8, 15, 8, 32, 188, 205):int
+              ]
+          )@loc('mult_for_pretty.ml', 7, 7, 8, 33, 135, 206):int
+      )@loc('mult_for_pretty.ml', 5, 2, 8, 33, 93, 206):int
+      )@loc('mult_for_pretty.ml', 4, 8, 8, 33, 83, 206):(int -> int -> int)),
+     ('main2'@loc('mult_for_pretty.ml', 10, 2, 10, 7, 246, 251):(unit -> unit),
+      abs([unit@loc('mult_for_pretty.ml', 10, 8, 10, 10, 252, 254):unit],
+      assert(app('<='@loc('mult_for_pretty.ml', 12, 16, 12, 18, 308, 310):(int -> int -> bool),
+                 [100@loc('mult_for_pretty.ml', 12, 12, 12, 15, 304, 307):int,
+                  app('mult1'@loc('mult_for_pretty.ml', 13, 22, 13, 27, 368, 373):(int -> int -> int),
+                      [100@loc('mult_for_pretty.ml', 13, 28, 13, 31, 374, 377):int,
+                       100@loc('mult_for_pretty.ml', 13, 32, 13, 35, 378, 381):int
+                      ]
+                  )@loc('mult_for_pretty.ml', 13, 22, 13, 35, 368, 381):int
+                 ]
+             )@loc('mult_for_pretty.ml', 12, 12, 13, 36, 304, 382):bool
+      )@loc('mult_for_pretty.ml', 12, 4, 13, 37, 296, 383):unit
+      )@loc('mult_for_pretty.ml', 10, 8, 13, 37, 252, 383):(unit -> unit))
+    ], unit@loc('mult_for_pretty.ml', 14, 8, 14, 10, 394, 396):unit
+)@loc('mult_for_pretty.ml', 1, 0, 13, 37, 0, 383):int.

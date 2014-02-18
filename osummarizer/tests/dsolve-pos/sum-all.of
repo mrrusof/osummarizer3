@@ -1,0 +1,56 @@
+ltr([('sum2'@loc('sum-all_for_pretty.ml', 2, 2, 2, 6, 44, 48):(int -> int),
+      abs(['x7'@loc('sum-all_for_pretty.ml', 2, 7, 2, 9, 49, 51):int],
+      ite(app('<='@loc('sum-all_for_pretty.ml', 3, 8, 3, 10, 62, 64):(int -> int -> bool),
+              ['x7'@loc('sum-all_for_pretty.ml', 3, 5, 3, 7, 59, 61):int,
+               0@loc('sum-all_for_pretty.ml', 3, 11, 3, 12, 65, 66):int
+              ]
+          )@loc('sum-all_for_pretty.ml', 3, 5, 3, 12, 59, 66):bool,
+          0@loc('sum-all_for_pretty.ml', 4, 7, 4, 8, 74, 75):int,
+          app('+'@loc('sum-all_for_pretty.ml', 5, 10, 5, 11, 86, 87):(int -> int -> int),
+              ['x7'@loc('sum-all_for_pretty.ml', 5, 7, 5, 9, 83, 85):int,
+               app('sum2'@loc('sum-all_for_pretty.ml', 6, 15, 6, 19, 139, 143):(int -> int),
+                   [app('-'@loc('sum-all_for_pretty.ml', 6, 24, 6, 25, 148, 149):(int -> int -> int),
+                        ['x7'@loc('sum-all_for_pretty.ml', 6, 21, 6, 23, 145, 147):int,
+                         1@loc('sum-all_for_pretty.ml', 6, 26, 6, 27, 150, 151):int
+                        ]
+                    )@loc('sum-all_for_pretty.ml', 6, 21, 6, 27, 145, 151):int
+                   ]
+               )@loc('sum-all_for_pretty.ml', 6, 15, 6, 28, 139, 152):int
+              ]
+          )@loc('sum-all_for_pretty.ml', 5, 7, 6, 29, 83, 153):int
+      )@loc('sum-all_for_pretty.ml', 3, 2, 6, 29, 56, 153):int
+      )@loc('sum-all_for_pretty.ml', 2, 7, 6, 29, 49, 153):(int -> int))
+    ],
+    ltr([('h3'@loc('sum-all_for_pretty.ml', 10, 2, 10, 4, 241, 243):(int -> A),
+          abs(['y5'@loc('sum-all_for_pretty.ml', 10, 5, 10, 7, 244, 246):int
+          ],
+          let('_16'@loc('sum-all_for_pretty.ml', 12, 5, 12, 8, 296, 299):unit,
+              assert(app('<='@loc('sum-all_for_pretty.ml', 14, 18, 14, 20, 360, 362):(int -> int -> bool),
+                         ['y5'@loc('sum-all_for_pretty.ml', 14, 15, 14, 17, 357, 359):int,
+                          app('sum2'@loc('sum-all_for_pretty.ml', 15, 24, 15, 28, 423, 427):(int -> int),
+                              ['y5'@loc('sum-all_for_pretty.ml', 15, 29, 15, 31, 428, 430):int
+                              ]
+                          )@loc('sum-all_for_pretty.ml', 15, 24, 15, 31, 423, 430):int
+                         ]
+                     )@loc('sum-all_for_pretty.ml', 14, 15, 15, 32, 357, 431):bool
+              )@loc('sum-all_for_pretty.ml', 14, 7, 15, 33, 349, 432):unit,
+              app('h3'@loc('sum-all_for_pretty.ml', 17, 8, 17, 10, 482, 484):(int -> A),
+                  [app('+'@loc('sum-all_for_pretty.ml', 17, 15, 17, 16, 489, 490):(int -> int -> int),
+                       ['y5'@loc('sum-all_for_pretty.ml', 17, 12, 17, 14, 486, 488):int,
+                        1@loc('sum-all_for_pretty.ml', 17, 17, 17, 18, 491, 492):int
+                       ]
+                   )@loc('sum-all_for_pretty.ml', 17, 12, 17, 18, 486, 492):int
+                  ]
+              )@loc('sum-all_for_pretty.ml', 17, 8, 17, 19, 482, 493):A
+          )@loc('sum-all_for_pretty.ml', 11, 3, 17, 19, 252, 493):A
+          )@loc('sum-all_for_pretty.ml', 10, 5, 17, 20, 244, 494):(int -> A)),
+         ('main4'@loc('sum-all_for_pretty.ml', 19, 2, 19, 7, 538, 543):(unit -> A),
+          abs([unit@loc('sum-all_for_pretty.ml', 19, 8, 19, 10, 544, 546):unit
+          ],
+          app('h3'@loc('sum-all_for_pretty.ml', 20, 15, 20, 17, 601, 603):(int -> A),
+              [0@loc('sum-all_for_pretty.ml', 20, 18, 20, 19, 604, 605):int]
+          )@loc('sum-all_for_pretty.ml', 20, 15, 20, 19, 601, 605):A
+          )@loc('sum-all_for_pretty.ml', 19, 8, 20, 19, 544, 605):(unit -> A))
+        ], unit@loc('sum-all_for_pretty.ml', 21, 8, 21, 10, 616, 618):unit
+    )@loc('sum-all_for_pretty.ml', 7, 0, 20, 19, 156, 605):int
+)@loc('sum-all_for_pretty.ml', 1, 0, 6, 29, 0, 153):int.
