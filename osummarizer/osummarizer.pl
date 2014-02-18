@@ -4,6 +4,8 @@
                            dpush_portray_clause/1, dpop_portray_clause/1,
                            dnl/0]).
 :- use_module('ext/utils/misc.pl', [format_atom/3]).
+:- use_module('ext/utils/list_utils.pl', [tuple2flatlist/2,
+                                          list2tuple/2]).
 :- use_module(library(avl), [avl_fetch/3,
                              avl_store/4]).
 :- use_module(library(lists), [rev/2,
@@ -762,9 +764,10 @@ apply_equations(K, Eqs, R) :-
 /*
 mk_summ_cstr(+N, +K, -SummCstr)
 */
-mk_summ_cstr(N, K, (Summ :- (K, Ctx))) :-
+mk_summ_cstr(N, K, (Summ :- Body)) :-
         mk_summ_pred(N, Summ),
-        mk_ctx_pred(N, Ctx).
+        mk_ctx_pred(N, Ctx),
+        tup_flatten((K, Ctx), Body).
 
 /*
 mk_ctx_cstr(+N, +K, -CtxCstr)
@@ -821,7 +824,14 @@ ctx_sy(N, Sy) :-
         unname_type(N, T),
         N = X:_,
         format_atom('ctx_~w_~w', [X, T], Sy).
-        
+
+/*
+tup_flatten(+K, -R)
+*/
+tup_flatten(K, R) :-
+        tuple2flatlist(K, L),
+        list2tuple(L, R).
+
 /*
 remove_true(+K, -R)
 */

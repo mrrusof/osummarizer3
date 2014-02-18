@@ -1020,8 +1020,8 @@ pos_summ_assume_assert :-
                                  )@loc('assume_assert.ml',0,0,0,0,0,0):v:unit,
                       n_e_to_c1(E, L, N, empty, true, 'f1_int->unit'('_'), S),
                       S == [('ctx_f1_int->unit'('A_F1_V') :- 'A_F1_V'='_'),
-                            ('f1_int->unit'('X2') :- 'X2'>0, 'X2'>1, 'ctx_f1_int->unit'('X2')),
-                            ('X2'>0 :- 'X2'>1, 'ctx_f1_int->unit'('X2'))] )).
+                            ('f1_int->unit'('X2') :- ('X2'>0, 'X2'>1, 'ctx_f1_int->unit'('X2'))),
+                            ('X2'>0 :- ('X2'>1, 'ctx_f1_int->unit'('X2')))] )).
 
 summarization :-
         pos_return_1,
