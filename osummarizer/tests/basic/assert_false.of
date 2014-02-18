@@ -1,0 +1,3 @@
+assert(
+       false@loc('assert_false.ml', 0, 0, 0, 0, 0, 0):bool
+      )@loc('assert_false.ml', 0, 0, 0, 0, 0, 0):unit.
