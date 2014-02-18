@@ -708,8 +708,8 @@ n_e_to_c1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, N, Env, K, DK, S) :- !,
 n_e_to_c1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S) :- !,
         dpush_portray_clause(n_e_to_c1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S)-let-in),
         n_e_to_c1(E1, L1, N1, Env, K, DK1, S1),
-        remove_true((DK1,K), K1),
-        n_e_to_c1(E2, L2, N2, Env, K1, DK2, S2),
+        remove_true((DK1,K), K2),
+        n_e_to_c1(E2, L2, N2, Env, K2, DK2, S2),
         ord_union(S1, S2, S),
         remove_true((DK2,DK1), DK),
         dpop_portray_clause(n_e_to_c1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S)-let-out).
@@ -903,7 +903,7 @@ unname_type(_:T, R) :-
 % **********************************************************************
 % Main
 
-summarize(FileIn, _FileOut) :-
+summarize(FileIn, FileOut) :-
 % Read the expression
         open(FileIn, read, In),
         read(In, ELT),
@@ -937,10 +937,16 @@ summarize(FileIn, _FileOut) :-
 % Summarize the expression
         named_exp_to_constraints(ELN, Ss),
 % Output the summarized program
-        (   foreach(S, Ss)
-        do  print(S),
-            nl
-        ).
+        (   FileOut == no_file ->
+            Out = user_output
+        ;   open(FileOut, write, Out)
+        ),
+        (   foreach(S, Ss),
+            param(Out)
+        do  print(Out, S),
+            print(Out, '\n')
+        ),
+        close(Out).
 
 
 % **********************************************************************
