@@ -16,10 +16,9 @@
                                  ord_add_element/3]).
 
 :- multifile user:portray/1.
+:- dynamic user:portray/1.
 
-% Define operator @
-% A@B:C == (A@B):C because current_op(N, _, :) ---> N = 550
-:- op(540, xfy, @).
+:- op(540, xfy, @). % A@B:C == (A@B):C because current_op(N, _, :) ---> N = 550
 
 
 % **********************************************************************
@@ -208,7 +207,11 @@ wf_t(T) :-
 % Pretty printing of typed expressions, named expressions,
 % and constraints.
 
-user:portray(Term) :-
+stop_pp :-
+        retractall(portray(_)).
+start_pp :-
+        assert((
+portray(Term) :-
         (   compound(Term) ->
             (   Term = (Head:-Body) ->
                 print(Head),
@@ -253,7 +256,9 @@ user:portray(Term) :-
                     format('~q(~p)', [F, A])
                 )
             )
-        ).
+        )
+        )).
+
 
 /*
 paren_t(+T)
@@ -666,7 +671,7 @@ n_e_to_c1(app(Ef@Lf:Nf, ELNs), L, N, Env, K, DK, S) :- !,
                 ord_union(InS, Si, OutS),
                 avl_store(Xi, InEqs, Vi, OutEqs)
             ),
-            mk_conj(Ks, Kctx),
+            list2tuple(Ks, Kctx),
             mk_ctx_cstr(Nf, Kctx, CtxCstr),
             ord_union(Sf, Ss, S1),
             ord_add_element(S1, CtxCstr, S),
@@ -776,13 +781,6 @@ mk_ctx_cstr(N, K, (CtxPred :- K)) :-
         mk_ctx_pred(N, CtxPred).
 
 /*
-mk_conj(+Ks, -K)
-*/
-mk_conj(Ks, K) :-
-        Kpre =.. [','|Ks],
-        remove_true(Kpre, K).
-
-/*
 mk_summ_pred(+N, -Summ)
 */
 mk_summ_pred(N, Summ) :-
@@ -836,19 +834,14 @@ tup_flatten(K, R) :-
 remove_true(+K, -R)
 */
 remove_true(K, R) :-
-        (   compound(K), K =.. [','|As] ->
-            (   foreach(Ai, As),
-                fromto([], InBs, OutBs, BsRev)
-            do  (   Ai == true ->
-                    OutBs = InBs
-                ;   remove_true(Ai, Bi),
-                    OutBs = [Bi|InBs]
-                )
-            ),
-            rev(BsRev, Bs),
-            (   Bs = [B] ->
-                R = B
-            ;   R =.. [','|Bs]
+        (   compound(K), K = (A, B) ->
+            (   A == true ->
+                remove_true(B, R)
+            ;   B == true ->
+                remove_true(A, R)
+            ;   remove_true(A, Ar),
+                remove_true(B, Br),
+                R = (Ar, Br)
             )
         ;   R = K
         ).
@@ -908,7 +901,7 @@ unname_type(_:T, R) :-
 
 
 % **********************************************************************
-% Entry point
+% Main
 
 summarize(FileIn, _FileOut) :-
 % Read the expression
@@ -948,3 +941,8 @@ summarize(FileIn, _FileOut) :-
         do  print(S),
             nl
         ).
+
+
+% **********************************************************************
+% Init
+:- start_pp.

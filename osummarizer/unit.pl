@@ -800,6 +800,15 @@ pp_named :-
 % **********************************************************************
 % Summarization of named expressions
 
+pos_remove_true_1 :-
+        unit_test("Positive test remove_true 1",
+                  remove_true(('X2'>1,'ctx_f1_int->unit'('X2'),true), ('X2'>1,'ctx_f1_int->unit'('X2'))) ).
+pos_remove_true_2 :-
+        unit_test("Positive test remove_true 2",
+                  remove_true(('X2'>1,true,'ctx_f1_int->unit'('X2')), ('X2'>1,'ctx_f1_int->unit'('X2'))) ).
+pos_remove_true_3 :-
+        unit_test("Positive test remove_true 3",
+                  remove_true((true,'X2'>1,'ctx_f1_int->unit'('X2')), ('X2'>1,'ctx_f1_int->unit'('X2'))) ).
 pos_return_1 :-
         unit_test("Positive test return 1",
                   return(f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)), bb_f:i) ).
@@ -821,9 +830,6 @@ pos_unname_type_1 :-
         unit_test("Positive test unname_type 1",
                   unname_type(v1:(v11:(v111:i->v112:i)->v12:(v121:(v1211:i->v1212:i)->v122:i)),
                                  (    (     i->     i)->          (      i->      i)->     i ) )).
-pos_remove_true_1 :-
-        unit_test("Positive test remove_true 1",
-                  remove_true(('X2'>1,'ctx_f1_int->unit'('X2'),true), ('X2'>1,'ctx_f1_int->unit'('X2'))) ).
 pos_summ_const_true :-
         unit_test("Positive test summarizing const true",
                   n_e_to_c1(true, loc('max.ml', 0, 0, 0, 0, 0, 0), r:bool, empty, true, true, []) ).
@@ -921,8 +927,8 @@ pos_summ_let_function :-
                                      )@loc('id.ml', 0, 0, 0, 0, 0, 0):v:int
                                  )@loc('id.ml', 0, 0, 0, 0, 0, 0):v:int,
                       n_e_to_c1(E, L, N, empty, true, 'id1_int->int'(3, 'V'), S),
-                      S == [('ctx_id1_int->int'('A_ID1_V'):-'A_ID1_V'=3),
-                            ('id1_int->int'('X2','RET_ID1'):-'RET_ID1'='X2','ctx_id1_int->int'('X2'))] )).
+                      S == [('ctx_id1_int->int'('A_ID1_V') :- 'A_ID1_V'=3),
+                            ('id1_int->int'('X2','RET_ID1'):- 'RET_ID1'='X2','ctx_id1_int->int'('X2'))] )).
 pos_summ_let_assume_assert :-
         unit_test("Positive test summarizing let assume-assert",
                   (   E@L:N = let('_3'@loc('assume_assert.ml',0,0,0,0,0,0):'_3':unit,
@@ -1024,13 +1030,15 @@ pos_summ_assume_assert :-
                             ('X2'>0 :- ('X2'>1, 'ctx_f1_int->unit'('X2')))] )).
 
 summarization :-
+        pos_remove_true_1,
+        pos_remove_true_2,
+        pos_remove_true_3,
         pos_return_1,
         pos_return_2,
         pos_formals_return_1,
         pos_formals_return_2,
         pos_uppercase_atom_1,
         pos_unname_type_1,
-        pos_remove_true_1,
         pos_summ_const_true,
         pos_summ_const_10,
         pos_summ_const_hola,
