@@ -1,0 +1,8 @@
+let('id1'@loc('id.ml', 0, 0, 0, 0, 0, 0):(int -> int),
+    abs(['x2'@loc('id.ml', 0, 0, 0, 0, 0, 0):int],
+        'x2'@loc('id.ml', 0, 0, 0, 0, 0, 0):int
+        )@loc('id.ml', 0, 0, 0, 0, 0, 0):(int -> int),
+    app('id1'@loc('id.ml', 0, 0, 0, 0, 0, 0):(int -> int),
+        [3@loc('id.ml', 0, 0, 0, 0, 0, 0):int]
+       )@loc('id.ml', 0, 0, 0, 0, 0, 0):int
+   )@loc('id.ml', 0, 0, 0, 0, 0, 0):int.

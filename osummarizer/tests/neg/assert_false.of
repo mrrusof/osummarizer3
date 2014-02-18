@@ -1,0 +1,5 @@
+let('_12'@loc('assert_false_for_pretty.ml', 2, 2, 2, 5, 45, 48):A,
+    assert(false@loc('assert_false_for_pretty.ml', 3, 10, 3, 22, 100, 112):bool
+    )@loc('assert_false_for_pretty.ml', 3, 10, 3, 22, 100, 112):A,
+    unit@loc('assert_false_for_pretty.ml', 4, 8, 4, 10, 123, 125):unit
+)@loc('assert_false_for_pretty.ml', 1, 0, 3, 22, 0, 112):A.
