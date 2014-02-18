@@ -911,7 +911,7 @@ summarize(FileIn, FileOut) :-
         \+ (
              ELT == end_of_file,
              print('ERROR: the input file is empty\n'),
-             halt
+             halt(1)
            ),
 % Check that the expression is well-formed
         (   bb_get(nowf, 1) ->
@@ -919,7 +919,7 @@ summarize(FileIn, FileOut) :-
         ;   (   wf_typed_exp(ELT) ->
                 true
             ;   print('ERROR: the input expression is malformed\n'),
-                halt
+                halt(1)
             )
         ),
 % Log the typed expression
