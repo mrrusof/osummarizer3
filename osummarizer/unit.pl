@@ -1117,4 +1117,5 @@ pp_cstr :-
         naming,
         pp_named,
         summarization,
-        pp_cstr.
+        pp_cstr,
+        flush_output.
