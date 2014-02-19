@@ -703,7 +703,7 @@ n_e_to_c1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, N, Env, K, DK, S) :- !,
         n_e_to_c1(E2, L2, N2, Env, K, DK2, S2),
         n_e_to_c1(E3, L3, N3, Env, K, DK3, S3),
         ord_union([S1, S2, S3], S),
-        DK = (DK1, DK2 ; \+DK1, DK3),
+        DK = (DK1 -> DK2 ; DK3),
         dpop_portray_clause(n_e_to_c1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, N, Env, K, DK, S)-ite-out).
 n_e_to_c1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S) :- !,
         dpush_portray_clause(n_e_to_c1(let(Y@Ly:Ny, E1@L1:N1, E2@L2:N2), L, N, Env, K, DK, S)-let-in),
