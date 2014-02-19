@@ -15,5 +15,8 @@ osummarizer.sav: main.pl osummarizer.pl log.pl ext/utils/misc.pl
 ext/utils/misc.pl:
 	./ext/checkout-externals.sh
 
+unit:
+	sicstus -l unit.pl --goal 'flush_output, halt.' 2>/dev/null
+
 clean:
 	rm -f *.sav *.sav.log osummarizer 1 tests/*/*.qarmc
