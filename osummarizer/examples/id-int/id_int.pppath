@@ -1,0 +1,14 @@
+(let
+  id1:id1:(x2:int -> ret_id1:int)
+=
+  (fun
+    x2:x2:int
+  ->
+    x2:ret_id1:int --> RET_ID1=X2
+  ):id1:(x2:int -> ret_id1:int) --> true
+in
+  (
+    id1:id1:(a_id1_v:int -> v:int) --> 'id1_int->int'(A_ID1_V, V)
+    3:a_id1_v:int --> A_ID1_V=3
+  ):v:int --> 'id1_int->int'(3, V)
+):v:int --> 'id1_int->int'(3, V)

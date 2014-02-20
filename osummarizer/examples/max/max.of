@@ -1,0 +1,19 @@
+let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(A -> A -> A),
+    abs(['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):A,
+         'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):A
+         ],
+        ite(app('>'@loc('max.ml', 0, 0, 0, 0, 0, 0):(A -> A -> bool),
+                ['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):A,
+                 'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):A
+                 ]
+               )@loc('max.ml', 0, 0, 0, 0, 0, 0):bool,
+            'x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):A,
+            'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):A
+            )@loc('max.ml', 0, 0, 0, 0, 0, 0):A
+       )@loc('max.ml', 0, 0, 0, 0, 0, 0):(A -> A -> A),
+    app('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
+        [3@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
+         1@loc('max.ml', 0, 0, 0, 0, 0, 0):int
+        ]
+       )@loc('max.ml', 0, 0, 0, 0, 0, 0):int
+   )@loc('max.ml', 0, 0, 0, 0, 0, 0):int.

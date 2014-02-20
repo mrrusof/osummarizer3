@@ -1,0 +1,16 @@
+let('x1'@loc('incr_env.ml', 0, 0, 0, 0, 0, 0):int,
+    1@loc('incr_env.ml', 0, 0, 0, 0, 0, 0):int,
+    let('incr2'@loc('incr_env.ml', 0, 0, 0, 0, 0, 0):(int -> int),
+        abs(['y3'@loc('incr_env.ml', 0, 0, 0, 0, 0, 0):int
+            ],
+            app('+'@loc('incr_env.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
+                ['y3'@loc('incr_env.ml', 0, 0, 0, 0, 0, 0):int,
+                 'x1'@loc('incr_env.ml', 0, 0, 0, 0, 0, 0):int
+                 ]
+               )@loc('incr_env.ml', 0, 0, 0, 0, 0, 0):int
+           )@loc('incr_env.ml', 0, 0, 0, 0, 0, 0):(int -> int),
+        app('incr2'@loc('incr_env.ml', 0, 0, 0, 0, 0, 0):(int -> int),
+            [2@loc('incr_env.ml', 0, 0, 0, 0, 0, 0):int]
+           )@loc('incr_env.ml', 0, 0, 0, 0, 0, 0):int
+       )@loc('incr_env.ml', 0, 0, 0, 0, 0, 0):int
+   )@loc('incr_env.ml', 0, 0, 0, 0, 0, 0):int.
