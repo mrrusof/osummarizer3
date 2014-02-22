@@ -3,7 +3,7 @@ all: osummarizer
 osummarizer: osummarizer.sav
 	spld --output="osummarizer" --main=restore --moveable --static --resources-from-sav --resources=osummarizer.sav=/osummarizer/osummarizer.sav
 
-osummarizer.sav: main.pl osummarizer.pl log.pl ext/utils/misc.pl
+osummarizer.sav: main.pl osummarizer.pl terms.ml log.pl debug.pl ext/utils/misc.pl
 	rm -f osummarizer.sav
 	sicstus --goal "compile(main), save_program('osummarizer.sav'), halt." 2>&1 | tee osummarizer.sav.log
 	(! sed -e '/\[Choices\] treated as local in do-loop but also used outside/D' \
