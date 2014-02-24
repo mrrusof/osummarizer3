@@ -98,8 +98,11 @@ string(C) :- ( foreach(N, C) do number(N) ).
 
 ml_id(X) :- atom(X), \+ml_const(X).
 
+base_type(int).
+base_type(bool).
+base_type(string).
 function_type(T) :- compound(T), T = (_->_).
-nullary_type(T) :- ( atom(T) -> true ; T =..['*'|_] ).
+nullary_type(T) :- ( base_type(T) -> true ; T =..['*'|_] ).
 type_var(T) :- var(T).
 
 
@@ -200,7 +203,7 @@ wf_t(T) :-
                 do  wf_t(Ti)
                 )
             )
-        ;   ( nullary_type(T) ; type_var(T) )
+        ;   ( base_type(T) ; type_var(T) )
         ).
 
 
@@ -585,7 +588,7 @@ t_e_to_n_e1(E, L, T, X, Env, E@L:N) :- !,
                 avl_fetch(E, Env, Nenv),
                 choose_names(Nenv, Nloc, _:Tn),
                 N = X:Tn
-            ;   N = X:T
+            ;   base_typeN = X:T
             )
         ;   ml_const(E) ->
             (   function_type(T) ->
