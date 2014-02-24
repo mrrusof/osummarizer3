@@ -99,7 +99,7 @@ string(C) :- ( foreach(N, C) do number(N) ).
 ml_id(X) :- atom(X), \+ml_const(X).
 
 function_type(T) :- compound(T), T = (_->_).
-nullary_type(T) :- atom(T).
+nullary_type(T) :- ( atom(T) -> true ; T =..['*'|_] ).
 type_var(T) :- var(T).
 
 
@@ -195,7 +195,7 @@ wf_t(T) :-
             (   T = (T1->T2) ->
                 wf_t(T1),
                 wf_t(T2)
-            ;   T =.. [_|Ts],
+            ;   T =.. ['*'|Ts],
                 (   foreach(Ti, Ts)
                 do  wf_t(Ti)
                 )
