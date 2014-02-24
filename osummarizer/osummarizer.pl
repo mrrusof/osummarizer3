@@ -100,9 +100,10 @@ ml_id(X) :- atom(X), \+ml_const(X).
 
 base_type(int).
 base_type(bool).
+base_type(unit).
 base_type(string).
 function_type(T) :- compound(T), T = (_->_).
-nullary_type(T) :- ( base_type(T) -> true ; T =..['*'|_] ).
+nullary_type(T) :- base_type(T). % ( base_type(T) -> true ; T =..['*'|_] ).
 type_var(T) :- var(T).
 
 
@@ -198,10 +199,10 @@ wf_t(T) :-
             (   T = (T1->T2) ->
                 wf_t(T1),
                 wf_t(T2)
-            ;   T =.. ['*'|Ts],
-                (   foreach(Ti, Ts)
-                do  wf_t(Ti)
-                )
+            % ;   T =.. ['*'|Ts],
+            %     (   foreach(Ti, Ts)
+            %     do  wf_t(Ti)
+            %     )
             )
         ;   ( base_type(T) ; type_var(T) )
         ).
@@ -588,7 +589,7 @@ t_e_to_n_e1(E, L, T, X, Env, E@L:N) :- !,
                 avl_fetch(E, Env, Nenv),
                 choose_names(Nenv, Nloc, _:Tn),
                 N = X:Tn
-            ;   base_typeN = X:T
+            ;   N = X:T
             )
         ;   ml_const(E) ->
             (   function_type(T) ->
@@ -727,10 +728,10 @@ n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, X:T, app(Ekf@Lf:Nf, ELNKs)@L:X:T-->DK) :- !,
                 Call =.. [Ef|AsFs]
             ;   Call =.. [Ef|Actuals]
             ),
-            (   ( T == bool ; T == unit ) ->
+            return(X:T, R:B),
+            (   ( B == bool ; B == unit ) ->
                 list2tuple([Call|Ks], DK)
-            ;   return(X:T, R:_),
-                uppercase_atom(R, Ru),
+            ;   uppercase_atom(R, Ru),
                 list2tuple([Ru=Call|Ks], DK)
             ),
             Ekf = Ef
@@ -796,21 +797,24 @@ return(X:T, R) :-
 path_exp_to_constraints(+ELNK, -S)
 */
 path_exp_to_constraints(E@L:N-->K, S) :-
-        p_e_to_c1(E, L, N, K, S).
+        p_e_to_c1(E, L, N, true, K, S).
 
 /*
-p_e_to_c1(+E, +L, +N, +K, -S)
+p_e_to_c1(+E, +L, +N, +K, +Kd, -S)
 */
-p_e_to_c1(app(Ef@Lf:Nf, ELNs), L, X:T, K, S) :- !,
-        dpush_portray_clause(p_e_to_c1(app(Ef@Lf:Nf, ELNs), L, X:T, K, S)-app-in),
+p_e_to_c1(app(Ef@Lf:Nf, ELNKs), L, X:T, K, Kd, S) :- !,
+        dpush_portray_clause(p_e_to_c1(app(Ef@Lf:Nf, ELNKs), L, X:T, K, Kd, S)-app-in),
         (   ml_const(Ef) ->
-            (   nullary_type(T) ->
-                S = []
+            (   function_type(T) ->
+                mk_summ_pred(X:T, Head),
+                remove_true((Kd, K), Body),
+                S = [(Head :- Body)]
+            ;   S = []
             )
         ),
-        dpush_portray_clause(p_e_to_c1(app(Ef@Lf:Nf, ELNs), L, X:T, K, S)-app-out).
-p_e_to_c1(E, L, X:T, K, S) :- !,
-        dpush_portray_clause(p_e_to_c1(E, L, X:T, K, S)-id-cst-in),
+        dpush_portray_clause(p_e_to_c1(app(Ef@Lf:Nf, ELNKs), L, X:T, K, Kd, S)-app-out).
+p_e_to_c1(E, L, X:T, K, Kd, S) :- !,
+        dpush_portray_clause(p_e_to_c1(E, L, X:T, K, Kd, S)-id-cst-in),
         (   ml_const(E) ->
             (   function_type(T) ->
                 ml_const_to_name(E, En),
@@ -835,7 +839,23 @@ p_e_to_c1(E, L, X:T, K, S) :- !,
             ;   S = []
             )
         ),
-        dpop_portray_clause(p_e_to_c1(E, L, X:T, K, S)-id-cst-out).
+        dpop_portray_clause(p_e_to_c1(E, L, X:T, K, Kd, S)-id-cst-out).
+
+/*
+remove_true(+K, -R)
+*/
+remove_true(K, R) :-
+        (   compound(K), K = (A, B) ->
+            (   A == true ->
+                remove_true(B, R)
+            ;   B == true ->
+                remove_true(A, R)
+            ;   remove_true(A, Ar),
+                remove_true(B, Br),
+                R = (Ar, Br)
+            )
+        ;   R = K
+        ).
 
 /*
 mk_summ_pred(+N, -Summ)
@@ -1058,21 +1078,7 @@ name_of_type(X:_, X).
 %         tuple2flatlist(K, L),
 %         list2tuple(L, R).
 
-% /*
-% remove_true(+K, -R)
-% */
-% remove_true(K, R) :-
-%         (   compound(K), K = (A, B) ->
-%             (   A == true ->
-%                 remove_true(B, R)
-%             ;   B == true ->
-%                 remove_true(A, R)
-%             ;   remove_true(A, Ar),
-%                 remove_true(B, Br),
-%                 R = (Ar, Br)
-%             )
-%         ;   R = K
-%         ).
+
 
 
 

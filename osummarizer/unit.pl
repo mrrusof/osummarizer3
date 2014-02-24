@@ -643,8 +643,8 @@ ut("Negative naming const ()", \+ t_e_to_n_e1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0
 ut("path   const ()", n_e_to_p_e1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit-->('V'=1))).
 ut("Negative path 1 const ()", \+ n_e_to_p_e1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit-->1)).
 ut("Negative path 2 const ()", \+ n_e_to_p_e1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit-->true)).
-ut("summ   const ()", p_e_to_c1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, 'V'=1, [])).
-ut("Negative summ   const ()", \+ p_e_to_c1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, 'V'=1, [_])).
+ut("summ   const ()", p_e_to_c1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, true, 'V'=1, [])).
+ut("Negative summ   const ()", \+ p_e_to_c1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, true, 'V'=1, [_])).
 
 ut("PP typed const ()", pp(unit@loc('c.ml', 0, 0, 0, 0, 0, 0):unit, "unit:unit")).
 ut("PP named const ()", pp(unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit, "unit:v:unit")).
@@ -655,7 +655,7 @@ ut("path   const true", n_e_to_p_e1(true, loc('c.ml', 0, 0, 0, 0, 0, 0), v:bool,
 ut("Negative path 1 const true", \+ n_e_to_p_e1(true, loc('c.ml', 0, 0, 0, 0, 0, 0), v:bool, true@loc('c.ml', 0, 0, 0, 0, 0, 0):v:bool-->('V'=true))).
 ut("Negative path 2 const true", \+ n_e_to_p_e1(true, loc('c.ml', 0, 0, 0, 0, 0, 0), v:bool, true@loc('c.ml', 0, 0, 0, 0, 0, 0):v:bool-->true)).
 ut("Negative path 3 const true", \+ n_e_to_p_e1(true, loc('c.ml', 0, 0, 0, 0, 0, 0), v:bool, true@loc('c.ml', 0, 0, 0, 0, 0, 0):v:bool-->1)).
-ut("summ   const true", p_e_to_c1(true, loc('c.ml', 0, 0, 0, 0, 0, 0), v:bool, 'V'=1, [])).
+ut("summ   const true", p_e_to_c1(true, loc('c.ml', 0, 0, 0, 0, 0, 0), v:bool, true, 'V'=1, [])).
 
 ut("PP typed const true", pp(true@loc('c.ml', 0, 0, 0, 0, 0, 0):bool, "true:bool")).
 ut("PP named const true", pp(true@loc('c.ml', 0, 0, 0, 0, 0, 0):v:bool, "true:v:bool")).
@@ -663,16 +663,16 @@ ut("PP path  const true", pp(true@loc('c.ml', 0, 0, 0, 0, 0, 0):v:bool-->'V'=1, 
 
 ut("naming const 10", t_e_to_n_e1(10, loc('c.ml', 0, 0, 0, 0, 0, 0), int, v, empty, 10@loc('c.ml', 0, 0, 0, 0, 0, 0):v:int)).
 ut("path   const 10", n_e_to_p_e1(10, loc('c.ml', 0, 0, 0, 0, 0, 0), v:int, 10@loc('c.ml', 0, 0, 0, 0, 0, 0):v:int-->('V'=10))).
-ut("summ   const 10", p_e_to_c1(10, loc('c.ml', 0, 0, 0, 0, 0, 0), v:int, 'V'=10, [])).
+ut("summ   const 10", p_e_to_c1(10, loc('c.ml', 0, 0, 0, 0, 0, 0), v:int, true, 'V'=10, [])).
 
 ut("naming const \"hola\"", t_e_to_n_e1("hola", loc('c.ml', 0, 0, 0, 0, 0, 0), string, str, empty, "hola"@loc('c.ml', 0, 0, 0, 0, 0, 0):str:string)).
 ut("path   const \"hola\"", n_e_to_p_e1("hola", loc('c.ml', 0, 0, 0, 0, 0, 0), str:string, "hola"@loc('c.ml', 0, 0, 0, 0, 0, 0):str:string-->('STR'="hola"))).
-ut("summ   const \"hola\"", p_e_to_c1("hola", loc('c.ml', 0, 0, 0, 0, 0, 0), v:int, 'STR'="hola", [])).
+ut("summ   const \"hola\"", p_e_to_c1("hola", loc('c.ml', 0, 0, 0, 0, 0, 0), v:int, true, 'STR'="hola", [])).
 
 ut("naming const +", t_e_to_n_e1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), (int -> int -> int), v, empty, '+'@loc('c.ml', 0, 0, 0, 0, 0, 0):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)))).
 ut("path   const +", n_e_to_p_e1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), '+'@loc('c.ml', 0, 0, 0, 0, 0, 0):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int))-->true)).
-ut("summ   const +", p_e_to_c1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), true, [('plus_int->int->int'('A_PLUS_V', 'BA_PLUS_V', 'BB_PLUS_V') :- 'BB_PLUS_V'='A_PLUS_V'+'BA_PLUS_V')])).
-ut("Negative summ   const +", \+ p_e_to_c1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), true, [])).
+ut("summ   const +", p_e_to_c1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), true, true, [('plus_int->int->int'('A_PLUS_V', 'BA_PLUS_V', 'BB_PLUS_V') :- 'BB_PLUS_V'='A_PLUS_V'+'BA_PLUS_V')])).
+ut("Negative summ   const +", \+ p_e_to_c1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), true, true, [])).
 
 ut("PP typed const +", pp('+'@loc('c.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int), "(+):(int -> int -> int)")).
 ut("PP named const +", pp('+'@loc('c.ml', 0, 0, 0, 0, 0, 0):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), "(+):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int))")).
@@ -680,8 +680,8 @@ ut("PP path  const +", pp('+'@loc('c.ml', 0, 0, 0, 0, 0, 0):plus_v:(a_plus_v:int
 
 ut("naming const >", t_e_to_n_e1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), (int -> int -> bool), v, empty, '>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)))).
 ut("path   const >", n_e_to_p_e1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)), '>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool))-->true)).
-ut("summ   const >", p_e_to_c1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)), true, [('gt_int->int->bool'('A_GT_V', 'BA_GT_V') :- 'A_GT_V'>'BA_GT_V')])).
-ut("Negative summ   const >", \+ p_e_to_c1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), gt_v:(a_gt_v:int -> b_v:(ba_gt_v:int -> bb_gt_v:bool)), true, [])).
+ut("summ   const >", p_e_to_c1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)), true, true, [('gt_int->int->bool'('A_GT_V', 'BA_GT_V') :- 'A_GT_V'>'BA_GT_V')])).
+ut("Negative summ   const >", \+ p_e_to_c1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), gt_v:(a_gt_v:int -> b_v:(ba_gt_v:int -> bb_gt_v:bool)), true, true, [])).
 
 ut("PP typed const >", pp('>'@loc('c.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool), "(>):(int -> int -> bool)")).
 ut("PP named const >", pp('>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)), "(>):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool))")).
@@ -696,10 +696,10 @@ ut("naming x:unit", t_e_to_n_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), unit, v, empty
 ut("Negative naming x:unit", \+ t_e_to_n_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), unit, v, empty, x@loc('x.ml', 0, 0, 0, 0, 0, 0):x:unit)).
 ut("path   x:unit", n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:unit-->('V'='X'))).
 ut("Negative path 1 x:unit", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:unit-->true)).
-ut("Negative path 2 x:unit", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:unit-->'V'='X')).
-ut("Negative path 3 x:unit", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:unit-->'X'='V')).
-ut("summ   x:unit", p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, ('V'='X'), [])).
-ut("Negative summ   x:unit", \+ p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, ('V'='X'), [_])).
+ut("Negative path 2 x:unit", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, (x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:unit-->'V')='X')).
+ut("Negative path 3 x:unit", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:unit-->('X'='V'))).
+ut("summ   x:unit", p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, true, 'V'='X', [])).
+ut("Negative summ   x:unit", \+ p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, true, 'V'='X', [_])).
 
 ut("PP typed x:unit", pp(x@loc('x.ml', 0, 0, 0, 0, 0, 0):unit, "x:unit")).
 ut("PP named x:unit", pp(x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:unit, "x:v:unit")).
@@ -711,8 +711,8 @@ ut("path   x:bool", n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:bool, x@loc(
 ut("Negative path 1 x:bool", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:bool, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:bool-->true)).
 ut("Negative path 2 x:bool", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:bool, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:bool-->'V'='X')).
 ut("Negative path 3 x:bool", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:bool, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:bool-->'X'='V')).
-ut("summ   x:bool", p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:bool, ('V'='X'), [])).
-ut("Negative summ   x:bool", \+ p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:bool, ('V'='X'), [_])).
+ut("summ   x:bool", p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:bool, true, 'V'='X', [])).
+ut("Negative summ   x:bool", \+ p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:bool, true, 'V'='X', [_])).
 
 ut("naming x:int", t_e_to_n_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), int, v, empty, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:int)).
 ut("Negative naming x:int", \+ t_e_to_n_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), int, v, empty, x@loc('x.ml', 0, 0, 0, 0, 0, 0):x:int)).
@@ -720,15 +720,15 @@ ut("path   x:int", n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int, x@loc('x
 ut("Negative path 1 x:int", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:int-->true)).
 ut("Negative path 2 x:int", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:int-->'V'='X')).
 ut("Negative path 3 x:int", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:int-->'X'='V')).
-ut("summ   x:int", p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int, ('V'='X'), [])).
-ut("Negative summ   x:int", \+ p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int, ('V'='X'), [_])).
+ut("summ   x:int", p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int, true, 'V'='X', [])).
+ut("Negative summ   x:int", \+ p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int, true, 'V'='X', [_])).
 
 ut("naming add:(int->int->int)", t_e_to_n_e1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), (int->int->int), v, node(add, add:(a_add:int -> b_add:(ba_add:int -> bb_add:int)), 0, empty, empty), add@loc('x.ml', 0, 0, 0, 0, 0, 0):v:(a_add_v:int->b_add:(ba_add_v:int->bb_add_v:int)))).
 ut("Negative naming add:(int->int->int)", \+ t_e_to_n_e1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), (int->int->int), v, empty, add@loc('x.ml', 0, 0, 0, 0, 0, 0):add_v:(a_add_v:int->b_add:(ba_add_v:int->bb_add_v:int)))).
 ut("path   add:(int->int->int)", n_e_to_p_e1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), v:(a_add_v:int->b_add:(ba_add_v:int->bb_add_v:int)), add@loc('x.ml', 0, 0, 0, 0, 0, 0):v:(a_add_v:int->b_add:(ba_add_v:int->bb_add_v:int))-->true)).
 ut("Negative path   add:(int->int->int)", \+ n_e_to_p_e1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), v:(a_add_v:int->b_add:(ba_add_v:int->bb_add_v:int)), add@loc('x.ml', 0, 0, 0, 0, 0, 0):v:(a_add_v:int->b_add:(ba_add_v:int->bb_add_v:int))-->('V'='ADD'))).
-ut("summ   add:(int->int->int)", p_e_to_c1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), v:(a_add_v:int->b_add:(ba_add_v:int->bb_add_v:int)), true, [('v_int->int->int'('A_ADD_V', 'BA_ADD_V', 'BB_ADD_V') :- 'add_int->int->int'('A_ADD_V', 'BA_ADD_V', 'BB_ADD_V'))])).
-ut("Negative summ   add:(int->int->int)", \+ p_e_to_c1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), v:(a_add_v:int->b_add:(ba_add_v:int->bb_add_v:int)), true, [])).
+ut("summ   add:(int->int->int)", p_e_to_c1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), v:(a_add_v:int->b_add:(ba_add_v:int->bb_add_v:int)), true, true, [('v_int->int->int'('A_ADD_V', 'BA_ADD_V', 'BB_ADD_V') :- 'add_int->int->int'('A_ADD_V', 'BA_ADD_V', 'BB_ADD_V'))])).
+ut("Negative summ   add:(int->int->int)", \+ p_e_to_c1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), v:(a_add_v:int->b_add:(ba_add_v:int->bb_add_v:int)), true, true, [])).
 
 ut("PP typed add:(int->int->int)", pp(add@loc('x.ml', 0, 0, 0, 0, 0, 0):(int->int->int), "add:(int -> int -> int)")).
 ut("PP named add:(int->int->int)", pp(add@loc('x.ml', 0, 0, 0, 0, 0, 0):v:(a_add_v:int->b_add:(ba_add_v:int->bb_add_v:int)), "add:v:(a_add_v:int -> b_add:(ba_add_v:int -> bb_add_v:int))")).
@@ -738,8 +738,8 @@ ut("naming comp:(int->int->bool)", t_e_to_n_e1(comp, loc('x.ml', 0, 0, 0, 0, 0, 
 ut("Negative naming comp:(int->int->bool)", \+ t_e_to_n_e1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), (int->int->bool), v, empty, comp@loc('x.ml', 0, 0, 0, 0, 0, 0):comp_v:(a_comp_v:int->b_comp:(ba_comp_v:int->bb_comp_v:bool)))).
 ut("path   comp:(int->int->bool)", n_e_to_p_e1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), v:(a_comp_v:int->b_comp:(ba_comp_v:int->bb_comp_v:bool)), comp@loc('x.ml', 0, 0, 0, 0, 0, 0):v:(a_comp_v:int->b_comp:(ba_comp_v:int->bb_comp_v:bool))-->true)).
 ut("Negative path   comp:(int->int->bool)", \+ n_e_to_p_e1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), v:(a_comp_v:int->b_comp:(ba_comp_v:int->bb_comp_v:int)), comp@loc('x.ml', 0, 0, 0, 0, 0, 0):v:(a_comp_v:int->b_comp:(ba_comp_v:int->bb_comp_v:bool))-->('V'='COMP'))).
-ut("summ   comp:(int->int->bool)", p_e_to_c1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), v:(a_comp_v:int->b_comp:(ba_comp_v:int->bb_comp_v:bool)), true, [('v_int->int->bool'('A_COMP_V', 'BA_COMP_V') :- 'comp_int->int->bool'('A_COMP_V', 'BA_COMP_V'))])).
-ut("Negative summ   comp:(int->int->bool)", \+ p_e_to_c1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), v:(a_comp_v:int->b_comp:(ba_comp_v:int->bb_comp_v:bool)), true, [])).
+ut("summ   comp:(int->int->bool)", p_e_to_c1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), v:(a_comp_v:int->b_comp:(ba_comp_v:int->bb_comp_v:bool)), true, true, [('v_int->int->bool'('A_COMP_V', 'BA_COMP_V') :- 'comp_int->int->bool'('A_COMP_V', 'BA_COMP_V'))])).
+ut("Negative summ   comp:(int->int->bool)", \+ p_e_to_c1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), v:(a_comp_v:int->b_comp:(ba_comp_v:int->bb_comp_v:bool)), true, true, [])).
 
 
 
@@ -749,15 +749,15 @@ ut("Negative summ   comp:(int->int->bool)", \+ p_e_to_c1(comp, loc('x.ml', 0, 0,
 
 ut("naming 1+2", t_e_to_n_e1(app((+)@l2:(int->int->int), [1@l3:int, 2@l4:int]), l1, int, v, empty, app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> v:int)), [1@l3:a_plus_v:int, 2@l4:ba_plus_v:int])@l1:v:int)).
 ut("path   1+2", n_e_to_p_e1(app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> v:int)), [1@l3:a_plus_v:int, 2@l4:ba_plus_v:int]), l1, v:int, app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> v:int)), [1@l3:a_plus_v:int, 2@l4:ba_plus_v:int])@l1:v:int-->('V'=1+2))).
-ut("summ   1+2", p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> v:int)), [1@l3:a_plus_v:int, 2@l4:ba_plus_v:int]), l1, v:int, ('V'=1+2), [])).
-ut("Negative summ   1+2", \+ p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> v:int)), [1@l3:a_plus_v:int, 2@l4:ba_plus_v:int]), l1, v:int, ('V'=1+2), [_])).
+ut("summ   1+2", p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> v:int)), [1@l3:a_plus_v:int, 2@l4:ba_plus_v:int]), l1, v:int, true, 'V'=1+2, [])).
+ut("Negative summ   1+2", \+ p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> v:int)), [1@l3:a_plus_v:int, 2@l4:ba_plus_v:int]), l1, v:int, true, 'V'=1+2, [_])).
 
 ut("PP typed 1+2", pp(app('+'@l2:(int -> int -> bool), [1@l3:int, 2@l4:int])@l1:bool, "(\n  (+):(int -> int -> bool)\n  1:int\n  2:int\n):bool")).
 
 ut("naming 1>2", t_e_to_n_e1(app((>)@l2:(int->int->bool), [1@l3:int, 2@l4:int]), l1, bool, v, empty, app((>)@l2:gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> v:bool)), [1@l3:a_gt_v:int, 2@l4:ba_gt_v:int])@l1:v:bool)).
 ut("path   1>2", n_e_to_p_e1(app((>)@l2:gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> v:bool)), [1@l3:a_gt_v:int, 2@l4:ba_gt_v:int]), l1, v:bool, app((>)@l2:gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> v:bool)), [1@l3:a_gt_v:int, 2@l4:ba_gt_v:int])@l1:v:bool-->(1>2))).
-ut("summ   1>2", p_e_to_c1(app((>)@l2:gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> v:bool)), [1@l3:a_gt_v:int, 2@l4:ba_gt_v:int]), l1, v:bool, (1>2), [])).
-ut("Negative summ   1>2", \+ p_e_to_c1(app((>)@l2:gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> v:bool)), [1@l3:a_gt_v:int, 2@l4:ba_gt_v:int]), l1, v:bool, (1>2), [_])).
+ut("summ   1>2", p_e_to_c1(app((>)@l2:gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> v:bool)), [1@l3:a_gt_v:int, 2@l4:ba_gt_v:int]), l1, v:bool, true, 1>2, [])).
+ut("Negative summ   1>2", \+ p_e_to_c1(app((>)@l2:gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> v:bool)), [1@l3:a_gt_v:int, 2@l4:ba_gt_v:int]), l1, v:bool, true, 1>2, [_])).
 
 ut("naming (1+2)+3", t_e_to_n_e1(app((+)@l2:(int->int->int), [app((+)@l4:(int->int->int), [1@l5:int, 2@l6:int])@l3:int, 3@l7:int]), l1, int, v, empty,
                                  app((+)@l2:plus_v:(a_plus_v:int->b_plus_v:(ba_plus_v:int->v:int)),
@@ -787,14 +787,14 @@ ut("summ   (1+2)+3", p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int->b_plus_v:(ba_plu
                                            2@l6:ba_plus_a_plus_v:int]
                                          )@l3:a_plus_v:int --> ('A_PLUS_V'=1+2),
                                       3@l7:ba_plus_v:int]
-                                  ), l1, v:int, ('V'='A_PLUS_V'+3, 'A_PLUS_V'=1+2), [])).
+                                  ), l1, v:int, true, ('V'='A_PLUS_V'+3, 'A_PLUS_V'=1+2), [])).
 ut("Negative summ   (1+2)+3", \+ p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int->b_plus_v:(ba_plus_v:int->v:int)),
                                      [app((+)@l4:plus_a_plus_v:(a_plus_a_plus_v:int->b_plus_a_plus_v:(ba_plus_a_plus_v:int->a_plus_v:int)),
                                           [1@l5:a_plus_a_plus_v:int,
                                            2@l6:ba_plus_a_plus_v:int]
                                          )@l3:a_plus_v:int --> ('A_PLUS_V'=1+2),
                                       3@l7:ba_plus_v:int]
-                                  ), l1, v:int, ('V'='A_PLUS_V'+3, 'A_PLUS_V'=1+2), [_])).
+                                  ), l1, v:int, true, ('V'='A_PLUS_V'+3, 'A_PLUS_V'=1+2), [_])).
 
 ut("PP path  (1+2)+3", pp(app((+)@l2:plus_v:(a_plus_v:int->b_plus_v:(ba_plus_v:int->v:int)),
                                      [app((+)@l4:plus_a_plus_v:(a_plus_a_plus_v:int->b_plus_a_plus_v:(ba_plus_a_plus_v:int->a_plus_v:int)),
@@ -807,20 +807,19 @@ ut("PP path  (1+2)+3", pp(app((+)@l2:plus_v:(a_plus_v:int->b_plus_v:(ba_plus_v:i
 
 ut("naming  (1+2)=3", t_e_to_n_e1(app((=)@l2:(int->int->bool),
                                       [app((+)@l4:(int->int->int),
-                                          [1@l5:int,
-                                           2@l6:int]
-                                         )@l3:int,
-                                      3@l7:int]
-                                  ), l1, bool, v, empty,
+                                           [1@l5:int,
+                                            2@l6:int]
+                                          )@l3:int,
+                                       3@l7:int]
+                                     ), l1, bool, v, empty,
                                   app((=)@l2:eq_v:(a_eq_v:int->b_eq_v:(ba_eq_v:int->v:bool)),
                                       [app((+)@l4:plus_a_eq_v:(a_plus_a_eq_v:int -> b_plus_a_eq_v:(ba_plus_a_eq_v:int -> a_eq_v:int)),
-                                          [1@l5:a_plus_a_eq_v:int,
-                                           2@l6:ba_plus_a_eq_v:int]
-                                         )@l3:a_eq_v:int,
-                                      3@l7:ba_eq_v:int]
-                                  )@l1:v:bool)).
-ut("path    (1+2)=3", n_e_to_p_e1(
-                                  app((=)@l2:eq_v:(a_eq_v:int->b_eq_v:(ba_eq_v:int->v:bool)),
+                                           [1@l5:a_plus_a_eq_v:int,
+                                            2@l6:ba_plus_a_eq_v:int]
+                                          )@l3:a_eq_v:int,
+                                       3@l7:ba_eq_v:int]
+                                     )@l1:v:bool)).
+ut("path    (1+2)=3", n_e_to_p_e1(app((=)@l2:eq_v:(a_eq_v:int->b_eq_v:(ba_eq_v:int->v:bool)),
                                       [app((+)@l4:plus_a_eq_v:(a_plus_a_eq_v:int -> b_plus_a_eq_v:(ba_plus_a_eq_v:int -> a_eq_v:int)),
                                           [1@l5:a_plus_a_eq_v:int,
                                            2@l6:ba_plus_a_eq_v:int]
@@ -835,34 +834,37 @@ ut("path    (1+2)=3", n_e_to_p_e1(
                                        3@l7:ba_eq_v:int]
                                      )@l1:v:bool --> ('A_EQ_V'=3, 'A_EQ_V'=1+2))).
 ut("summ    (1+2)=3", p_e_to_c1(app((=)@l2:eq_v:(a_eq_v:int->b_eq_v:(ba_eq_v:int->v:bool)),
-                                     [app((+)@l4:eq_a_eq_v:(a_eq_a_eq_v:int->b_eq_a_eq_v:(ba_eq_a_eq_v:int->a_eq_v:int)),
-                                          [1@l5:a_eq_a_eq_v:int,
-                                           2@l6:ba_eq_a_eq_v:int]
-                                         )@l3:a_eq_v:int --> ('A_EQ_V'=1+2),
-                                      3@l7:ba_eq_v:int]
-                                  ), l1, v:bool, ('A_EQ_V'=3, 'A_EQ_V'=1+2), [])).
-ut("Negative summ    (1+2)=3", \+ p_e_to_c1(app((=)@l2:eq_v:(a_eq_v:int->b_eq_v:(ba_eq_v:int->v:bool)),
-                                     [app((+)@l4:eq_a_eq_v:(a_eq_a_eq_v:int->b_eq_a_eq_v:(ba_eq_a_eq_v:int->a_eq_v:int)),
-                                          [1@l5:a_eq_a_eq_v:int,
-                                           2@l6:ba_eq_a_eq_v:int]
-                                         )@l3:a_eq_v:int --> ('A_EQ_V'=1+2),
-                                      3@l7:ba_eq_v:int]
-                                  ), l1, v:bool, ('A_EQ_V'=3, 'A_EQ_V'=1+2), [_])).
+                                    [app((+)@l4:eq_a_eq_v:(a_eq_a_eq_v:int->b_eq_a_eq_v:(ba_eq_a_eq_v:int->a_eq_v:int)),
+                                         [1@l5:a_eq_a_eq_v:int,
+                                          2@l6:ba_eq_a_eq_v:int]
+                                        )@l3:a_eq_v:int --> ('A_EQ_V'=1+2),
+                                     3@l7:ba_eq_v:int]
+                                   ), l1, v:bool, true, ('A_EQ_V'=3, 'A_EQ_V'=1+2), [])).
+ut("Negative summ   (1+2)=3", \+ p_e_to_c1(app((=)@l2:eq_v:(a_eq_v:int->b_eq_v:(ba_eq_v:int->v:bool)),
+                                               [app((+)@l4:eq_a_eq_v:(a_eq_a_eq_v:int->b_eq_a_eq_v:(ba_eq_a_eq_v:int->a_eq_v:int)),
+                                                    [1@l5:a_eq_a_eq_v:int,
+                                                     2@l6:ba_eq_a_eq_v:int]
+                                                   )@l3:a_eq_v:int --> ('A_EQ_V'=1+2),
+                                                3@l7:ba_eq_v:int]
+                                              ), l1, v:bool, true, ('A_EQ_V'=3, 'A_EQ_V'=1+2), [_])).
 
 ut("naming (+) 1", t_e_to_n_e1(app((+)@l2:(int->int->int), [1@l3:int]), l1, (int->int), v, empty, app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)), [1@l3:a_plus_v:int])@l1:v:(ba_plus_v:int -> bb_plus_v:int))).
-ut("path   (+) 1", n_e_to_p_e1(
-                               app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
+ut("path   (+) 1", n_e_to_p_e1(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
                                    [1@l3:a_plus_v:int]
                                   ), l1, v:(ba_plus_v:int -> bb_plus_v:int),
                                app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
                                    [1@l3:a_plus_v:int]
                                   )@l1:v:(ba_plus_v:int -> bb_plus_v:int)-->('BB_PLUS_V'=1+'BA_PLUS_V'))).
-ut("summ   (+) 1", p_e_to_c1(
-                             app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
+ut("summ   (+) 1", p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
                                  [1@l3:a_plus_v:int]
-                                ), l1, v:(ba_plus_v:int -> bb_plus_v:int), 'BB_PLUS_V'=1+'BA_PLUS_V',
-                             [( 'v_int->int'('BA_P_V', 'BB_P_V') :- 'BB_P_V'=1+'BA_P_V' )])).
-ut("Negative summ   (+) 1", \+ p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)), [1@l3:a_plus_v:int]), l1, v:(ba_plus_v:int -> bb_plus_v:int), ('V'=1+'BB_PLUS_V'), [])).
+                                ), l1, v:(ba_plus_v:int -> bb_plus_v:int), true, 'BB_PLUS_V'=1+'BA_PLUS_V',
+                             [( 'v_int->int'('BA_PLUS_V', 'BB_PLUS_V') :- 'BB_PLUS_V'=1+'BA_PLUS_V' )])).
+ut("Negative summ   (+) 1", \+ p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
+                                             [1@l3:a_plus_v:int]
+                                            ), l1, v:(ba_plus_v:int -> bb_plus_v:int), true, ('V'=1+'BB_PLUS_V'), [])).
+
+ut("naming (<) true", t_e_to_n_e1(app((<)@l2:(bool->bool->bool), [true@l3:bool]), l1, (bool->bool), v, empty, app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:bool)), [true@l3:a_lt_v:bool])@l1:v:(ba_lt_v:bool -> bb_lt_v:bool))).
+ut("path   (<) true", n_e_to_p_e1(app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:bool)), [true@l3:a_lt_v:bool]), l1, v:(ba_lt_v:bool -> bb_lt_v:bool), app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:bool)), [true@l3:a_lt_v:bool])@l1:v:(ba_lt_v:bool -> bb_lt_v:bool)-->(true<'BA_LT_V'))).
 
 
 
