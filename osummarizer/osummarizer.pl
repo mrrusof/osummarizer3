@@ -718,9 +718,12 @@ n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, X:T, app(Ekf@Lf:Nf, ELNKs)@L:X:T-->DK) :- !,
                  )
             ),
             Call =.. [Ef|Actuals],
-            uppercase_atom(X, Xu),
-            Ekf = Ef,
-            list2tuple([Xu=Call|Ks], DK)
+            (   ( T == bool ; T == unit ) ->
+                list2tuple([Call|Ks], DK)
+            ;   uppercase_atom(X, Xu),
+                list2tuple([Xu=Call|Ks], DK)
+            ),
+            Ekf = Ef
         ),
         dpush_portray_clause(n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, N, app(Ekf@Lf:Nf, ELNKs)@L:X:T-->DK)-app-out).
 n_e_to_p_e1(E, L, X:T, E@L:X:T-->DK) :- !,
