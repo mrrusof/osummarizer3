@@ -677,23 +677,15 @@ ml_const_to_name('Obj.magic', 'magic').
 % **********************************************************************
 % Path of named expressions
 
-named_exp_to_path_exp(E@L:N, ELNK) :-
-        n_e_to_p_e1(E, L, N, ELNK).
+named_exp_to_path_exp(E@L:N, ELN-->K) :-
+        n_e_to_p_e1(E, L, N, ELN-->K),
+        lformat('\n* Main path conjunct:\n~p\n\n', [K]).
 
 n_e_to_p_e1(E, L, X:T, E@L:X:T-->DK) :- !,
         dpush_portray_clause(n_e_to_p_e1(E, L, X:T, ELNK)-id-cst-in),
         (   ml_const(E) ->
             (   function_type(T) ->
-                formals(X:T, NFormals),
-                maplist(name_of_type, NFormals, Formals),
-                maplist(uppercase_atom, Formals, UFormals),
-                return(X:T, Y:R),
-                (   ( R == bool ; R == unit ) ->
-                    DK =.. [E|UFormals]
-                ;   Call =.. [E|UFormals],
-                    uppercase_atom(Y, Yu),
-                    DK = (Yu=Call)
-                )
+                DK = true
             ;   uppercase_atom(X, Xu),
                 (   ( E == true ; T == unit ) ->
                     DK = (Xu=1)
@@ -719,23 +711,6 @@ return(X:T, R) :-
 	;   R = X:T
 	).
 
-% /*
-% remove_true(+K, -R)
-% */
-% remove_true(K, R) :-
-%         (   compound(K), K = (A, B) ->
-%             (   A == true ->
-%                 remove_true(B, R)
-%             ;   B == true ->
-%                 remove_true(A, R)
-%             ;   remove_true(A, Ar),
-%                 remove_true(B, Br),
-%                 R = (Ar, Br)
-%             )
-%         ;   R = K
-%         ).
-
-
 
 
 % **********************************************************************
@@ -744,13 +719,72 @@ return(X:T, R) :-
 path_exp_to_constraints(E@L:N-->K, S) :-
         p_e_to_c1(E, L, N, K, S).
 
-p_e_to_c1(E, L, N, K, S) :- !,
-        dpush_portray_clause(p_e_to_c1(E, L, N, K, S)-id-cst-in),
+p_e_to_c1(E, L, X:T, K, S) :- !,
+        dpush_portray_clause(p_e_to_c1(E, L, X:T, K, S)-id-cst-in),
         (   ml_const(E) ->
-            S = []
+            (   function_type(T) ->
+                ml_const_to_name(E, En),
+                mk_summ_pred(En:T, Summ),
+                formals(X:T, NFormals),
+                maplist(name_of_type, NFormals, Formals),
+                maplist(uppercase_atom, Formals, UFormals),
+                Call =.. [E|UFormals],
+                return(X:T, Y:R),
+                (   (R == bool ; R == unit) ->
+                    S = [(Summ :- Call)]
+                ;   uppercase_atom(Y, Yu),
+                    S = [(Summ :- Yu=Call)]
+                )
+            ;   S = []
+            )
         ),
-        dpop_portray_clause(p_e_to_c1(E, L, N, K, S)-id-cst-out).
+        dpop_portray_clause(p_e_to_c1(E, L, X:T, K, S)-id-cst-out).
 
+/*
+mk_summ_pred(+N, -Summ)
+*/
+mk_summ_pred(N, Summ) :-
+        summ_sy(N, Sy),
+        return(N, _:RetT),
+        (   (RetT == bool ; RetT == unit) ->
+            formals(N, NFormals),
+            maplist(name_of_type, NFormals, Formals),
+            maplist(uppercase_atom, Formals, UFormals),
+            Summ =.. [Sy|UFormals]
+        ;   formals_return(N, NFormalsRet),
+            maplist(name_of_type, NFormalsRet, FormalsRet),
+            maplist(uppercase_atom, FormalsRet, UFormalsRet),
+            Summ =.. [Sy|UFormalsRet]
+        ).
+
+/*
+summ_sy(+N, -Sy)
+*/
+summ_sy(N, Sy) :-
+        unname_type(N, T),
+        N = X:_,
+        format_atom('~w_~w', [X, T], Sy).
+
+/*
+formals_return(+N, -FormalsRet)
+*/
+formals_return(X:T, [R|Rs]) :-
+	(   compound(T), T = (R->T2) ->
+            formals_return(T2, Rs)
+	;   R = X:T,
+	    Rs = []
+	).
+
+/*
+unname_type(+N, -T)
+*/
+unname_type(_:T, R) :-
+	(   compound(T), T = (N1->N2) ->
+            unname_type(N1, R1),
+            unname_type(N2, R2),
+            R = (R1->R2)
+	;   R = T
+	).
 
 
 % % **********************************************************************
@@ -893,22 +927,6 @@ p_e_to_c1(E, L, N, K, S) :- !,
 % mk_ctx_cstr(N, K, (CtxPred :- K)) :-
 %         mk_ctx_pred(N, CtxPred).
 
-% /*
-% mk_summ_pred(+N, -Summ)
-% */
-% mk_summ_pred(N, Summ) :-
-%         summ_sy(N, Sy),
-%         return(N, _:RetT),
-%         (   (RetT == bool ; RetT == unit) ->
-%             formals(N, NFormals),
-%             maplist(name_of_type, NFormals, Formals),
-%             maplist(uppercase_atom, Formals, UFormals),
-%             Summ =.. [Sy|UFormals]
-%         ;   formals_return(N, NFormalsRet),
-%             maplist(name_of_type, NFormalsRet, FormalsRet),
-%             maplist(uppercase_atom, FormalsRet, UFormalsRet),
-%             Summ =.. [Sy|UFormalsRet]
-%         ).
 
 % /*
 % mk_ctx_pred(+N, -Ctx)
@@ -920,13 +938,7 @@ p_e_to_c1(E, L, N, K, S) :- !,
 %         maplist(uppercase_atom, Formals, UFormals),
 %         Ctx =.. [Sy|UFormals].
 
-% /*
-% summ_sy(+N, -Sy)
-% */
-% summ_sy(N, Sy) :-
-%         unname_type(N, T),
-%         N = X:_,
-%         format_atom('~w_~w', [X, T], Sy).
+
 
 % /*
 % ctx_sy(+N, -Sy)
@@ -943,32 +955,24 @@ p_e_to_c1(E, L, N, K, S) :- !,
 %         tuple2flatlist(K, L),
 %         list2tuple(L, R).
 
-
-
 % /*
-% formals_return(+N, -FormalsRet)
+% remove_true(+K, -R)
 % */
-% formals_return(X:T, [R|Rs]) :-
-% 	(   compound(T), T = (R->T2) ->
-%             formals_return(T2, Rs)
-% 	;   R = X:T,
-% 	    Rs = []
-% 	).
+% remove_true(K, R) :-
+%         (   compound(K), K = (A, B) ->
+%             (   A == true ->
+%                 remove_true(B, R)
+%             ;   B == true ->
+%                 remove_true(A, R)
+%             ;   remove_true(A, Ar),
+%                 remove_true(B, Br),
+%                 R = (Ar, Br)
+%             )
+%         ;   R = K
+%         ).
 
 
 
-
-
-% /*
-% unname_type(+N, -T)
-% */
-% unname_type(_:T, R) :-
-% 	(   compound(T), T = (N1->N2) ->
-%             unname_type(N1, R1),
-%             unname_type(N2, R2),
-%             R = (R1->R2)
-% 	;   R = T
-% 	).
 
 
 

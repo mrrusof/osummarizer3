@@ -670,23 +670,29 @@ ut("naming const \"hola\"", t_e_to_n_e1("hola", loc('c.ml', 0, 0, 0, 0, 0, 0), s
 ut("path   const \"hola\"", n_e_to_p_e1("hola", loc('c.ml', 0, 0, 0, 0, 0, 0), str:string, "hola"@loc('c.ml', 0, 0, 0, 0, 0, 0):str:string-->('STR'="hola"))).
 ut("summ   const \"hola\"", p_e_to_c1("hola", loc('c.ml', 0, 0, 0, 0, 0, 0), v:int, 'STR'="hola", [])).
 
-ut("naming const +", t_e_to_n_e1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), (int -> int -> int), v, empty, '+'@loc('c.ml', 0, 0, 0, 0, 0, 0):'plus_v':('a_plus_v':int -> 'b_plus_v':('ba_plus_v':int -> 'bb_plus_v':int)))).
-ut("path   const +", n_e_to_p_e1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), 'plus_v':('a_plus_v':int -> 'b_plus_v':('ba_plus_v':int -> 'bb_plus_v':int)), '+'@loc('c.ml', 0, 0, 0, 0, 0, 0):'plus_v':('a_plus_v':int -> 'b_plus_v':('ba_plus_v':int -> 'bb_plus_v':int))-->('BB_PLUS_V'='A_PLUS_V'+'BA_PLUS_V'))).
-ut("summ   const +", p_e_to_c1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), 'plus_v':('a_plus_v':int -> 'b_plus_v':('ba_plus_v':int -> 'bb_plus_v':int)), 'BB_PLUS_V'='A_PLUS_V'+'BA_PLUS_V', [])).
-ut("Negative summ   const +", \+ p_e_to_c1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), 'plus_v':('a_plus_v':int -> 'b_plus_v':('ba_plus_v':int -> 'bb_plus_v':int)), 'BB_PLUS_V'='A_PLUS_V'+'BA_PLUS_V', [_])).
+ut("naming const +", t_e_to_n_e1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), (int -> int -> int), v, empty, '+'@loc('c.ml', 0, 0, 0, 0, 0, 0):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)))).
+ut("path   const +", n_e_to_p_e1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), '+'@loc('c.ml', 0, 0, 0, 0, 0, 0):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int))-->true)).
+ut("summ   const +", p_e_to_c1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), true, [('plus_int->int->int'('A_PLUS_V', 'BA_PLUS_V', 'BB_PLUS_V') :- 'BB_PLUS_V'='A_PLUS_V'+'BA_PLUS_V')])).
+ut("Negative summ   const +", \+ p_e_to_c1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), true, [])).
 
 ut("PP typed const +", pp('+'@loc('c.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int), "(+):(int -> int -> int)")).
-ut("PP named const +", pp('+'@loc('c.ml', 0, 0, 0, 0, 0, 0):'plus_v':('a_plus_v':int -> 'b_plus_v':('ba_plus_v':int -> 'bb_plus_v':int)), "(+):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int))")).
-ut("PP path  const +", pp('+'@loc('c.ml', 0, 0, 0, 0, 0, 0):'plus_v':('a_plus_v':int -> 'b_plus_v':('ba_plus_v':int -> 'bb_plus_v':int))-->'BB_P_V'='A_P_V'+'BA_P_V', "(+):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)) --> BB_P_V=A_P_V+BA_P_V")).
+ut("PP named const +", pp('+'@loc('c.ml', 0, 0, 0, 0, 0, 0):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), "(+):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int))")).
+ut("PP path  const +", pp('+'@loc('c.ml', 0, 0, 0, 0, 0, 0):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int))-->true, "(+):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)) --> true")).
 
-ut("naming const >", t_e_to_n_e1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), (int -> int -> bool), v, empty, '>'@loc('c.ml', 0, 0, 0, 0, 0, 0):'gt_v':('a_gt_v':int -> 'b_gt_v':('ba_gt_v':int -> 'bb_gt_v':bool)))).
-ut("path   const >", n_e_to_p_e1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), 'gt_v':('a_gt_v':int -> 'b_gt_v':('ba_gt_v':int -> 'bb_gt_v':bool)), '>'@loc('c.ml', 0, 0, 0, 0, 0, 0):'gt_v':('a_gt_v':int -> 'b_gt_v':('ba_gt_v':int -> 'bb_gt_v':bool))-->('A_GT_V'>'BA_GT_V'))).
-ut("summ   const >", p_e_to_c1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), 'gt_v':('a_gt_v':int -> 'b_gt_v':('ba_gt_v':int -> 'bb_gt_v':bool)), 'A_GT_V'>'BA_GT_V', [])).
-ut("Negative summ   const >", \+ p_e_to_c1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), 'gt_v':('a_gt_v':int -> 'b_gt_v':('ba_gt_v':int -> 'bb_gt_v':bool)), 'A_GT_V'>'BA_GT_V', [_])).
+ut("naming const >", t_e_to_n_e1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), (int -> int -> bool), v, empty, '>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)))).
+ut("path   const >", n_e_to_p_e1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)), '>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool))-->true)).
+ut("summ   const >", p_e_to_c1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)), true, [('gt_int->int->bool'('A_GT_V', 'BA_GT_V') :- 'A_GT_V'>'BA_GT_V')])).
+ut("Negative summ   const >", \+ p_e_to_c1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), gt_v:(a_gt_v:int -> b_v:(ba_gt_v:int -> bb_gt_v:bool)), true, [])).
 
 ut("PP typed const >", pp('>'@loc('c.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool), "(>):(int -> int -> bool)")).
-ut("PP named const >", pp('>'@loc('c.ml', 0, 0, 0, 0, 0, 0):'gt_v':('a_gt_v':int -> 'b_gt_v':('ba_gt_v':int -> 'bb_gt_v':bool)), "(>):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool))")).
-ut("PP path const >", pp('>'@loc('c.ml', 0, 0, 0, 0, 0, 0):'gt_v':('a_gt_v':int -> 'b_gt_v':('ba_gt_v':int -> 'bb_gt_v':bool))-->'A_P_V'>'BA_P_V', "(>):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)) --> A_P_V>BA_P_V")).
+ut("PP named const >", pp('>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)), "(>):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool))")).
+ut("PP path const >", pp('>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool))-->true, "(>):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)) --> true")).
+
+
+
+% **********************************************************************
+% Subset x
+
 
 
 
