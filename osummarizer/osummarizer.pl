@@ -574,7 +574,8 @@ t_e_to_n_e1(E, L, T, X, Env, E@L:N) :- !,
                 format_atom('~p_~p', [E, X], EX),
                 name_type(EX, T, Nloc),
                 avl_fetch(E, Env, Nenv),
-                choose_names(Nenv, Nloc, N)
+                choose_names(Nenv, Nloc, _:Tn),
+                N = X:Tn
             ;   N = X:T
             )
         ;   ml_const(E) ->
@@ -677,10 +678,16 @@ ml_const_to_name('Obj.magic', 'magic').
 % **********************************************************************
 % Path of named expressions
 
+/*
+named_exp_to_path_exp(+ELN, -ELNK)
+*/
 named_exp_to_path_exp(E@L:N, ELN-->K) :-
         n_e_to_p_e1(E, L, N, ELN-->K),
         lformat('\n* Main path conjunct:\n~p\n\n', [K]).
 
+/*
+n_e_to_p_e1(+E, +L, +N, -ELNK)
+*/
 n_e_to_p_e1(E, L, X:T, E@L:X:T-->DK) :- !,
         dpush_portray_clause(n_e_to_p_e1(E, L, X:T, ELNK)-id-cst-in),
         (   ml_const(E) ->
@@ -693,6 +700,13 @@ n_e_to_p_e1(E, L, X:T, E@L:X:T-->DK) :- !,
                     DK = (Xu=0)
                 ;   DK = (Xu=E)
                 )
+            )
+        ;   ml_id(E) ->
+            (   function_type(T) ->
+                DK = true
+            ;   uppercase_atom(E, Eu),
+                uppercase_atom(X, Xu),
+                DK = (Xu=Eu)
             )
         ),
         dpop_portray_clause(n_e_to_p_e1(E, L, X:T, ELNK)-id-cst-out).
@@ -716,9 +730,15 @@ return(X:T, R) :-
 % **********************************************************************
 % Summarization of path expressions
 
+/*
+path_exp_to_constraints(+ELNK, -S)
+*/
 path_exp_to_constraints(E@L:N-->K, S) :-
         p_e_to_c1(E, L, N, K, S).
 
+/*
+p_e_to_c1(+E, +L, +N, +K, -S)
+*/
 p_e_to_c1(E, L, X:T, K, S) :- !,
         dpush_portray_clause(p_e_to_c1(E, L, X:T, K, S)-id-cst-in),
         (   ml_const(E) ->
@@ -735,6 +755,13 @@ p_e_to_c1(E, L, X:T, K, S) :- !,
                 ;   uppercase_atom(Y, Yu),
                     S = [(Summ :- Yu=Call)]
                 )
+            ;   S = []
+            )
+        ;   ml_id(E) ->
+            (   function_type(T) ->
+                mk_summ_pred(E:T, Body),
+                mk_summ_pred(X:T, Head),
+                S = [(Head :- Body)]
             ;   S = []
             )
         ),
