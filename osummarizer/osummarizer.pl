@@ -5,7 +5,7 @@
                            dpush_portray_clause/1, dpop_portray_clause/1,
                            dnl/0]).
 :- use_module('ext/utils/misc.pl', [format_atom/3]).
-:- use_module('ext/utils/list_utils.pl', [tuple2flatlist/2,
+:- use_module('ext/utils/list_utils.pl', [% tuple2flatlist/2,
                                           list2tuple/2]).
 :- use_module(library(avl), [avl_fetch/3,
                              avl_store/4]).
@@ -237,12 +237,11 @@ portray(Term) :-
                 do  write(', '),
                     print(Ai)
                 )
-            ;   Term = E@_:X:T-->K ->
-                pp_p_e(E, X, T, K, "")
-            ;   Term = E@_:X:T ->
-                pp_n_e(E, X, T, "")
-            ;   Term = E@_:T ->
-                pp_t_e(E, T, "")
+            ;   (   Term = _@_:_:_-->_
+                ;   Term = _@_:_:_
+                ;   Term = _@_:_
+                ) ->
+                pp_e(Term, "")
             ;   Term = X:(T1->T2) ->
                 format('~p:(', [X]),
                 print(T1),
@@ -289,20 +288,28 @@ pp_const_parenthesis(>=).
 pp_const_parenthesis(<=).
 pp_const_parenthesis(&&).
 
-pp_p_e(E, X, T, K, I) :- !,
-        pp_e(E, I),
-        write(':'),
-        print(X:T),
+pp_e(ELN-->K, I) :- !,
+        pp_e(ELN, I),
         write(' --> '),
         print(K).
-pp_n_e(E, X, T, I) :- !,
+pp_e(E@_:X:T, I) :- !,
         pp_e(E, I),
         write(':'),
         print(X:T).
-pp_t_e(E, T, I) :- !,
+pp_e(E@_:T, I) :- !,
         pp_e(E, I),
         write(':'),
         paren_t(T).
+pp_e(app(Ef, Es), I) :- !,
+        append(I, "  ", J),
+        format('~s(\n', [I]),
+        pp_e(Ef, J),
+        (   foreach(Ei, Es),
+            param(J)
+        do  write('\n'),
+            pp_e(Ei, J)
+        ),
+        format('\n~s)', [I]).
 pp_e(E, I) :- !,
         format('~s', [I]),
         (   pp_const_parenthesis(E) ->
@@ -692,21 +699,30 @@ named_exp_to_path_exp(E@L:N, ELN-->K) :-
 /*
 n_e_to_p_e1(+E, +L, +N, -ELNK)
 */
-n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, X:T, app(Ekf@Lf:Nf, ELNs)@L:X:T-->DK) :- !,
-        dpush_portray_clause(n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, N, app(Ekf@Lf:Nf, ELNs)@L:X:T-->DK)-app-in),
+n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, X:T, app(Ekf@Lf:Nf, ELNKs)@L:X:T-->DK) :- !,
+        dpush_portray_clause(n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, N, app(Ekf@Lf:Nf, ELNKs)@L:X:T-->DK)-app-in),
         (   ml_const(Ef) ->
-            (   foreach(Ei@_Li:_Xi:_Ti, ELNs),
-                foreach(Ai, Actuals)
+            (   foreach(Ei@Li:Xi:Ti, ELNs),
+                foreach(ELNKi, ELNKs),
+                foreach(Ai, Actuals),
+                fromto([], InKs, OutKs, Ks)
             do   (   ( ml_const(Ei) ; ml_id(Ei) ) ->
-                     Ai = Ei
+                     Ai = Ei,
+                     ELNKi = Ei@Li:Xi:Ti,
+                     OutKs = InKs
+                 ;   n_e_to_p_e1(Ei, Li, Xi:Ti, ELNi-->Ki),
+                     uppercase_atom(Xi, Xiu),
+                     Ai = Xiu,
+                     ELNKi = (ELNi-->Ki),
+                     OutKs = [Ki|InKs]
                  )
             ),
             Call =.. [Ef|Actuals],
             uppercase_atom(X, Xu),
             Ekf = Ef,
-            DK = (Xu = Call)
+            list2tuple([Xu=Call|Ks], DK)
         ),
-        dpush_portray_clause(n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, N, app(Ekf@Lf:Nf, ELNs)@L:X:T-->DK)-app-out).
+        dpush_portray_clause(n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, N, app(Ekf@Lf:Nf, ELNKs)@L:X:T-->DK)-app-out).
 n_e_to_p_e1(E, L, X:T, E@L:X:T-->DK) :- !,
         dpush_portray_clause(n_e_to_p_e1(E, L, X:T, ELNK)-id-cst-in),
         (   ml_const(E) ->
