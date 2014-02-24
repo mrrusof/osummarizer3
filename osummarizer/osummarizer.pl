@@ -688,6 +688,24 @@ named_exp_to_path_exp(E@L:N, ELN-->K) :-
 /*
 n_e_to_p_e1(+E, +L, +N, -ELNK)
 */
+n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, X:T, app(Ekf@Lf:Nf, ELNs)@L:X:T-->DK) :- !,
+        dpush_portray_clause(n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, N, app(Ekf@Lf:Nf, ELNs)@L:X:T-->DK)-app-in),
+        (   ml_const(Ef) ->
+            (   foreach(Ei@_Li:_Xi:_Ti, ELNs),
+                foreach(Ai, Actuals)
+            do   (   ( ml_const(Ei) ; ml_id(Ei) ) ->
+                    Ai = Ei
+                )
+            ),
+            Call =.. [Ef|Actuals],
+            uppercase_atom(X, Xu),
+            Ekf = Ef,
+            DK = (Xu = Call)
+        ;   ml_id(Ef) ->
+            false
+        ;   false
+        ),
+        dpush_portray_clause(n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, N, app(Ekf@Lf:Nf, ELNs)@L:X:T-->DK)-app-out).
 n_e_to_p_e1(E, L, X:T, E@L:X:T-->DK) :- !,
         dpush_portray_clause(n_e_to_p_e1(E, L, X:T, ELNK)-id-cst-in),
         (   ml_const(E) ->
