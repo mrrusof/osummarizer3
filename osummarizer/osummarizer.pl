@@ -509,7 +509,11 @@ t_e_to_n_e1(+E, +L, +T, +X, +Env, -ELN)
 */
 t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N) :- !,
         dpush_portray_clause(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N)-app-in),
-        t_e_to_n_e1(Ef, Lf, Tf, X, Env, Efr@Lfr:Nfr),
+        (   ( ml_const(Ef) ; ml_id(Ef) ) ->
+            Xf = X
+        ;   format_atom('f_~p', [X], Xf)
+        ),
+        t_e_to_n_e1(Ef, Lf, Tf, Xf, Env, Efr@Lfr:Nfr),
         formals(Nfr, Formals),
         (   foreach(Ei@Li:Ti, ELTs),
             fromto(Formals, [Xi:_|Rest], Rest, _),
@@ -694,7 +698,7 @@ n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, X:T, app(Ekf@Lf:Nf, ELNs)@L:X:T-->DK) :- !,
             (   foreach(Ei@_Li:_Xi:_Ti, ELNs),
                 foreach(Ai, Actuals)
             do   (   ( ml_const(Ei) ; ml_id(Ei) ) ->
-                    Ai = Ei
+                     Ai = Ei
                  )
             ),
             Call =.. [Ef|Actuals],
