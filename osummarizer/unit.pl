@@ -886,19 +886,17 @@ ut("PP path  (<) 1", pp(app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:b
 
 
 
-
-
 % **********************************************************************
 % | c                                                      Constant
 % | if e then e else e                                     If
 
-ut("naming if true then 1 else 0", t_e_to_n_e1(ite(true@l2:bool, 1@l2:int, 0@l3:int), l1, int, res, empty, ite(true@l2:c_res:bool, 1@l2:res:int, 0@l3:res:int)@l1:res:int)).
-ut("path   if true then 1 else 0", n_e_to_p_e1(ite(true@l2:c_res:bool, 1@l2:res:int, 0@l3:res:int), l1, res:int,
+ut("naming   if true then 1 else 0", t_e_to_n_e1(ite(true@l2:bool, 1@l2:int, 0@l3:int), l1, int, res, empty, ite(true@l2:c_res:bool, 1@l2:res:int, 0@l3:res:int)@l1:res:int)).
+ut("path     if true then 1 else 0", n_e_to_p_e1(ite(true@l2:c_res:bool, 1@l2:res:int, 0@l3:res:int), l1, res:int,
                                                ite(true@l2:c_res:bool --> true,
                                                    1@l2:res:int --> ('RES'=1),
                                                    0@l3:res:int --> ('RES'=0)
                                                   )@l1:res:int --> (true -> 'RES'=1 ; 'RES'=0))).
-ut("summ   if true then 1 else 0", p_e_to_c1(ite(true@l2:c_res:bool --> true,
+ut("summ     if true then 1 else 0", p_e_to_c1(ite(true@l2:c_res:bool --> true,
                                                    1@l2:res:int --> ('RES'=1),
                                                    0@l3:res:int --> ('RES'=0)
                                                   ), l1, res:int, true, (true -> 'RES'=1 ; 'RES'=0), [])).
@@ -909,13 +907,13 @@ ut("PP path  if true then 1 else 0", pp(ite(true@l2:c_res:bool --> true,
                                            )@l1:res:int --> (true -> 'RES'=1 ; 'RES'=0),
                                         "(if\n  true:c_res:bool --> true\nthen\n  1:res:int --> RES=1\nelse\n  0:res:int --> RES=0\n):res:int --> (true -> 'RES'=1 ; 'RES'=0)")).
 
-ut("naming if true then false else true", t_e_to_n_e1(ite(true@l2:bool, false@l2:bool, true@l3:bool), l1, bool, res, empty, ite(true@l2:c_res:bool, false@l2:res:bool, true@l3:res:bool)@l1:res:bool)).
-ut("path   if true then false else true", n_e_to_p_e1(ite(true@l2:c_res:bool, false@l2:res:bool, true@l3:res:bool), l1, res:bool,
+ut("naming   if true then false else true", t_e_to_n_e1(ite(true@l2:bool, false@l2:bool, true@l3:bool), l1, bool, res, empty, ite(true@l2:c_res:bool, false@l2:res:bool, true@l3:res:bool)@l1:res:bool)).
+ut("path     if true then false else true", n_e_to_p_e1(ite(true@l2:c_res:bool, false@l2:res:bool, true@l3:res:bool), l1, res:bool,
                                                       ite(true@l2:c_res:bool --> true,
                                                           false@l2:res:bool --> false,
                                                           true@l3:res:bool --> true
                                                          )@l1:res:bool --> (true -> false ; true))).
-ut("summ   if true then false else true", p_e_to_c1(ite(true@l2:c_res:bool --> true,
+ut("summ     if true then false else true", p_e_to_c1(ite(true@l2:c_res:bool --> true,
                                                           false@l2:res:bool --> false,
                                                           true@l3:res:bool --> true
                                                          ), l1, res:bool, true, (true -> false ; true), [])).
@@ -925,6 +923,11 @@ ut("PP path  if true then false else true", pp(ite(true@l2:c_res:bool --> true,
                                                    true@l3:res:bool --> true
                                                   )@l1:res:bool --> (true -> false ; true),
                                                "(if\n  true:c_res:bool --> true\nthen\n  false:res:bool --> false\nelse\n  true:res:bool --> true\n):res:bool --> (true -> false ; true)")).
+
+ut("naming if false then (+) else (-)", false).
+ut("path   if false then (+) else (-)", false).
+ut("summ   if false then (+) else (-)", false).
+ut("PP path   if false then (+) else (-)", false).
 
 
 
