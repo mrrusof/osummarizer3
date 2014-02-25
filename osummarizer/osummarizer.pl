@@ -313,6 +313,22 @@ pp_e(app(Ef, Es), I) :- !,
             pp_e(Ei, J)
         ),
         format('\n~s)', [I]).
+pp_e(abs(Xs, Eb), I) :- !,
+        append(I, "  ", J),
+        format('~s(fun\n', [I]),
+        (   Xs = [Xh|Xr] ->
+            pp_e(Xh, J),
+            (   foreach(X, Xr),
+                param(J)
+            do  write('\n'),
+                pp_e(X, J)
+            )
+        ;   Xs = [X] ->
+            pp_e(X, J)
+        ),
+        format('\n~s->\n', [I]),
+        pp_e(Eb, J),
+        format('\n~s)', [I]).
 pp_e(ite(E1, E2, E3), I) :- !,
         append(I, "  ", J),
         format('~s(if\n', [I]),
@@ -322,6 +338,43 @@ pp_e(ite(E1, E2, E3), I) :- !,
         format('\n~selse\n', [I]),
         pp_e(E3, J),
         format('\n~s)', [I]).
+pp_e(let(X, E1, E2), I) :- !,
+        append(I, "  ", J),
+        format('~s(let\n', [I]),
+        pp_e(X, J),
+        format('\n~s=\n', [I]),
+        pp_e(E1, J),
+        format('\n~sin\n', [I]),
+        pp_e(E2, J),
+        format('\n~s)', [I]).
+pp_e(assert(Ec), I) :- !,
+        append(I, "  ", J),
+        (   compound(Ec),
+            ( Ec = E@_:_:_-->_
+            ; Ec = E@_:_:_
+            ; Ec = E@_:_ ),
+            ( E == true ; E == false ) ->
+            format('~s(assert(\n', [I]),
+            pp_e(Ec, J),
+            format('\n~s))', [I])
+        ;   format('~s(assert\n', [I]),
+            pp_e(Ec, J),
+            format('\n~s)', [I])
+        ).
+pp_e(assume(Ec), I) :- !,
+        append(I, "  ", J),
+        (   compound(Ec),
+            ( Ec = E@_:_:_-->_
+            ; Ec = E@_:_:_
+            ; Ec = E@_:_ ),
+            ( E == true ; E == false ) ->
+            format('~s(assume(\n', [I]),
+            pp_e(Ec, J),
+            format('\n~s))', [I])
+        ;   format('~s(assume\n', [I]),
+            pp_e(Ec, J),
+            format('\n~s)', [I])
+        ).
 pp_e(E, I) :- !,
         format('~s', [I]),
         (   pp_const_parenthesis(E) ->
@@ -333,184 +386,6 @@ pp_e(E, I) :- !,
         ;   ( ml_const(E) ; ml_id(E) ) ->
             write(E)
         ).
-
-% /*
-% pp_t_e(+E, +T, +I)
-% */
-% pp_t_e(app(Ef@_:Tf, ELTs), T, I) :- !,
-%         append(I, "  ", J),
-%         format('~s(\n', [I]),
-%         pp_t_e(Ef, Tf, J),
-%         (   foreach(Ei@_:Ti, ELTs),
-%             param(J)
-%         do  write('\n'),
-%             pp_t_e(Ei, Ti, J)
-%         ),
-%         format('\n~s):', [I]),
-%         paren_t(T).
-% pp_t_e(abs(XLTs, Eb@_:Tb), T, I) :- !,
-%         append(I, "  ", J),
-%         format('~s(fun\n', [I]),
-%         (   XLTs = [X@_:T] ->
-%             pp_t_e(X, T, J)
-%         ;   XLTs = [Xh@_:Th|XrLrTr] ->
-%             pp_t_e(Xh, Th, J),
-%             (   foreach(X@_:Tx, XrLrTr),
-%                 param(J)
-%             do  write('\n'),
-%                 pp_t_e(X, Tx, J)
-%             )
-%         ),
-%         format('\n~s->\n', [I]),
-%         pp_t_e(Eb, Tb, J),
-%         format('\n~s):', [I]),
-%         paren_t(T).
-% pp_t_e(ite(E1@_:T1, E2@_:T2, E3@_:T3), T, I) :- !,
-%         append(I, "  ", J),
-%         format('~s(if\n', [I]),
-%         pp_t_e(E1, T1, J),
-%         format('\n~sthen\n', [I]),
-%         pp_t_e(E2, T2, J),
-%         format('\n~selse\n', [I]),
-%         pp_t_e(E3, T3, J),
-%         format('\n~s):', [I]),
-%         paren_t(T).
-% pp_t_e(let(X@_:Tx, E1@_:T1, E2@_:T2), T, I) :- !,
-%         append(I, "  ", J),
-%         format('~s(let\n', [I]),
-%         pp_t_e(X, Tx, J),
-%         format('\n~s=\n', [I]),
-%         pp_t_e(E1, T1, J),
-%         format('\n~sin\n', [I]),
-%         pp_t_e(E2, T2, J),
-%         format('\n~s):', [I]),
-%         paren_t(T).
-% pp_t_e(assert(Ec@_:Tc), T, I) :- !,
-%         append(I, "  ", J),
-%         (   ( Ec == true ; Ec == false ) ->
-%             format('~s(assert(\n', [I])
-%         ;   format('~s(assert\n', [I])
-%         ),
-%         pp_t_e(Ec, Tc, J),
-%         (   ( Ec == true ; Ec == false ) ->
-%             format('\n~s)):', [I])
-%         ;   format('\n~s):', [I])
-%         ),
-%         paren_t(T).
-% pp_t_e(assume(Ec@_:Tc), T, I) :- !,
-%         append(I, "  ", J),
-%         (   ( Ec == true ; Ec == false ) ->
-%             format('~s(assume(\n', [I])
-%         ;   format('~s(assume\n', [I])
-%         ),
-%         pp_t_e(Ec, Tc, J),
-%         (   ( Ec == true ; Ec == false ) ->
-%             format('\n~s)):', [I])
-%         ;   format('\n~s):', [I])
-%         ),
-%         paren_t(T).
-% pp_t_e(E, T, I) :- !,
-%         format('~s', [I]),
-%         (   pp_const_parenthesis(E) ->
-%             write('('),
-%             write(E),
-%             write(')')
-%         ;   string(E) ->
-%             format("\"~s\"", [E])
-%         ;   ( ml_const(E) ; ml_id(E) ) ->
-%             write(E)
-%         ),
-%         write(':'),
-%         paren_t(T).
-
-% /*
-% pp_n_e(+E, +X, +T, +I)
-% */
-% pp_n_e(app(Ef@_:Xf:Tf, ELNs), X, T, I) :- !,
-%         append(I, "  ", J),
-%         format('~s(\n', [I]),
-%         pp_n_e(Ef, Xf, Tf, J),
-%         (   foreach(Ei@_:Xi:Ti, ELNs),
-%             param(J)
-%         do  write('\n'),
-%             pp_n_e(Ei, Xi, Ti, J)
-%         ),
-%         format('\n~s):', [I]),
-%         print(X:T).
-% pp_n_e(abs(YLNs, Eb@_:Xb:Tb), X, T, I) :-
-%         append(I, "  ", J),
-%         format('~s(fun\n', [I]),
-%         (   YLNs = [Y@_:Xy:Ty] ->
-%             pp_n_e(Y, Xy, Ty, J)
-%         ;   YLNs = [Yh@_:Xh:Th|YrLrNr] ->
-%             pp_n_e(Yh, Xh, Th, J),
-%             (   foreach(Y@_:Xy:Ty, YrLrNr),
-%                 param(J)
-%             do  write('\n'),
-%                 pp_n_e(Y, Xy, Ty, J)
-%             )
-%         ),
-%         format('\n~s->\n', [I]),
-%         pp_n_e(Eb, Xb, Tb, J),
-%         format('\n~s):', [I]),
-%         print(X:T).
-% pp_n_e(ite(E1@_:X1:T1, E2@_:X2:T2, E3@_:X3:T3), X, T, I) :- !,
-%         append(I, "  ", J),
-%         format('~s(if\n', [I]),
-%         pp_n_e(E1, X1, T1, J),
-%         format('\n~sthen\n', [I]),
-%         pp_n_e(E2, X2, T2, J),
-%         format('\n~selse\n', [I]),
-%         pp_n_e(E3, X3, T3, J),
-%         format('\n~s):', [I]),
-%         print(X:T).
-% pp_n_e(let(Y@_:Xy:Tx, E1@_:X1:T1, E2@_:X2:T2), X, T, I) :- !,
-%         append(I, "  ", J),
-%         format('~s(let\n', [I]),
-%         pp_n_e(Y, Xy, Tx, J),
-%         format('\n~s=\n', [I]),
-%         pp_n_e(E1, X1, T1, J),
-%         format('\n~sin\n', [I]),
-%         pp_n_e(E2, X2, T2, J),
-%         format('\n~s):', [I]),
-%         print(X:T).
-% pp_n_e(assert(Ec@_:Xc:Tc), X, T, I) :- !,
-%         append(I, "  ", J),
-%         (   ( Ec == true ; Ec == false ) ->
-%             format('~s(assert(\n', [I])
-%         ;   format('~s(assert\n', [I])
-%         ),
-%         pp_n_e(Ec, Xc, Tc, J),
-%         (   ( Ec == true ; Ec == false ) ->
-%             format('\n~s)):', [I])
-%         ;   format('\n~s):', [I])
-%         ),
-%         print(X:T).
-% pp_n_e(assume(Ec@_:Xc:Tc), X, T, I) :- !,
-%         append(I, "  ", J),
-%         (   ( Ec == true ; Ec == false ) ->
-%             format('~s(assume(\n', [I])
-%         ;   format('~s(assume\n', [I])
-%         ),
-%         pp_n_e(Ec, Xc, Tc, J),
-%         (   ( Ec == true ; Ec == false ) ->
-%             format('\n~s)):', [I])
-%         ;   format('\n~s):', [I])
-%         ),
-%         print(X:T).
-% pp_n_e(E, X, T, I) :- !,
-%         format('~s', [I]),
-%         (   pp_const_parenthesis(E) ->
-%             write('('),
-%             write(E),
-%             write(')')
-%         ;   string(E) ->
-%             format("\"~s\"", [E])
-%         ;   ( ml_const(E) ; ml_id(E) ) ->
-%             write(E)
-%         ),
-%         write(':'),
-%         print(X:T).
 
 
 
