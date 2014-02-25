@@ -529,8 +529,11 @@ t_e_to_n_e1(+E, +L, +T, +X, +Env, -ELN)
 */
 t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N) :- !,
         dpush_portray_clause(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N)-app-in),
-        (   ( ml_const(Ef) ; ml_id(Ef) ) ->
-            Xf = X
+        (   ml_const(Ef) ->
+            ml_const_to_name(Ef, C),
+            format_atom('~p_~p', [C, X], Xf)
+        ;   ml_id(Ef) ->
+            format_atom('~p_~p', [Ef, X], Xf)
         ;   format_atom('f_~p', [X], Xf)
         ),
         t_e_to_n_e1(Ef, Lf, Tf, Xf, Env, Efr@Lfr:Nfr),
@@ -595,8 +598,7 @@ t_e_to_n_e1(E, L, T, X, Env, E@L:N) :- !,
         dpush_portray_clause(t_e_to_n_e1(E, L, T, X, Env, E@L:N)-id-cst-in),
         (   ml_id(E) ->
             (   function_type(T) ->
-                format_atom('~p_~p', [E, X], EX),
-                name_type(EX, T, Nloc),
+                name_type(X, T, Nloc),
                 avl_fetch(E, Env, Nenv),
                 choose_names(Nenv, Nloc, _:Tn),
                 N = X:Tn
@@ -604,9 +606,7 @@ t_e_to_n_e1(E, L, T, X, Env, E@L:N) :- !,
             )
         ;   ml_const(E) ->
             (   function_type(T) ->
-                ml_const_to_name(E, C),
-                format_atom('~p_~p', [C, X], CX),
-                name_type(CX, T, N)
+                name_type(X, T, N)
             ;   N = X:T
             )
         ),
