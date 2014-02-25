@@ -5,14 +5,13 @@
                            dpush_portray_clause/1, dpop_portray_clause/1,
                            dnl/0]).
 :- use_module('ext/utils/misc.pl', [format_atom/3]).
-:- use_module('ext/utils/list_utils.pl', [list2tuple/2]).
+:- use_module('ext/utils/list_utils.pl', [list2tuple/2,
+                                          tuple2flatlist/2]).
 :- use_module(library(avl), [avl_fetch/3,
                              avl_store/4]).
 :- use_module(library(lists), [rev/2,
                                maplist/3]).
-% :- use_module(library(ordsets), [ord_union/3,
-%                                  ord_union/2,
-%                                  ord_add_element/3]).
+:- use_module(library(ordsets), [ord_union/2]).
 
 :- multifile user:portray/1.
 :- dynamic user:portray/1.
@@ -747,9 +746,9 @@ n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, X:T, app(Ekf@Lf:Nf, ELNKs)@L:X:T-->DK) :- !,
             ),
             Ekf = Ef
         ),
-        dpush_portray_clause(n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, N, app(Ekf@Lf:Nf, ELNKs)@L:X:T-->DK)-app-out).
-n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, X:T, ite(E1L1N1-->K1, E2L2N2-->K2, E3L3N3-->K3)@L:N-->DK) :- !,
-        dpush_portray_clause(n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, X:T, ite(E1L1N1-->K1, E2L2N2-->K2, E3L3N3-->K3)@L:N-->DK)-ite-in),
+        dpop_portray_clause(n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, N, app(Ekf@Lf:Nf, ELNKs)@L:X:T-->DK)-app-out).
+n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, X:T, ite(E1L1N1-->K1, E2L2N2-->K2, E3L3N3-->K3)@L:X:T-->DK) :- !,
+        dpush_portray_clause(n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, X:T, ite(E1L1N1-->K1, E2L2N2-->K2, E3L3N3-->K3)@L:X:T-->DK)-ite-in),
         n_ce_to_p_ce1(E1, L1, N1, E1L1N1-->K1),
         (   ( T == bool ; T == unit ) ->
             n_ce_to_p_ce1(E2, L2, N2, E2L2N2-->K2),
@@ -757,8 +756,11 @@ n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, X:T, ite(E1L1N1-->K1, E2L2N2--
         ;   n_e_to_p_e1(E2, L2, N2, E2L2N2-->K2),
             n_e_to_p_e1(E3, L3, N3, E3L3N3-->K3)
         ),
-        DK = (K1 -> K2 ; K3),
-        dpush_portray_clause(n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, X:T, ite(E1L1N1-->K1, E2L2N2-->K2, E3L3N3-->K3)@L:N-->DK)-ite-out).
+        (   function_type(T) ->
+            DK = true
+        ;   DK = (K1 -> K2 ; K3)
+        ),
+        dpop_portray_clause(n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, X:T, ite(E1L1N1-->K1, E2L2N2-->K2, E3L3N3-->K3)@L:X:T-->DK)-ite-out).
 n_e_to_p_e1(E, L, X:T, E@L:X:T-->DK) :- !,
         dpush_portray_clause(n_e_to_p_e1(E, L, X:T, ELNK)-id-cst-in),
         (   ml_const(E) ->
@@ -822,59 +824,50 @@ p_e_to_c1(app(Ef@Lf:Nf, ELNKs), L, X:T, K, Kd, S) :- !,
         (   ml_const(Ef) ->
             (   function_type(T) ->
                 mk_summ_pred(X:T, Head),
-                remove_true((Kd, K), Body),
+                mk_conj((Kd, K), Body),
                 S = [(Head :- Body)]
             ;   S = []
             )
         ),
-        dpush_portray_clause(p_e_to_c1(app(Ef@Lf:Nf, ELNKs), L, X:T, K, Kd, S)-app-out).
-p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, N, K, Kd, S) :- !,
-        dpush_portray_clause(p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, N, K, Kd, S)-ite-in),
-        S = [],
-        dpop_portray_clause(p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, N, K, Kd, S)-ite-out).
+        dpop_portray_clause(p_e_to_c1(app(Ef@Lf:Nf, ELNKs), L, X:T, K, Kd, S)-app-out).
+p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, S) :- !,
+        dpush_portray_clause(p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, S)-ite-in),
+        p_e_to_c1(E1, L1, N1, K, K1, S1),
+        p_e_to_c1(E2, L2, N2, (   K1, K), K2, S2),
+        p_e_to_c1(E3, L3, N3, (\+ K1, K), K3, S3),
+        ord_union([S1, S2, S3], S),
+        dpop_portray_clause(p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, S)-ite-out).
 p_e_to_c1(E, L, X:T, K, Kd, S) :- !,
         dpush_portray_clause(p_e_to_c1(E, L, X:T, K, Kd, S)-id-cst-in),
         (   ml_const(E) ->
             (   function_type(T) ->
-                ml_const_to_name(E, En),
-                mk_summ_pred(En:T, Summ),
+                mk_summ_pred(X:T, Head),
                 formals(X:T, NFormals),
                 maplist(name_of_type, NFormals, Formals),
                 maplist(uppercase_atom, Formals, UFormals),
                 Call =.. [E|UFormals],
                 return(X:T, Y:R),
-                (   (R == bool ; R == unit) ->
-                    S = [(Summ :- Call)]
+                (   ( R == bool ; R == unit ) ->
+                    mk_conj((Call, K), Body),
+                    S = [(Head :- Body)]
                 ;   uppercase_atom(Y, Yu),
-                    S = [(Summ :- Yu=Call)]
+                    mk_conj((Yu=Call, K), Body),
+                    S = [(Head :- Body)]
                 )
             ;   S = []
             )
         ;   ml_id(E) ->
             (   function_type(T) ->
-                mk_summ_pred(E:T, Body),
                 mk_summ_pred(X:T, Head),
+                mk_summ_pred(E:T, Summ),
+                mk_conj((Summ, K), Body),
                 S = [(Head :- Body)]
             ;   S = []
             )
         ),
         dpop_portray_clause(p_e_to_c1(E, L, X:T, K, Kd, S)-id-cst-out).
 
-/*
-remove_true(+K, -R)
-*/
-remove_true(K, R) :-
-        (   compound(K), K = (A, B) ->
-            (   A == true ->
-                remove_true(B, R)
-            ;   B == true ->
-                remove_true(A, R)
-            ;   remove_true(A, Ar),
-                remove_true(B, Br),
-                R = (Ar, Br)
-            )
-        ;   R = K
-        ).
+
 
 /*
 mk_summ_pred(+N, -Summ)
@@ -891,6 +884,36 @@ mk_summ_pred(N, Summ) :-
             maplist(name_of_type, NFormalsRet, FormalsRet),
             maplist(uppercase_atom, FormalsRet, UFormalsRet),
             Summ =.. [Sy|UFormalsRet]
+        ).
+
+/*
+mk_conj(+Tuple, -Conj)
+*/
+mk_conj(T, C) :-
+        flatten_tuple(T, Flat),
+        remove_true(Flat, C).
+
+/*
+flatten_tuple(+K, -R)
+*/
+flatten_tuple(K, R) :-
+        tuple2flatlist(K, L),
+        list2tuple(L, R).
+
+/*
+remove_true(+K, -R)
+*/
+remove_true(K, R) :-
+        (   compound(K), K = (A, B) ->
+            (   A == true ->
+                remove_true(B, R)
+            ;   B == true ->
+                remove_true(A, R)
+            ;   remove_true(A, Ar),
+                remove_true(B, Br),
+                R = (Ar, Br)
+            )
+        ;   R = K
         ).
 
 /*
@@ -1090,12 +1113,7 @@ name_of_type(X:_, X).
 %         N = X:_,
 %         format_atom('ctx_~w_~w', [X, T], Sy).
 
-% /*
-% tup_flatten(+K, -R)
-% */
-% tup_flatten(K, R) :-
-%         tuple2flatlist(K, L),
-%         list2tuple(L, R).
+
 
 
 
