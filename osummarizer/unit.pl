@@ -905,7 +905,7 @@ ut("PP path  if true then 1 else 0", pp(ite(true@l2:c_res:bool --> true,
                                             1@l2:res:int --> ('RES'=1),
                                             0@l3:res:int --> ('RES'=0)
                                            )@l1:res:int --> (true -> 'RES'=1 ; 'RES'=0),
-                                        "(if\n  true:c_res:bool --> true\nthen\n  1:res:int --> RES=1\nelse\n  0:res:int --> RES=0\n):res:int --> (true -> 'RES'=1 ; 'RES'=0)")).
+                                        "(if\n  true:c_res:bool --> true\nthen\n  1:res:int --> RES=1\nelse\n  0:res:int --> RES=0\n):res:int --> (true -> RES=1 ; RES=0)")).
 
 ut("naming   if true then false else true", t_e_to_n_e1(ite(true@l2:bool, false@l2:bool, true@l3:bool), l1, bool, res, empty, ite(true@l2:c_res:bool, false@l2:res:bool, true@l3:res:bool)@l1:res:bool)).
 ut("path     if true then false else true", n_e_to_p_e1(ite(true@l2:c_res:bool, false@l2:res:bool, true@l3:res:bool), l1, res:bool,

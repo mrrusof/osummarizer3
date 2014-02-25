@@ -226,6 +226,8 @@ portray(Term) :-
                 write('.')
             ;   Term =.. ['\\+'|[A]] ->
                 format('\\+~p', [A])
+            ;   Term = (A -> B ; C) ->
+                format('(~p -> ~p ; ~p)', [A,B,C])
             ;   Term =.. [';'|[A|Args]] ->
                 format('(~p', [A]),
                 (   foreach(Ai, Args)
@@ -311,6 +313,15 @@ pp_e(app(Ef, Es), I) :- !,
         do  write('\n'),
             pp_e(Ei, J)
         ),
+        format('\n~s)', [I]).
+pp_e(ite(E1, E2, E3), I) :- !,
+        append(I, "  ", J),
+        format('~s(if\n', [I]),
+        pp_e(E1, J),
+        format('\n~sthen\n', [I]),
+        pp_e(E2, J),
+        format('\n~selse\n', [I]),
+        pp_e(E3, J),
         format('\n~s)', [I]).
 pp_e(E, I) :- !,
         format('~s', [I]),
@@ -737,13 +748,17 @@ n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, X:T, app(Ekf@Lf:Nf, ELNKs)@L:X:T-->DK) :- !,
             Ekf = Ef
         ),
         dpush_portray_clause(n_e_to_p_e1(app(Ef@Lf:Nf, ELNs), L, N, app(Ekf@Lf:Nf, ELNKs)@L:X:T-->DK)-app-out).
-n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, N, ite(E1L1N1-->K1, E2L2N2-->K2, E3L3N3-->K3)@L:N-->DK) :- !,
-        dpush_portray_clause(n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, N, ite(E1L1N1K1, E2L2N2K2, E3L3N3K3)@L:N-->DK)-ite-in),
+n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, X:T, ite(E1L1N1-->K1, E2L2N2-->K2, E3L3N3-->K3)@L:N-->DK) :- !,
+        dpush_portray_clause(n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, X:T, ite(E1L1N1-->K1, E2L2N2-->K2, E3L3N3-->K3)@L:N-->DK)-ite-in),
         n_ce_to_p_ce1(E1, L1, N1, E1L1N1-->K1),
-        n_e_to_p_e1(E2, L2, N2, E2L2N2-->K2),
-        n_e_to_p_e1(E3, L3, N3, E3L3N3-->K3),
+        (   ( T == bool ; T == unit ) ->
+            n_ce_to_p_ce1(E2, L2, N2, E2L2N2-->K2),
+            n_ce_to_p_ce1(E3, L3, N3, E3L3N3-->K3)
+        ;   n_e_to_p_e1(E2, L2, N2, E2L2N2-->K2),
+            n_e_to_p_e1(E3, L3, N3, E3L3N3-->K3)
+        ),
         DK = (K1 -> K2 ; K3),
-        dpush_portray_clause(n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, N, ite(E1L1N1K1, E2L2N2K2, E3L3N3K3)@L:N-->DK)-ite-out).
+        dpush_portray_clause(n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, X:T, ite(E1L1N1-->K1, E2L2N2-->K2, E3L3N3-->K3)@L:N-->DK)-ite-out).
 n_e_to_p_e1(E, L, X:T, E@L:X:T-->DK) :- !,
         dpush_portray_clause(n_e_to_p_e1(E, L, X:T, ELNK)-id-cst-in),
         (   ml_const(E) ->
@@ -813,6 +828,10 @@ p_e_to_c1(app(Ef@Lf:Nf, ELNKs), L, X:T, K, Kd, S) :- !,
             )
         ),
         dpush_portray_clause(p_e_to_c1(app(Ef@Lf:Nf, ELNKs), L, X:T, K, Kd, S)-app-out).
+p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, N, K, Kd, S) :- !,
+        dpush_portray_clause(p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, N, K, Kd, S)-ite-in),
+        S = [],
+        dpop_portray_clause(p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, N, K, Kd, S)-ite-out).
 p_e_to_c1(E, L, X:T, K, Kd, S) :- !,
         dpush_portray_clause(p_e_to_c1(E, L, X:T, K, Kd, S)-id-cst-in),
         (   ml_const(E) ->
