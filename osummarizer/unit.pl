@@ -1,16 +1,3 @@
-%
-% The unit tests cover the following modules of osummarizer.
-%
-% 1. Well-formedness of typed expressions
-% 2. Pretty printing of typed expressions
-% 3. Naming of typed expressions
-% 4. Pretty printing of named expressions
-% 5. Path of named expressions
-% 6. Pretty printing of path expressions
-% 7. Summarization of named expressions
-% 8. Pretty printing of constraints
-%
-
 :- ['osummarizer.pl'].
 :- use_module(library(ordsets), [list_to_ord_set/2]).
 :- use_module(library(codesio), [format_to_codes/3]).
