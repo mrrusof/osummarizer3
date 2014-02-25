@@ -968,6 +968,89 @@ ut("PP path   if false then (+) else (-)", pp(ite(false@l2:c_f:bool --> false,
                                                  )@l1:f:(a_f:int -> b_f:(ba_f:int -> bb_f:int)) --> true,
                                               "(if\n  false:c_f:bool --> false\nthen\n  (+):f:(a_f:int -> b_f:(ba_f:int -> bb_f:int)) --> true\nelse\n  (-):f:(a_f:int -> b_f:(ba_f:int -> bb_f:int)) --> true\n):f:(a_f:int -> b_f:(ba_f:int -> bb_f:int)) --> true")).
 
+% **********************************************************************
+% | c                                                      Constant
+% | e e ... e                                              Application
+% | assert(e)                                              Assert
+% | assume(e)                                              Assume
+
+% assume(1>0)
+ut("path      assume(1>0)", false).
+ut("summ      assume(1>0)", false).
+
+% assert(true || false)
+ut("path      assert(true || false)", false).
+ut("summ      assert(true || false)", false).
+
+% assert(1>0 && false)
+ut("path      assert(1>0 && false)", false).
+ut("summ      assert(1>0 && false)", false).
+
+
+
+% **********************************************************************
+% | c                                                      Constant
+% | e e ... e                                              Application
+% | if e then e else e                                     If
+
+% if true then (+) 2 else (-) 1
+ut("path      if true then (+) 2 else (-) 1", false).
+ut("summ      if true then (+) 2 else (-) 1", false).
+
+
+
+% **********************************************************************
+% | x                                                      Identifier
+% | c                                                      Constant
+% | e e ... e                                              Application
+% | let x = e in e                                         Let
+
+% let x = 1 in x
+ut("path      let x = 1 in x", false).
+ut("summ      let x = 1 in x", false).
+
+% let f = (+) in f
+ut("path      let f = (+) in f", false).
+ut("summ      let f = (+) in f", false).
+
+% let f = let g = (+) in g in f
+ut("path      let f = let g = (+) in g in f", false).
+ut("summ      let f = let g = (+) in g in f", false).
+
+% let g = (+) in let f = g in f
+ut("path      let g = (+) in let f = g in f", false).
+ut("summ      let g = (+) in let f = g in f", false).
+
+% let f = (+) 1 in f
+ut("path      let f = (+) 1 in f", false).
+ut("summ      let f = (+) 1 in f", false).
+
+% let f = (+) 1 in f 2
+ut("path      let f = (+) 1 in f 2", false).
+ut("summ      let f = (+) 1 in f 2", false).
+
+
+
+% **********************************************************************
+% | x                                                      Identifier
+% | c                                                      Constant
+% | e e ... e                                              Application
+
+% (fun x y -> x + y) 1 2
+ut("summ      (fun x y -> x + y) 1 2", false).
+
+% (fun x y -> x + y) 1
+ut("summ      (fun x y -> x + y) 1", false).
+
+% (fun x -> (+) x)
+ut("summ      (fun x -> (+) x)", false).
+
+% (fun f x -> f x) (+) 1
+ut("summ      (fun f x -> f x) (+) 1", false).
+
+% (fun f x -> f x) (fun y -> (+) y) 1
+ut("summ      (fun f x -> f x) (fun y -> (+) y) 1", false).
+
 
 
 % **********************************************************************
