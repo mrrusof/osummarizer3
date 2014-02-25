@@ -863,8 +863,28 @@ ut("Negative summ   (+) 1", \+ p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> v:(b
                                              [1@l3:a_plus_v:int]
                                             ), l1, v:(ba_plus_v:int -> bb_plus_v:int), true, ('V'=1+'BB_PLUS_V'), [])).
 
+ut("PP path  (+) 1", pp(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
+                                   [1@l3:a_plus_v:int]
+                                  )@l1:v:(ba_plus_v:int -> bb_plus_v:int)-->('BB_PLUS_V'=1+'BA_PLUS_V'),
+                        "(\n  (+):plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int))\n  1:a_plus_v:int\n):v:(ba_plus_v:int -> bb_plus_v:int) --> BB_PLUS_V=1+BA_PLUS_V")).
+
 ut("naming (<) true", t_e_to_n_e1(app((<)@l2:(bool->bool->bool), [true@l3:bool]), l1, (bool->bool), v, empty, app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:bool)), [true@l3:a_lt_v:bool])@l1:v:(ba_lt_v:bool -> bb_lt_v:bool))).
-ut("path   (<) true", n_e_to_p_e1(app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:bool)), [true@l3:a_lt_v:bool]), l1, v:(ba_lt_v:bool -> bb_lt_v:bool), app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:bool)), [true@l3:a_lt_v:bool])@l1:v:(ba_lt_v:bool -> bb_lt_v:bool)-->(true<'BA_LT_V'))).
+ut("path   (<) true", n_e_to_p_e1(app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:bool)), [true@l3:a_lt_v:bool]), l1, v:(ba_lt_v:bool -> bb_lt_v:bool),
+                                  app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:bool)), [true@l3:a_lt_v:bool])@l1:v:(ba_lt_v:bool -> bb_lt_v:bool)-->(true<'BA_LT_V'))).
+ut("summ   (<) true", p_e_to_c1(app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:bool)),
+                                    [true@l3:a_lt_v:bool]
+                                   ), l1, v:(ba_lt_v:bool -> bb_lt_v:bool), true, (true<'BA_LT_V'),
+                                [( 'v_bool->bool'('BA_LT_V') :- true<'BA_LT_V' )])).
+ut("Negative summ   (<) true", \+ p_e_to_c1(app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:bool)),
+                                    [true@l3:a_lt_v:bool]
+                                   ), l1, v:(ba_lt_v:bool -> bb_lt_v:bool), true, (true<'BA_LT_V'), [])).
+
+ut("PP path  (<) 1", pp(app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:bool)),
+                            [true@l3:a_lt_v:bool]
+                           )@l1:v:(ba_lt_v:bool -> bb_lt_v:bool) --> (true<'BA_LT_V'),
+                        "(\n  (<):lt_v:(a_lt_v:bool -> v:(ba_lt_v:bool -> bb_lt_v:bool))\n  true:a_lt_v:bool\n):v:(ba_lt_v:bool -> bb_lt_v:bool) --> true<BA_LT_V")).
+
+
 
 
 
@@ -877,8 +897,34 @@ ut("path   if true then 1 else 0", n_e_to_p_e1(ite(true@l2:c_res:bool, 1@l2:res:
                                                ite(true@l2:c_res:bool --> true,
                                                    1@l2:res:int --> ('RES'=1),
                                                    0@l3:res:int --> ('RES'=0)
-                                                  )@l1:res:int --> (true -> 'RES'=1 ; 'RES'=0)
-                                              )).
+                                                  )@l1:res:int --> (true -> 'RES'=1 ; 'RES'=0))).
+ut("summ   if true then 1 else 0", p_e_to_c1(ite(true@l2:c_res:bool --> true,
+                                                   1@l2:res:int --> ('RES'=1),
+                                                   0@l3:res:int --> ('RES'=0)
+                                                  ), l1, res:int, true, (true -> 'RES'=1 ; 'RES'=0), [])).
+
+ut("PP path  if true then 1 else 0", pp(ite(true@l2:c_res:bool --> true,
+                                            1@l2:res:int --> ('RES'=1),
+                                            0@l3:res:int --> ('RES'=0)
+                                           )@l1:res:int --> (true -> 'RES'=1 ; 'RES'=0),
+                                        "(if\n  true:c_res:bool --> true\nthen\n  1:res:int --> RES=1\nelse\n  0:res:int --> RES=0\n):res:int --> (true -> 'RES'=1 ; 'RES'=0)")).
+
+ut("naming if true then false else true", t_e_to_n_e1(ite(true@l2:bool, false@l2:bool, true@l3:bool), l1, bool, res, empty, ite(true@l2:c_res:bool, false@l2:res:bool, true@l3:res:bool)@l1:res:bool)).
+ut("path   if true then false else true", n_e_to_p_e1(ite(true@l2:c_res:bool, false@l2:res:bool, true@l3:res:bool), l1, res:bool,
+                                                      ite(true@l2:c_res:bool --> true,
+                                                          false@l2:res:bool --> false,
+                                                          true@l3:res:bool --> true
+                                                         )@l1:res:bool --> (true -> false ; true))).
+ut("summ   if true then false else true", p_e_to_c1(ite(true@l2:c_res:bool --> true,
+                                                          false@l2:res:bool --> false,
+                                                          true@l3:res:bool --> true
+                                                         ), l1, res:bool, true, (true -> false ; true), [])).
+
+ut("PP path  if true then false else true", pp(ite(true@l2:c_res:bool --> true,
+                                                   false@l2:res:bool --> false,
+                                                   true@l3:res:bool --> true
+                                                  )@l1:res:bool --> (true -> false ; true),
+                                               "(if\n  true:c_res:bool --> true\nthen\n  false:res:bool --> false\nelse\n  true:res:bool --> true\n):res:bool --> (true -> false ; true)")).
 
 
 
