@@ -1008,9 +1008,38 @@ ut("summ     nested app (incr (incr 1)):int", p_e_to_c1(app(incr@l:incr_r:(a_inc
                                                         [('ctx_incr_int->int'('A_INCR_A_INCR_R'):-'A_INCR_A_INCR_R'=1),
                                                          ('ctx_incr_int->int'('A_INCR_R'):-'incr_int->int'(1,'A_INCR_R'))])).
 
-% ut("naming   nested app (incr (1+2)):int", false).
-% ut("path     nested app (incr (1+2)):int", false).
-% ut("summ     nested app (incr (1+2)):int", false).
+ut("naming   nested app (incr (1+2)):int", t_e_to_n_e1(app(incr@l:(int->int),
+                                                              [app((+)@l:(int->int->int),
+                                                                   [1@l:int,
+                                                                   2@l:int]
+                                                                  )@l:int]
+                                                             ), l, int, r,
+                                                          node(incr,incr:(a_incr:int->b_incr:int),0,empty,empty),
+                                                       app(incr@l:incr_r:(a_incr_r:int->r:int),
+                                                           [app((+)@l:plus_a_incr_r:(a_plus_a_incr_r:int->b_plus_a_incr_r:(ba_plus_a_incr_r:int->a_incr_r:int)),
+                                                                [1@l:a_plus_a_incr_r:int,
+                                                                 2@l:ba_plus_a_incr_r:int]
+                                                               )@l:a_incr_r:int]
+                                                          )@l:r:int)).
+ut("path     nested app (incr (1+2)):int", n_e_to_p_e1(app(incr@l:incr_r:(a_incr_r:int->r:int),
+                                                           [app((+)@l:plus_a_incr_r:(a_plus_a_incr_r:int->b_plus_a_incr_r:(ba_plus_a_incr_r:int->a_incr_r:int)),
+                                                                [1@l:a_plus_a_incr_r:int,
+                                                                 2@l:ba_plus_a_incr_r:int]
+                                                               )@l:a_incr_r:int]
+                                                          ), l, r:int,
+                                                       app(incr@l:incr_r:(a_incr_r:int->r:int),
+                                                           [app((+)@l:plus_a_incr_r:(a_plus_a_incr_r:int->b_plus_a_incr_r:(ba_plus_a_incr_r:int->a_incr_r:int)),
+                                                                [1@l:a_plus_a_incr_r:int --> ('A_PLUS_A_INCR_R'=1),
+                                                                 2@l:ba_plus_a_incr_r:int --> ('BA_PLUS_A_INCR_R'=2)]
+                                                               )@l:a_incr_r:int --> ('A_INCR_R'=1+2)]
+                                                          )@l:r:int --> ('incr_int->int'('A_INCR_R', 'R'), 'A_INCR_R'=1+2))).
+ut("summ     nested app (incr (1+2)):int", p_e_to_c1(app(incr@l:incr_r:(a_incr_r:int->r:int),
+                                                         [app((+)@l:plus_a_incr_r:(a_plus_a_incr_r:int->b_plus_a_incr_r:(ba_plus_a_incr_r:int->a_incr_r:int)),
+                                                              [1@l:a_plus_a_incr_r:int --> ('A_PLUS_A_INCR_R'=1),
+                                                               2@l:ba_plus_a_incr_r:int --> ('BA_PLUS_A_INCR_R'=2)]
+                                                             )@l:a_incr_r:int --> ('A_INCR_R'=1+2)]
+                                                        ), l, r:int, true, ('incr_int->int'('A_INCR_R', 'R'), 'A_INCR_R'=1+2),
+                                                     [('ctx_incr_int->int'('A_INCR_R') :- 'A_INCR_R'=1+2)])).
 
 
 
