@@ -773,7 +773,8 @@ p_e_to_c1(let(X1Lx1Nx1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N2, K, Kd, S) :- !,
         (   function_type(T1) ->
             p_e_to_c1(E2, L2, N2, K, K2, S2),
             mk_summ_pred(X1:T1, Summ),
-            mk_conj((K1, K), Body),
+            mk_ctx_pred(X1:T1, Ctx),
+            mk_conj((K1, Ctx, K), Body),
             ord_union([[(Summ :- Body)], S1, S2], S)
         ;   p_e_to_c1(E2, L2, N2, (K1, K), K2, S2),
             ord_union([S1, S2], S)

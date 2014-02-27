@@ -1315,7 +1315,7 @@ ut("summ            let plus = (+) in plus 1 2", p_e_to_c1(let(plus1@l:plus1:(a_
                                                                   )@l:v:int --> 'plus1_int->int->int'(1,2,'V')
                                                               ), l, v:int, true, 'plus1_int->int->int'(1,2,'V'),
                                                            [('ctx_plus1_int->int->int'('A_PLUS1_V', 'BA_PLUS1_V') :- ('BA_PLUS1_V'=2, 'A_PLUS1_V'=1)),
-                                                            ('plus1_int->int->int'('A_PLUS1', 'BA_PLUS1', 'BB_PLUS1') :- 'BB_PLUS1'='A_PLUS1'+'BA_PLUS1')])).
+                                                            ('plus1_int->int->int'('A_PLUS1', 'BA_PLUS1', 'BB_PLUS1') :- ('BB_PLUS1'='A_PLUS1'+'BA_PLUS1', 'ctx_plus1_int->int->int'('A_PLUS1', 'BA_PLUS1')))])).
 ut("Negative summ 1 let plus = (+) in plus 1 2", \+ p_e_to_c1(let(plus1@l:plus1:(a_plus1:int->b_plus1:(ba_plus1:int->bb_plus1:int)),
                                                                (+)@l:plus1:(a_plus1:int->b_plus1:(ba_plus1:int->bb_plus1:int)) --> ('BB_PLUS1'='A_PLUS1'+'BA_PLUS1'),
                                                                app(plus1@l:plus1_v:(a_plus1_v:int->b_plus1:(ba_plus1_v:int->v:int)),
@@ -1355,7 +1355,7 @@ ut("summ            let neq = (<>) in neq 1 2", p_e_to_c1(let(neq@l:neq:(a_neq:i
                                                                    )@l:v:bool --> 'neq_int->int->bool'(1, 2)
                                                                ), l, v:bool, true, 'neq_int->int->bool'(1, 2),
                                                             [('ctx_neq_int->int->bool'('A_NEQ_V', 'BA_NEQ_V') :- ('BA_NEQ_V'=2, 'A_NEQ_V'=1)),
-                                                             ('neq_int->int->bool'('A_NEQ', 'BA_NEQ') :- 'A_NEQ'=\='BA_NEQ')])).
+                                                             ('neq_int->int->bool'('A_NEQ', 'BA_NEQ') :- ('A_NEQ'=\='BA_NEQ', 'ctx_neq_int->int->bool'('A_NEQ','BA_NEQ')))])).
 
 
 
