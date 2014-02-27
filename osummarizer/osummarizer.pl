@@ -143,6 +143,7 @@ wf_t_e(abs(XLTs, Eb@Lb:Tb), L, T) :- !,
         dpop_portray_clause(wf_t_e(abs(XLTs, Eb@Lb:Tb), L, T)-out).
 wf_t_e(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T) :- !,
         dpush_portray_clause(wf_t_e(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T)-in),
+        T1 == bool,
         wf_l(L),
         wf_t(T),
         T2 == T3,
@@ -607,10 +608,14 @@ n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)
                 foreach(Ai, Actuals),
                 fromto([], InKs, OutKs, Ks)
             do  n_e_to_p_e1(Ei, Li, Xi:Ti, ELNKi),
-                (   ( ml_const(Ei) ; ml_id(Ei) ) ->
+                (   ml_const(Ei) ->
                     Ai = Ei,
                     OutKs = InKs
-                 ;  uppercase_atom(Xi, Xiu),
+                ;   ml_id(Ei) ->
+                    uppercase_atom(Ei, Eiu),
+                    Ai = Eiu,
+                    OutKs = InKs
+                ;   uppercase_atom(Xi, Xiu),
                     Ai = Xiu,
                     (_-->Ki) = ELNKi,
                     OutKs = [Ki|InKs]
@@ -648,12 +653,8 @@ n_e_to_p_e1(abs(XLTs, Eb@Lb:Nb), L, X:T, abs(XLTs, ELNb-->Kb)@L:X:T-->Kb) :- !,
 n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, X:T, ite(E1L1N1-->K1, E2L2N2-->K2, E3L3N3-->K3)@L:X:T-->(K1 -> K2 ; K3)) :- !,
         dpush_portray_clause(n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, X:T, ite(E1L1N1-->K1, E2L2N2-->K2, E3L3N3-->K3)@L:X:T-->(K1 -> K2 ; K3))-ite-in),
         n_ce_to_p_ce1(E1, L1, N1, E1L1N1-->K1),
-        (   ( T == bool ; T == unit ) ->
-            n_ce_to_p_ce1(E2, L2, N2, E2L2N2-->K2),
-            n_ce_to_p_ce1(E3, L3, N3, E3L3N3-->K3)
-        ;   n_e_to_p_e1(E2, L2, N2, E2L2N2-->K2),
-            n_e_to_p_e1(E3, L3, N3, E3L3N3-->K3)
-        ),
+        n_e_to_p_e1(E2, L2, N2, E2L2N2-->K2),
+        n_e_to_p_e1(E3, L3, N3, E3L3N3-->K3),
         dpop_portray_clause(n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, X:T, ite(E1L1N1-->K1, E2L2N2-->K2, E3L3N3-->K3)@L:X:T-->(K1 -> K2 ; K3))-ite-out).
 n_e_to_p_e1(let(YLyN1, E1@L1:X1:T1, E2@L2:N2), L, N2, let(YLyN1, E1L1N1-->K1, E2L2N2-->K2)@L:N2-->Kd) :- !,
         dpush_portray_clause(n_e_to_p_e1(let(YLyN1, E1@L1:X1:T1, E2@L2:N2), L, N2, let(YLyN1, E1L1N1-->K1, E2L2N2-->K2)@L:N2-->Kd)-let-in),
@@ -702,14 +703,16 @@ n_e_to_p_e1(E, L, X:T, E@L:X:T-->Kd) :- !,
 /*
 n_ce_to_p_ce1(+E, +L, +N, -ELNK)
 */
-n_ce_to_p_ce1(E, L, N, E@L:N-->Kd) :- !,
-        dpush_portray_clause(n_ce_to_p_ce1(E, L, N, E@L:N-->Kd)-id-cst-in),
+n_ce_to_p_ce1(E, L, N, ELNK) :- !,
+        dpush_portray_clause(n_ce_to_p_ce1(E, L, N, ELNK)-id-cst-in),
         (   E == true ->
-            Kd = true
+            ELNK = (E@L:N-->true)
         ;   E == false ->
-            Kd = false
+            ELNK = (E@L:N-->false)
+        ;   compound(E), E = app(_, _) ->
+            n_e_to_p_e1(E, L, N, ELNK)
         ),
-        dpush_portray_clause(n_ce_to_p_ce1(E, L, N, E@L:N-->Kd)-id-cst-out).
+        dpush_portray_clause(n_ce_to_p_ce1(E, L, N, ELNK)-id-cst-out).
 
 /*
 ml_const_to_prolog_const(?ML, ?Prolog)
