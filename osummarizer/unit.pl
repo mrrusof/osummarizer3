@@ -1184,12 +1184,45 @@ ut("summ     let y = 1+2 in ()", p_e_to_c1(let(y@l2:y:int,
 
 % /*
 % let z =                                                        ==> {}
-%   (f 1 2):z:int                         --> f_i->i->i(1,2,Z)   ==> { ctx_f_i->i->i(X,Y) :- X=1, Y=2 }
+%   (add 1 2):z:int                       --> add_i->i->i(1,2,Z) ==> { ctx_add_i->i->i(X,Y) :- X=1, Y=2 }
 % in ():v:unit                            --> V=1                ==> {}
 % */
-% ut("naming   let z = f 1 2 in ()", false).
-% ut("path     let z = f 1 2 in ()", false).
-% ut("summ     let z = f 1 2 in ()", false).
+ut("naming   let z = add 1 2 in ()", t_e_to_n_e1(let(z@l2:int,
+                                                     app(add@l4:(int->int->int),
+                                                         [1@l5:int,
+                                                          2@l6:int]
+                                                        )@l3:int,
+                                                     unit@l7:unit), l1, unit, v,
+                                                 node(add, add:(a_add:int -> b_add:(ba_add:int -> bb_add:int)), 0, empty, empty),
+                                                 let(z@l2:z:int,
+                                                     app(add@l4:add_z:(a_add_z:int->b_add:(ba_add_z:int->z:int)),
+                                                         [1@l5:a_add_z:int,
+                                                          2@l6:ba_add_z:int]
+                                                        )@l3:z:int,
+                                                     unit@l7:v:unit
+                                                    )@l1:v:unit)).
+ut("path     let z = add 1 2 in ()", n_e_to_p_e1(let(z@l2:z:int,
+                                                     app(add@l4:add_z:(a_add_z:int->b_add:(ba_add_z:int->z:int)),
+                                                         [1@l5:a_add_z:int,
+                                                          2@l6:ba_add_z:int]
+                                                        )@l3:z:int,
+                                                     unit@l7:v:unit
+                                                    ), l1, v:unit,
+                                                 let(z@l2:z:int,
+                                                     app(add@l4:add_z:(a_add_z:int->b_add:(ba_add_z:int->z:int)),
+                                                         [1@l5:a_add_z:int-->('A_ADD_Z'=1),
+                                                          2@l6:ba_add_z:int-->('BA_ADD_Z'=2)]
+                                                        )@l3:z:int-->'add_int->int->int'(1,2,'Z'),
+                                                     unit@l7:v:unit-->('V'=1)
+                                                    )@l1:v:unit-->('V'=1,'add_int->int->int'(1,2,'Z')))).
+ut("summ     let z = add 1 2 in ()", p_e_to_c1(let(z@l2:z:int,
+                                                 app(add@l4:add_z:(a_add_z:int->b_add:(ba_add_z:int->z:int)),
+                                                     [1@l5:a_add_z:int-->('A_ADD_Z'=1),
+                                                      2@l6:ba_add_z:int-->('BA_ADD_Z'=2)]
+                                                    )@l3:z:int-->'add_int->int->int'(1,2,'Z'),
+                                                 unit@l7:v:unit-->('V'=1)
+                                                ), l1, v:unit, true, ('V'=1,'add_int->int->int'(1,2,'Z')),
+                                             [('ctx_add_int->int->int'('A_ADD_Z', 'BA_ADD_Z') :- ('BA_ADD_Z'=2, 'A_ADD_Z'=1))])).
 
 % /*
 % let f =                                                        ==> { f_i->i->i(X,Y,R) :- R=X+Y }

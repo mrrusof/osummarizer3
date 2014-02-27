@@ -1,0 +1,1 @@
+let plus1 = (+) in plus1 1 2

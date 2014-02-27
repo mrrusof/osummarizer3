@@ -1,0 +1,8 @@
+let('plus1'@loc('plus.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
+    '+'@loc('plus.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
+    app('plus1'@loc('plus.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
+        [1@loc('plus.ml', 0, 0, 0, 0, 0, 0):int,
+         2@loc('plus.ml', 0, 0, 0, 0, 0, 0):int
+        ]
+       )@loc('plus.ml', 0, 0, 0, 0, 0, 0):int
+   )@loc('plus.ml', 0, 0, 0, 0, 0, 0):int.
