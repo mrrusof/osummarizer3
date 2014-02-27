@@ -1072,7 +1072,6 @@ summarize(FileIn, FileOut) :-
         named_exp_to_path_exp(ELN, ELNK),
 % Log the path expression
         lprint('\n'),
-        portray_clause(ELNK),
         lprint('* Path expression:\n'),
         lprint(ELNK),
         lprint('\n'),
