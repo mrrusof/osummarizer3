@@ -1205,6 +1205,21 @@ ut("summ     let y = 1+2 in ()", p_e_to_c1(let(y@l2:y:int,
 % ut("summ     let p = (fun x -> (+) x) 1 in ()", false).
 
 
+ut("path   let plus = (+) in plus 1 2", n_e_to_p_e1(let(plus1@l:plus1:(a_plus1:int->b_plus1:(ba_plus1:int->bb_plus1:int)),
+                                                        (+)@l:plus1:(a_plus1:int->b_plus1:(ba_plus1:int->bb_plus1:int)),
+                                                        app(plus1@l:plus1_v:(a_plus1_v:int->b_plus1:(ba_plus1_v:int->v:int)),
+                                                            [1@l:a_plus1_v:int,
+                                                             2@l:ba_plus1_v:int]
+                                                           )@l:v:int
+                                                       ), l, v:int,
+                                                    let(plus1@l:plus1:(a_plus1:int->b_plus1:(ba_plus1:int->bb_plus1:int)),
+                                                        (+)@l:plus1:(a_plus1:int->b_plus1:(ba_plus1:int->bb_plus1:int)) --> ('BB_PLUS1'='A_PLUS1'+'BA_PLUS1'),
+                                                        app(plus1@l:plus1_v:(a_plus1_v:int->b_plus1:(ba_plus1_v:int->v:int)),
+                                                            [1@l:a_plus1_v:int --> ('A_PLUS1_V'=1),
+                                                             2@l:ba_plus1_v:int --> ('BA_PLUS1_V'=2)]
+                                                           )@l:v:int --> 'plus1_int->int->int'(1,2,'V')
+                                                       )@l:v:int --> 'plus1_int->int->int'(1,2,'V'))).
+
 
 % % **********************************************************************
 % % | c                                                      Constant

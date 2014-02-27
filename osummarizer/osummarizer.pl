@@ -581,7 +581,7 @@ named_exp_to_path_exp(+ELN, -ELNK)
 */
 named_exp_to_path_exp(E@L:N, ELN-->K) :-
         n_e_to_p_e1(E, L, N, ELN-->K),
-        lformat('\n* Main path conjunct:\n~p\n\n', [K]).
+        lformat('\n* Main path conjunct:\n~p\n', [K]).
 
 /*
 n_e_to_p_e1(+E, +L, +N, -ELNK)
@@ -639,12 +639,15 @@ n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, X:T, ite(E1L1N1-->K1, E2L2N2--
         ),
         Kd = (K1 -> K2 ; K3),
         dpop_portray_clause(n_e_to_p_e1(ite(E1@L1:N1, E2@L2:N2, E3@L3:N3), L, X:T, ite(E1L1N1-->K1, E2L2N2-->K2, E3L3N3-->K3)@L:X:T-->Kd)-ite-out).
-n_e_to_p_e1(let(YLyN1, E1@L1:N1, E2@L2:N2), L, N2, let(YLyN1, E1L1N1-->K1, E2L2N2-->K2)@L:N2-->Kd) :- !,
-        dpush_portray_clause(n_e_to_p_e1(let(YLyN1, E1@L1:N1, E2@L2:N2), L, N2, let(YLyN1, E1L1N1-->K1, E2L2N2-->K2)@L:N2-->Kd)-let-in),
-        n_e_to_p_e1(E1, L1, N1, E1L1N1-->K1),
+n_e_to_p_e1(let(YLyN1, E1@L1:X1:T1, E2@L2:N2), L, N2, let(YLyN1, E1L1N1-->K1, E2L2N2-->K2)@L:N2-->Kd) :- !,
+        dpush_portray_clause(n_e_to_p_e1(let(YLyN1, E1@L1:X1:T1, E2@L2:N2), L, N2, let(YLyN1, E1L1N1-->K1, E2L2N2-->K2)@L:N2-->Kd)-let-in),
+        n_e_to_p_e1(E1, L1, X1:T1, E1L1N1-->K1),
         n_e_to_p_e1(E2, L2, N2, E2L2N2-->K2),
-        mk_conj((K2, K1), Kd),
-        dpop_portray_clause(n_e_to_p_e1(let(YLyN1, E1@L1:N1, E2@L2:N2), L, N2, let(YLyN1, E1L1N1-->K1, E2L2N2-->K2)@L:N2-->Kd)-let-out).
+        (   function_type(T1) ->
+            Kd = K2
+        ;   mk_conj((K2, K1), Kd)
+        ),
+        dpop_portray_clause(n_e_to_p_e1(let(YLyN1, E1@L1:X1:T1, E2@L2:N2), L, N2, let(YLyN1, E1L1N1-->K1, E2L2N2-->K2)@L:N2-->Kd)-let-out).
 n_e_to_p_e1(E, L, X:T, E@L:X:T-->Kd) :- !,
         dpush_portray_clause(n_e_to_p_e1(E, L, X:T, ELNK)-id-cst-in),
         (   ml_const(E) ->
@@ -1051,12 +1054,15 @@ summarize(FileIn, FileOut) :-
         named_exp_to_path_exp(ELN, ELNK),
 % Log the path expression
         lprint('\n'),
+        portray_clause(ELNK),
         lprint('* Path expression:\n'),
         lprint(ELNK),
         lprint('\n'),
 % Summarize the expression
         path_exp_to_constraints(ELNK, Ss),
 % Output the summarized program
+        lprint('\n'),
+        lprint('* Summary constraints:\n'),
         (   FileOut == no_file ->
             Out = user_output
         ;   open(FileOut, write, Out)
