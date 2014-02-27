@@ -937,22 +937,81 @@ ut("PP path  (<) 1", pp(app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:b
 
 % **********************************************************************
 % | x                                                      Identifier
+% | c                                                      Constant
 % | e e ... e                                              Application
 
 ut("naming   full app (add 1 2):int", t_e_to_n_e1(app(add@l2:(int->int->int), [1@l3:int, 2@l4:int]), l1, int, v,
                                                   node(add, add:(a_add:int -> b_add:(ba_add:int -> bb_add:int)), 0, empty, empty),
-                                                  app(add@l2:add_v:(a_add_v:int->b_add:(ba_add_v:int->v:int)), [1@l3:a_add_v:int, 2@l4:ba_add_v:int])@l1:v:int)).
-ut("path     full app (add 1 2):int", n_e_to_p_e1(app(add@l2:add_v:(a_add_v:int->b_add:(ba_add_v:int->v:int)), [1@l3:a_add_v:int, 2@l4:ba_add_v:int]), l1, v:int,
-                                                        app(add@l2:add_v:(a_add_v:int->b_add:(ba_add_v:int->v:int)),
-                                                            [1@l3:a_add_v:int --> ('A_ADD_V'=1),
-                                                             2@l4:ba_add_v:int --> ('BA_ADD_V'=2)]
-                                                           )@l1:v:int --> 'add_int->int->int'(1, 2, 'V'))).
+                                                  app(add@l2:add_v:(a_add_v:int->b_add:(ba_add_v:int->v:int)),
+                                                      [1@l3:a_add_v:int,
+                                                       2@l4:ba_add_v:int]
+                                                     )@l1:v:int)).
+ut("path     full app (add 1 2):int", n_e_to_p_e1(app(add@l2:add_v:(a_add_v:int->b_add:(ba_add_v:int->v:int)),
+                                                      [1@l3:a_add_v:int,
+                                                       2@l4:ba_add_v:int]
+                                                     ), l1, v:int,
+                                                  app(add@l2:add_v:(a_add_v:int->b_add:(ba_add_v:int->v:int)),
+                                                      [1@l3:a_add_v:int --> ('A_ADD_V'=1),
+                                                       2@l4:ba_add_v:int --> ('BA_ADD_V'=2)]
+                                                     )@l1:v:int --> 'add_int->int->int'(1, 2, 'V'))).
 ut("summ     full app (add 1 2):int", p_e_to_c1(app(add@l2:add_v:(a_add_v:int->b_add:(ba_add_v:int->v:int)),
                                                     [1@l3:a_add_v:int --> ('A_ADD_V'=1),
                                                      2@l4:ba_add_v:int --> ('BA_ADD_V'=2)]
-                                                   ), l1, v:int, true, 'add_int->int->int'(1, 2, 'V'), [('ctx_add_int->int->int'('A_ADD_V', 'BA_ADD_V') :- ('BA_ADD_V'=2, 'A_ADD_V'=1))])).
-ut("naming   partial app (f 1):(int->int)", false).
-ut("naming   nested app (incr (incr 1)):int", false).
+                                                   ), l1, v:int, true, 'add_int->int->int'(1, 2, 'V'),
+                                                [('ctx_add_int->int->int'('A_ADD_V', 'BA_ADD_V') :- ('BA_ADD_V'=2, 'A_ADD_V'=1))])).
+
+ut("Negative WF   partial app (add 1):(int->int)", \+ wf_t_e(app(add@l2:(int->int->int), [1@l3:int]), l1, int)).
+ut("naming        partial app (add 1):(int->int)", t_e_to_n_e1(app(add@l2:(int->int->int),
+                                                                   [1@l3:int]
+                                                                  ), l1, (int->int), v,
+                                                               node(add, add:(a_add:int -> b_add:(ba_add:int -> bb_add:int)), 0, empty, empty),
+                                                               app(add@l2:add_v:(a_add_v:int->v:(ba_add_v:int->bb_add_v:int)),
+                                                                   [1@l3:a_add_v:int]
+                                                                  )@l1:v:(ba_add_v:int->bb_add_v:int))).
+ut("path          partial app (add 1):(int->int)", n_e_to_p_e1(app(add@l2:add_v:(a_add_v:int->v:(ba_add_v:int->bb_add_v:int)),
+                                                                   [1@l3:a_add_v:int]
+                                                                  ), l1, v:(ba_add_v:int->bb_add_v:int),
+                                                               app(add@l2:add_v:(a_add_v:int->v:(ba_add_v:int->bb_add_v:int)),
+                                                                   [1@l3:a_add_v:int --> ('A_ADD_V'=1)]
+                                                                  )@l1:v:(ba_add_v:int->bb_add_v:int) --> 'add_int->int->int'(1, 'BA_ADD_V', 'BB_ADD_V'))).
+ut("summ          partial app (add 1):(int->int)", p_e_to_c1(app(add@l2:add_v:(a_add_v:int->v:(ba_add_v:int->bb_add_v:int)),
+                                                                   [1@l3:a_add_v:int --> ('A_ADD_V'=1)]
+                                                                ), l1, v:(ba_add_v:int->bb_add_v:int), true, 'add_int->int->int'(1, 'BA_ADD_V', 'BB_ADD_V'),
+                                                             [('ctx_add_int->int->int'('A_ADD_V', 'BA_ADD_V') :- ('ctx_v_int->int'('BA_ADD_V'), 'A_ADD_V'=1))])).
+
+ut("naming   nested app (incr (incr 1)):int", t_e_to_n_e1(app(incr@l:(int->int),
+                                                              [app(incr@l:(int->int),
+                                                                   [1@l:int]
+                                                                  )@l:int]
+                                                             ), l, int, r,
+                                                          node(incr,incr:(a_incr:int->b_incr:int),0,empty,empty),
+                                                          app(incr@l:incr_r:(a_incr_r:int->r:int),
+                                                              [app(incr@l:incr_a_incr_r:(a_incr_a_incr_r:int->a_incr_r:int),
+                                                                   [1@l:a_incr_a_incr_r:int]
+                                                                  )@l:a_incr_r:int]
+                                                             )@l:r:int)).
+ut("path     nested app (incr (incr 1)):int", n_e_to_p_e1(app(incr@l:incr_r:(a_incr_r:int->r:int),
+                                                              [app(incr@l:incr_a_incr_r:(a_incr_a_incr_r:int->a_incr_r:int),
+                                                                   [1@l:a_incr_a_incr_r:int]
+                                                                  )@l:a_incr_r:int]
+                                                             ), l, r:int,
+                                                          app(incr@l:incr_r:(a_incr_r:int->r:int),
+                                                              [app(incr@l:incr_a_incr_r:(a_incr_a_incr_r:int->a_incr_r:int),
+                                                                   [1@l:a_incr_a_incr_r:int --> ('A_INCR_A_INCR_R'=1)]
+                                                                  )@l:a_incr_r:int --> 'incr_int->int'(1, 'A_INCR_R')]
+                                                             )@l:r:int -->  ('incr_int->int'('A_INCR_R', 'R'), 'incr_int->int'(1, 'A_INCR_R')))).
+ut("summ     nested app (incr (incr 1)):int", p_e_to_c1(app(incr@l:incr_r:(a_incr_r:int->r:int),
+                                                            [app(incr@l:incr_a_incr_r:(a_incr_a_incr_r:int->a_incr_r:int),
+                                                                 [1@l:a_incr_a_incr_r:int --> ('A_INCR_A_INCR_R'=1)]
+                                                                )@l:a_incr_r:int --> 'incr_int->int'(1, 'A_INCR_R')]
+                                                           ), l, r:int, true, ('incr_int->int'('A_INCR_R', 'R'), 'incr_int->int'(1, 'A_INCR_R')),
+                                                        [('ctx_incr_int->int'('A_INCR_A_INCR_R'):-'A_INCR_A_INCR_R'=1),
+                                                         ('ctx_incr_int->int'('A_INCR_R'):-'incr_int->int'(1,'A_INCR_R'))])).
+
+% ut("naming   nested app (incr (1+2)):int", false).
+% ut("path     nested app (incr (1+2)):int", false).
+% ut("summ     nested app (incr (1+2)):int", false).
+
 
 
 % **********************************************************************
@@ -1219,6 +1278,7 @@ ut("path   let plus = (+) in plus 1 2", n_e_to_p_e1(let(plus1@l:plus1:(a_plus1:i
                                                              2@l:ba_plus1_v:int --> ('BA_PLUS1_V'=2)]
                                                            )@l:v:int --> 'plus1_int->int->int'(1,2,'V')
                                                        )@l:v:int --> 'plus1_int->int->int'(1,2,'V'))).
+
 
 
 % % **********************************************************************

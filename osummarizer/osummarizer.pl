@@ -122,7 +122,9 @@ wf_t_e(app(Ef@Lf:Tf, ELTs), L, T) :- !,
         wf_l(L),
         wf_t(T),
         wf_t_e(Ef, Lf, Tf),
-        ELTs = [_|_],
+        length(ELTs, Count),
+        Count > 0,
+        remove_formals_ty(Count, Tf, T),
         (   foreach(Ei@Li:Ti, ELTs)
         do  wf_t_e(Ei, Li, Ti)
         ),
@@ -205,6 +207,17 @@ wf_t(T) :-
             )
         ;   ( base_type(T) ; type_var(T) )
         ).
+
+/*
+remove_formals_ty(+Count, +T, -R) :-
+*/
+remove_formals_ty(Count, T, R) :-
+	(   Count > 0 ->
+	    T = (_->T2),
+	    Count1 is Count-1,
+	    remove_formals_ty(Count1, T2, R)
+	;   R = T
+	).
 
 
 
@@ -544,7 +557,7 @@ rename_return(Pos, X, Y:T, NewN) :-
         ).
 
 /*
-remove_formals(Count, N, R) :-
+remove_formals(+Count, +N, -R) :-
 */
 remove_formals(Count, N, R) :-
 	(   Count > 0 ->
@@ -721,16 +734,18 @@ p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, X:T, K, Kd, S) :- !,
             S = []
         ;   ml_id(Ef) ->
             mk_ctx_pred(Ef:Tf, CtxEf),
-            (   foreach(_-->Ki, ELNKs),
-                fromto(true, InKs, (Ki,InKs), Ks)
-            do  true
+            (   foreach(Ei@Li:Ni-->Ki, ELNKs),
+                fromto(true, InKs, (Ki,InKs), Ks),
+                foreach(Si, Ss),
+                param(K)
+            do  p_e_to_c1(Ei, Li, Ni, K, Ki, Si)
             ),
             (   function_type(T) ->
                 mk_ctx_pred(X:T, CtxX),
                 mk_conj((CtxX, Ks, K), Body)
             ;   mk_conj((Ks, K), Body)
             ),
-            S = [(CtxEf :- Body)]
+            ord_union([[(CtxEf :- Body)]|Ss], S)
         ),
         dpop_portray_clause(p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, X:T, K, Kd, S)-app-out).
 p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, S) :- !,
