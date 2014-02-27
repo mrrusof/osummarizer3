@@ -32,6 +32,7 @@
 ;; Prolog mode for the following files
 (setq auto-mode-alist (append '(("\\.of$" . prolog-mode)
                                 ("\\.named$" . prolog-mode)
+                                ("\\.path$" . prolog-mode)
                                 ("\\.hsf$" . prolog-mode)
                                 ("\\.qarmc$" . prolog-mode)
                                 ("\\.qscript$" . prolog-mode)) auto-mode-alist))

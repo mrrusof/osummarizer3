@@ -1,0 +1,8 @@
+let(id1@loc('id.ml',0,0,0,0,0,0):id1:(x2:int->ret_id1:int),
+    abs([x2@loc('id.ml',0,0,0,0,0,0):x2:int],
+        x2@loc('id.ml',0,0,0,0,0,0):ret_id1:int-->('RET_ID1'='X2')
+       )@loc('id.ml',0,0,0,0,0,0):id1:(x2:int->ret_id1:int)-->('RET_ID1'='X2'),
+    app(id1@loc('id.ml',0,0,0,0,0,0):id1_v:(a_id1_v:int->v:int),
+        [3@loc('id.ml',0,0,0,0,0,0):a_id1_v:int-->('A_ID1_V'=3)]
+       )@loc('id.ml',0,0,0,0,0,0):v:int-->'id1_int->int'(3,'V')
+   )@loc('id.ml',0,0,0,0,0,0):v:int-->'id1_int->int'(3,'V').
