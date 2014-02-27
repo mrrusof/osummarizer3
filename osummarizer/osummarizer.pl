@@ -755,15 +755,18 @@ p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, S) :-
         p_e_to_c1(E3, L3, N3, (\+ K1, K), K3, S3),
         ord_union([S1, S2, S3], S),
         dpop_portray_clause(p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, S)-ite-out).
-p_e_to_c1(let(YLyN1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N2, K, Kd, S) :- !,
-        dpush_portray_clause(p_e_to_c1(let(YLyN1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N2, K, Kd, S)-let-in),
+p_e_to_c1(let(X1Lx1Nx1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N2, K, Kd, S) :- !,
+        dpush_portray_clause(p_e_to_c1(let(X1Lx1Nx1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N2, K, Kd, S)-let-in),
         p_e_to_c1(E1, L1, X1:T1, K, K1, S1),
         (   function_type(T1) ->
-            p_e_to_c1(E2, L2, N2, K, K2, S2)
-        ;   p_e_to_c1(E2, L2, N2, (K1, K), K2, S2)
+            p_e_to_c1(E2, L2, N2, K, K2, S2),
+            mk_summ_pred(X1:T1, Summ),
+            mk_conj((K1, K), Body),
+            ord_union([[(Summ :- Body)], S1, S2], S)
+        ;   p_e_to_c1(E2, L2, N2, (K1, K), K2, S2),
+            ord_union([S1, S2], S)
         ),
-        ord_union([S1, S2], S),
-        dpop_portray_clause(p_e_to_c1(let(YLyN1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N2, K, Kd, S)-let-out).
+        dpop_portray_clause(p_e_to_c1(let(X1Lx1Nx1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N2, K, Kd, S)-let-out).
 p_e_to_c1(E, L, X:T, K, Kd, S) :- !,
         dpush_portray_clause(p_e_to_c1(E, L, X:T, K, Kd, S)-id-cst-in),
         (   ml_const(E) ->

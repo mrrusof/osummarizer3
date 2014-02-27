@@ -1315,7 +1315,7 @@ ut("summ   let plus = (+) in plus 1 2", p_e_to_c1(let(plus1@l:plus1:(a_plus1:int
                                                            )@l:v:int --> 'plus1_int->int->int'(1,2,'V')
                                                        ), l, v:int, true, 'plus1_int->int->int'(1,2,'V'),
                                                   [('ctx_plus1_int->int->int'('A_PLUS1_V', 'BA_PLUS1_V') :- ('BA_PLUS1_V'=2, 'A_PLUS1_V'=1)),
-                                                   ('plus1_int->int->int'('A_PLUS1_V', 'BA_PLUS1_V', 'BB_PLUS1_V') :- ('BA_PLUS1_V'='A_PLUS1_V'+'BA_PLUS1_V'))])).
+                                                   ('plus1_int->int->int'('A_PLUS1', 'BA_PLUS1', 'BB_PLUS1') :- 'BB_PLUS1'='A_PLUS1'+'BA_PLUS1')])).
 
 
 
