@@ -1,0 +1,26 @@
+(let
+  max1:max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int))
+=
+  (fun
+    x2:x2:int
+    y3:y3:int
+  ->
+    (if
+      (
+        (>):gt_c_ret_max1:(a_gt_c_ret_max1:int -> b_gt_c_ret_max1:(ba_gt_c_ret_max1:int -> c_ret_max1:bool))
+        x2:a_gt_c_ret_max1:int --> A_GT_C_RET_MAX1=X2
+        y3:ba_gt_c_ret_max1:int --> BA_GT_C_RET_MAX1=Y3
+      ):c_ret_max1:bool --> X2>Y3
+    then
+      x2:ret_max1:int --> RET_MAX1=X2
+    else
+      y3:ret_max1:int --> RET_MAX1=Y3
+    ):ret_max1:int --> (X2>Y3 -> RET_MAX1=X2 ; RET_MAX1=Y3)
+  ):max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int)) --> (X2>Y3 -> RET_MAX1=X2 ; RET_MAX1=Y3)
+in
+  (
+    max1:max1_v:(a_max1_v:int -> f1_max1:(ba_max1_v:int -> v:int))
+    3:a_max1_v:int --> A_MAX1_V=3
+    1:ba_max1_v:int --> BA_MAX1_V=1
+  ):v:int --> 'max1_int->int->int'(3, 1, V)
+):v:int --> 'max1_int->int->int'(3, 1, V)

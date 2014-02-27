@@ -8,7 +8,7 @@
     (if
       (
         (>):gt_c_ret_max1:(a_gt_c_ret_max1:int -> b_gt_c_ret_max1:(ba_gt_c_ret_max1:int -> c_ret_max1:bool))
-        x2: a_gt_c_ret_max1:int
+        x2:a_gt_c_ret_max1:int
         y3:ba_gt_c_ret_max1:int
       ):c_ret_max1:bool
     then
@@ -19,8 +19,8 @@
   ):max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int))
 in
   (
-    max1:max1:(a_max1_v:int -> f1_max1_v:(ba_max1_v:int -> v:int))
-    3: a_max1_v:int
+    max1:max1_v:(a_max1_v:int -> f1_max1:(ba_max1_v:int -> v:int))
+    3:a_max1_v:int
     1:ba_max1_v:int
   ):v:int
 ):v:int
