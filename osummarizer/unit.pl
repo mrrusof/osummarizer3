@@ -1320,7 +1320,7 @@ ut("summ     let id1 = fun (x2 : int) -> x2 in id1 3", p_e_to_c1(let(id1@loc('id
                                                                          [3@l:a_id1_v:int-->('A_ID1_V'=3)]
                                                                         )@l:v:int-->'id1_int->int'(3,'V')
                                                                     ), l, v:int, true, 'id1_int->int'(3,'V'),
-                                                                 [('ctx_id1_int->int'(A_ID1_V) :- A_ID1_V=3),
+                                                                 [('ctx_id1_int->int'('A_ID1_V') :- 'A_ID1_V'=3),
                                                                   ('id1_int->int'('X2', 'RET_ID1') :- 'RET_ID1'='X2', 'ctx_id1_int->int'('X2'))])).
 
 % /*
