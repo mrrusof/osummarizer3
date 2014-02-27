@@ -15,6 +15,9 @@ osummarizer.sav: main.pl osummarizer.pl terms.pl log.pl debug.pl ext/utils/misc.
 ext/utils/misc.pl:
 	./ext/checkout-externals.sh
 
+tests: osummarizer
+	./run-tests.sh
+
 unit:
 	sicstus -l unit.pl --goal 'flush_output, halt.' 2>/dev/null
 
