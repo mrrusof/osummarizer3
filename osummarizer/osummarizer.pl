@@ -568,7 +568,7 @@ remove_formals(Count, N, R) :-
 	).
 
 /*
-ml_const_to_name(-Const, +Name)
+ml_const_to_name(?Const, ?Name)
 */
 ml_const_to_name(+, plus).
 ml_const_to_name(-, sub).
@@ -668,7 +668,10 @@ n_e_to_p_e1(E, L, X:T, E@L:X:T-->Kd) :- !,
                 formals(X:T, NFormals),
                 maplist(name_of_type, NFormals, Formals),
                 maplist(uppercase_atom, Formals, UFormals),
-                Call =.. [E|UFormals],
+                (   ml_const_to_prolog_const(E, Ep) ->
+                    Call =.. [Ep|UFormals]
+                ;   Call =.. [E|UFormals]
+                ),
                 return(X:T, Y:R),
                 (   ( R == bool ; R == unit ) ->
                     Kd = Call
@@ -704,6 +707,15 @@ n_ce_to_p_ce1(E, L, N, E@L:N-->Kd) :- !,
             Kd = false
         ),
         dpush_portray_clause(n_ce_to_p_ce1(E, L, N, E@L:N-->Kd)-id-cst-out).
+
+/*
+ml_const_to_prolog_const(?ML, ?Prolog)
+*/
+ml_const_to_prolog_const(<>, =\=).
+ml_const_to_prolog_const(>=, >=).
+ml_const_to_prolog_const(<=, =<).
+ml_const_to_prolog_const(&&, ',').
+ml_const_to_prolog_const('||', ';').
 
 /*
 return(+N, -R)
