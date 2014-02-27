@@ -1260,14 +1260,25 @@ ut("summ     let plus = (+) in ()", p_e_to_c1(let(plus@l:plus:(a_plus:int->b_plu
                                               [('plus_int->int->int'('A_PLUS', 'BA_PLUS', 'BB_PLUS') :- ('BB_PLUS'='A_PLUS'+'BA_PLUS', 'ctx_plus_int->int->int'('A_PLUS','BA_PLUS')))])).
 
 
-% /*
-% let g =                                                        ==> { g_i->i->i(X,Y,R) :- f_i->i->i(X,Y,R) }
-%   f:g:(x:i->y:i->r:i)                   --> f_i->i->i(X,Y,R)   ==> { ctx_f_i->i->i(X,Y) :- ctx_g_i->i->i(X,Y) }
-% in ():v:unit                            --> V=1                ==> {}
-% */
+/*
+(let
+  g:g:(a_g:int -> b_add:(ba_g:int -> bb_g:int))                                            ==> { 'g_int->int->int'(A_G, BA_G, BB_G) :- 'add_int->int->int'(A_G, BA_G, BB_G), 'ctx_g_int->int->int'(A_G, BA_G) }
+=
+  add:g:(a_g:int -> b_add:(ba_g:int -> bb_g:int)) --> 'add_int->int->int'(A_G, BA_G, BB_G) ==> { 'ctx_add_int->int->int'(A_G, BA_G) :- 'ctx_g_int->int->int'(A_G, BA_G) }
+in
+  unit:v:unit                                     --> V=1                                  ==> {}
+):v:unit                                          --> V=1                                  ==> {}
+*/
 % ut("naming   let g = f in ()", false).
 % ut("path     let g = f in ()", false).
-% ut("summ     let g = f in ()", false).
+ut("summ     let g = add in ()", p_e_to_c1(let(g@l2:g:(a_g:int->b_add:(ba_g:int->bb_g:int)),
+                                               add@l3:g:(a_g:int->b_add:(ba_g:int->bb_g:int))-->'add_int->int->int'('A_G','BA_G','BB_G'),
+                                               unit@l4:v:unit-->('V'=1)
+                                              ), l1, v:unit, true, ('V'=1),
+                                           [('ctx_add_int->int->int'('A_G','BA_G'):-'ctx_g_int->int->int'('A_G','BA_G')),
+                                            ('g_int->int->int'(A_G, BA_G, BB_G) :- ('add_int->int->int'(A_G, BA_G, BB_G), 'ctx_g_int->int->int'(A_G, BA_G)))])).
+
+
 
 % /*
 % let h =                                                        ==> { h_i->i(Y,R) :- R=1+Y }
