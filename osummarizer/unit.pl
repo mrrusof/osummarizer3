@@ -1278,13 +1278,11 @@ ut("summ     let g = add in ()", p_e_to_c1(let(g@l2:g:(a_g:int->b_add:(ba_g:int-
                                            [('ctx_add_int->int->int'('A_G','BA_G'):-'ctx_g_int->int->int'('A_G','BA_G')),
                                             ('g_int->int->int'(A_G, BA_G, BB_G) :- ('add_int->int->int'(A_G, BA_G, BB_G), 'ctx_g_int->int->int'(A_G, BA_G)))])).
 
-
-
-% /*
-% let h =                                                        ==> { h_i->i(Y,R) :- R=1+Y }
-%   ((+) 1 ):h:(y:i->r:i)                 --> R=1+Y              ==> {}
-% in ():v:unit                            --> V=1                ==> {}
-% */
+/*
+let h =                                                        ==> { h_i->i(Y,R) :- R=1+Y }
+  ((+) 1 ):h:(y:i->r:i)                 --> R=1+Y              ==> {}
+in ():v:unit                            --> V=1                ==> {}
+*/
 % ut("naming   let h = ((+) 1) in ()", false).
 % ut("path     let h = ((+) 1) in ()", false).
 % ut("summ     let h = ((+) 1) in ()", false).
@@ -1298,6 +1296,33 @@ ut("summ     let g = add in ()", p_e_to_c1(let(g@l2:g:(a_g:int->b_add:(ba_g:int-
 % ut("path     let k = f 1 in ()", false).
 % ut("summ     let k = f 1 in ()", false).
 
+/*
+(let
+  id1:id1:(x2:int -> ret_id1:int)                             ==> { 'id1_int->int'(X2, RET_ID1) :- RET_ID1=X2, 'ctx_id1_int->int'(X2) }
+=
+  (fun
+    x2:x2:int
+  ->
+    x2:ret_id1:int                   --> RET_ID1=X2           ==> {}
+  ):id1:(x2:int -> ret_id1:int)      --> RET_ID1=X2           ==> {}
+in
+  (
+    id1:id1_v:(a_id1_v:int -> v:int)
+    3:a_id1_v:int                    --> A_ID1_V=3
+  ):v:int                            --> 'id1_int->int'(3, V) ==> { 'ctx_id1_int->int'(A_ID1_V) :- A_ID1_V=3 }
+):v:int                              --> 'id1_int->int'(3, V) ==> {}
+*/
+ut("summ     let id1 = fun (x2 : int) -> x2 in id1 3", p_e_to_c1(let(id1@loc('id.ml',0,0,0,0,0,0):id1:(x2:int->ret_id1:int),
+                                                                     abs([x2@l:x2:int],
+                                                                         x2@l:ret_id1:int-->('RET_ID1'='X2')
+                                                                        )@l:id1:(x2:int->ret_id1:int)-->('RET_ID1'='X2'),
+                                                                     app(id1@l:id1_v:(a_id1_v:int->v:int),
+                                                                         [3@l:a_id1_v:int-->('A_ID1_V'=3)]
+                                                                        )@l:v:int-->'id1_int->int'(3,'V')
+                                                                    ), l, v:int, true, 'id1_int->int'(3,'V'),
+                                                                 [('ctx_id1_int->int'(A_ID1_V) :- A_ID1_V=3),
+                                                                  ('id1_int->int'('X2', 'RET_ID1') :- 'RET_ID1'='X2', 'ctx_id1_int->int'('X2'))])).
+
 % /*
 % let l1 =                                                       ==> { l1_i->i->i(X,Y,R) :- R=X+Y }
 %   (fun x y ->
@@ -1305,7 +1330,7 @@ ut("summ     let g = add in ()", p_e_to_c1(let(g@l2:g:(a_g:int->b_add:(ba_g:int-
 %   ):l1:(x:i->y:i->r:i)                  --> R=X+Y              ==> {}
 % in ():v:unit                            --> V=1                ==> {}
 % */
-% ut("naming   let l1 = fun x y -> x+y in ()", false).
+% ut("naming   let l1 = fun x y -> x+y in ()",
 % ut("path     let l1 = fun x y -> x+y in ()", false).
 % ut("summ     let l1 = fun x y -> x+y in ()", false).
 
