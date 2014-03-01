@@ -587,36 +587,6 @@ ut("naming max int", (   E@L:T = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int
 %                             ('max1_int->int->int'('X2','Y3','RET_MAX1'):-('X2'>'Y3','RET_MAX1'='X2';\+'X2'>'Y3','RET_MAX1'='Y3'),'ctx_max1_int->int->int'('X2','Y3'))] )).
 % ut("summarizing max",
 %                   false ).
-% ut("summarizing assume-assert",
-%                   (   E@L:N = let(f1@loc('assume_assert.ml',0,0,0,0,0,0):f1:(x2:int->ret_f1:unit),
-%                                   abs([x2@loc('assume_assert.ml',0,0,0,0,0,0):x2:int],
-%                                       let('_3'@loc('assume_assert.ml',0,0,0,0,0,0):'_3':unit,
-%                                           assume(app(> @loc('assume_assert.ml',0,0,0,0,0,0):gt_asu__3:(a_gt_asu__3:int->b_gt_asu__3:(ba_gt_asu__3:int->asu__3:bool)),
-%                                                      [x2@loc('assume_assert.ml',0,0,0,0,0,0):a_gt_asu__3:int,
-%                                                       1@loc('assume_assert.ml',0,0,0,0,0,0):ba_gt_asu__3:int
-%                                                      ]
-%                                                     )@loc('assume_assert.ml',0,0,0,0,0,0):asu__3:bool
-%                                                 )@loc('assume_assert.ml',0,0,0,0,0,0):'_3':unit,
-%                                           assert(app(> @loc('assume_assert.ml',0,0,0,0,0,0):gt_ase_ret_f1:(a_gt_ase_ret_f1:int->b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int->ase_ret_f1:bool)),
-%                                                      [x2@loc('assume_assert.ml',0,0,0,0,0,0):a_gt_ase_ret_f1:int,
-%                                                       0@loc('assume_assert.ml',0,0,0,0,0,0):ba_gt_ase_ret_f1:int
-%                                                      ]
-%                                                     )@loc('assume_assert.ml',0,0,0,0,0,0):ase_ret_f1:bool
-%                                                 )@loc('assume_assert.ml',0,0,0,0,0,0):ret_f1:unit
-%                                          )@loc('assume_assert.ml',0,0,0,0,0,0):ret_f1:unit
-%                                      )@loc('assume_assert.ml',0,0,0,0,0,0):f1:(x2:int->ret_f1:unit),
-%                                   app(f1@loc('assume_assert.ml',0,0,0,0,0,0):f1:(a_f1_v:int->v:unit),
-%                                       [app('Obj.magic'@loc('assume_assert.ml',0,0,0,0,0,0):magic_a_f1_v:(a_magic_a_f1_v:unit->a_f1_v:int),
-%                                            [unit@loc('assume_assert.ml',0,0,0,0,0,0):a_magic_a_f1_v:unit
-%                                            ]
-%                                           )@loc('assume_assert.ml',0,0,0,0,0,0):a_f1_v:int
-%                                       ]
-%                                      )@loc('assume_assert.ml',0,0,0,0,0,0):v:unit
-%                                  )@loc('assume_assert.ml',0,0,0,0,0,0):v:unit,
-%                       n_e_to_c1(E, L, N, empty, true, 'f1_int->unit'('_'), S),
-%                       S == [('ctx_f1_int->unit'('A_F1_V') :- 'A_F1_V'='_'),
-%                             ('f1_int->unit'('X2') :- ('X2'>0, 'X2'>1, 'ctx_f1_int->unit'('X2'))),
-%                             ('X2'>0 :- ('X2'>1, 'ctx_f1_int->unit'('X2')))] )).
 
 
 
@@ -1299,7 +1269,7 @@ ut("summ     let z = add 1 2 in ()", p_e_to_c1(let(z@l2:z:int,
                                                     )@l3:z:int-->'add_int->int->int'(1,2,'Z'),
                                                  unit@l7:v:unit-->('V'=1)
                                                 ), l1, v:unit, true, ('V'=1,'add_int->int->int'(1,2,'Z')),
-                                             [('ctx_add_int->int->int'('A_ADD_Z', 'BA_ADD_Z') :- ('BA_ADD_Z'=2, 'A_ADD_Z'=1))])).
+                                             [('ctx_add_int->int->int'('A_ADD_Z', 'BA_ADD_Z') :- ('BA_ADD_Z'=2, 'A_ADD_Z'=1, ctx_z_int))])).
 
 /*
 let
@@ -2273,6 +2243,124 @@ ut("PP path  if nondet () then 1 else 0", pp(ite(app(nondet@l:nondet_c_res:(a_no
                                                           0@l:res:int-->('RES'=0)
                                                          )@l:res:int-->('_'->'RES'=1;'RES'=0),
                                              "(if\n  (\n    nondet:nondet_c_res:(a_nondet_c_res:unit -> c_res:bool)\n    unit:a_nondet_c_res:unit\n  ):c_res:bool --> _\nthen\n  1:res:int --> RES=1\nelse\n  0:res:int --> RES=0\n):res:int --> (_ -> RES=1 ; RES=0)")).
+
+ut("naming  assume-assert", t_e_to_n_e1(let('f1'@l:(int -> unit),
+                                            abs(['x2'@l:int],
+                                                let('_3'@l:unit,
+                                                    assume(app('>'@l:(int -> int -> bool),
+                                                               ['x2'@l:int,
+                                                                1@l:int
+                                                               ]
+                                                              )@l:bool
+                                                          )@l:unit,
+                                                    assert(app('>'@l:(int -> int -> bool),
+                                                               ['x2'@l:int,
+                                                                0@l:int
+                                                               ]
+                                                              )@l:bool
+                                                          )@l:unit
+                                                   )@l:unit
+                                               )@l:(int -> unit),
+                                            app('f1'@l:(int -> unit),
+                                                [app(nondet@l:(unit -> int),
+                                                     [unit@l:unit
+                                                     ]
+                                                    )@l:int
+                                                ]
+                                               )@l:unit
+                                           ), l, unit, v, empty,
+                                        let(f1@l:f1:(x2:int->ret_f1:unit),
+                                            abs([x2@l:x2:int],
+                                                let('_3'@l:'_3':unit,
+                                                    assume(
+                                                           app(> @l:gt_asu__3:(a_gt_asu__3:int->b_gt_asu__3:(ba_gt_asu__3:int->asu__3:bool)),
+                                                               [x2@l:a_gt_asu__3:int,
+                                                                1@l:ba_gt_asu__3:int]
+                                                              )@l:asu__3:bool
+                                                          )@l:'_3':unit,
+                                                    assert(
+                                                           app(> @l:gt_ase_ret_f1:(a_gt_ase_ret_f1:int->b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int->ase_ret_f1:bool)),
+                                                               [x2@l:a_gt_ase_ret_f1:int,
+                                                                0@l:ba_gt_ase_ret_f1:int]
+                                                              )@l:ase_ret_f1:bool
+                                                          )@l:ret_f1:unit
+                                                   )@l:ret_f1:unit
+                                               )@l:f1:(x2:int->ret_f1:unit),
+                                            app(f1@l:f1_v:(a_f1_v:int->v:unit),
+                                                [app(nondet@l:nondet_a_f1_v:(a_nondet_a_f1_v:unit->a_f1_v:int),
+                                                     [unit@l:a_nondet_a_f1_v:unit]
+                                                    )@l:a_f1_v:int]
+                                               )@l:v:unit
+                                           )@l:v:unit)).
+ut("path  assume-assert", n_e_to_p_e1(let(f1@l:f1:(x2:int->ret_f1:unit),
+                                          abs([x2@l:x2:int],
+                                              let('_3'@l:'_3':unit,
+                                                  assume(
+                                                         app(> @l:gt_asu__3:(a_gt_asu__3:int->b_gt_asu__3:(ba_gt_asu__3:int->asu__3:bool)),
+                                                             [x2@l:a_gt_asu__3:int,
+                                                              1@l:ba_gt_asu__3:int]
+                                                            )@l:asu__3:bool
+                                                        )@l:'_3':unit,
+                                                  assert(
+                                                         app(> @l:gt_ase_ret_f1:(a_gt_ase_ret_f1:int->b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int->ase_ret_f1:bool)),
+                                                             [x2@l:a_gt_ase_ret_f1:int,
+                                                              0@l:ba_gt_ase_ret_f1:int]
+                                                            )@l:ase_ret_f1:bool
+                                                        )@l:ret_f1:unit
+                                                 )@l:ret_f1:unit
+                                             )@l:f1:(x2:int->ret_f1:unit),
+                                          app(f1@l:f1_v:(a_f1_v:int->v:unit),
+                                              [app(nondet@l:nondet_a_f1_v:(a_nondet_a_f1_v:unit->a_f1_v:int),
+                                                   [unit@l:a_nondet_a_f1_v:unit]
+                                                  )@l:a_f1_v:int]
+                                             )@l:v:unit
+                                         ), l, v:unit,
+                                      let(f1@l:f1:(x2:int->ret_f1:unit),
+                                          abs([x2@l:x2:int],
+                                              let('_3'@l:'_3':unit,
+                                                  assume(app(> @l:gt_asu__3:(a_gt_asu__3:int->b_gt_asu__3:(ba_gt_asu__3:int->asu__3:bool)),
+                                                             [x2@l:a_gt_asu__3:int-->('A_GT_ASU__3'='X2'),
+                                                              1@l:ba_gt_asu__3:int-->('BA_GT_ASU__3'=1)]
+                                                            )@l:asu__3:bool-->('X2'>1)
+                                                        )@l:'_3':unit-->('X2'>1),
+                                                  assert(app(> @l:gt_ase_ret_f1:(a_gt_ase_ret_f1:int->b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int->ase_ret_f1:bool)),
+                                                             [x2@l:a_gt_ase_ret_f1:int-->('A_GT_ASE_RET_F1'='X2'),
+                                                              0@l:ba_gt_ase_ret_f1:int-->('BA_GT_ASE_RET_F1'=0)]
+                                                            )@l:ase_ret_f1:bool-->('X2'>0)
+                                                        )@l:ret_f1:unit-->('X2'>0)
+                                                 )@l:ret_f1:unit-->('X2'>0,'X2'>1)
+                                             )@l:f1:(x2:int->ret_f1:unit)-->('X2'>0,'X2'>1),
+                                          app(f1@l:f1_v:(a_f1_v:int->v:unit),
+                                              [app(nondet@l:nondet_a_f1_v:(a_nondet_a_f1_v:unit->a_f1_v:int),
+                                                   [unit@l:a_nondet_a_f1_v:unit]
+                                                  )@l:a_f1_v:int-->('A_F1_V'='_')]
+                                             )@l:v:unit-->('f1_int->unit'('A_F1_V'),'A_F1_V'='_')
+                                         )@l:v:unit-->('f1_int->unit'('A_F1_V'),'A_F1_V'='_'))).
+ut("summ  assume-assert", p_e_to_c1(let(f1@l:f1:(x2:int->ret_f1:unit),
+                                        abs([x2@l:x2:int],
+                                            let('_3'@l:'_3':unit,
+                                                assume(app(> @l:gt_asu__3:(a_gt_asu__3:int->b_gt_asu__3:(ba_gt_asu__3:int->asu__3:bool)),
+                                                           [x2@l:a_gt_asu__3:int-->('A_GT_ASU__3'='X2'),
+                                                            1@l:ba_gt_asu__3:int-->('BA_GT_ASU__3'=1)]
+                                                          )@l:asu__3:bool-->('X2'>1)
+                                                      )@l:'_3':unit-->('X2'>1),
+                                                assert(app(> @l:gt_ase_ret_f1:(a_gt_ase_ret_f1:int->b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int->ase_ret_f1:bool)),
+                                                           [x2@l:a_gt_ase_ret_f1:int-->('A_GT_ASE_RET_F1'='X2'),
+                                                            0@l:ba_gt_ase_ret_f1:int-->('BA_GT_ASE_RET_F1'=0)]
+                                                          )@l:ase_ret_f1:bool-->('X2'>0)
+                                                      )@l:ret_f1:unit-->('X2'>0)
+                                               )@l:ret_f1:unit-->('X2'>0,'X2'>1)
+                                           )@l:f1:(x2:int->ret_f1:unit)-->('X2'>0,'X2'>1),
+                                        app(f1@l:f1_v:(a_f1_v:int->v:unit),
+                                            [app(nondet@l:nondet_a_f1_v:(a_nondet_a_f1_v:unit->a_f1_v:int),
+                                                 [unit@l:a_nondet_a_f1_v:unit]
+                                                )@l:a_f1_v:int-->('A_F1_V'='_')]
+                                           )@l:v:unit-->('f1_int->unit'('A_F1_V'),'A_F1_V'='_')
+                                       ), l, v:unit, true, ('f1_int->unit'('A_F1_V'),'A_F1_V'='_'),
+                                    [('ctx_f1_int->unit'('A_F1_V') :- 'A_F1_V'='_'),
+                                     ('f1_int->unit'('X2') :- 'X2'>0, 'X2'>1, 'ctx_f1_int->unit'('X2')),
+                                     ('X2'>0 :- 'X2'>1, 'ctx_f1_int->unit'('X2'))])).
+
 
 
 

@@ -832,11 +832,11 @@ p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, S) :-
         dpop_portray_clause(p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, S)-out).
 p_e_to_c1(let(X1Lx1Nx1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N2, K, Kd, S) :- !,
         dpush_portray_clause(p_e_to_c1(let(X1Lx1Nx1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N2, K, Kd, S)-in),
-        p_e_to_c1(E1, L1, X1:T1, K, K1, S1),
+        mk_ctx_pred(X1:T1, Ctx),
+        p_e_to_c1(E1, L1, X1:T1, (Ctx, K), K1, S1),
         (   function_type(T1) ->
             p_e_to_c1(E2, L2, N2, K, K2, S2),
             mk_summ_pred(X1:T1, Summ),
-            mk_ctx_pred(X1:T1, Ctx),
             mk_conj((K1, Ctx, K), Body),
             ord_union([[(Summ :- Body)], S1, S2], S)
         ;   p_e_to_c1(E2, L2, N2, (K1, K), K2, S2),
