@@ -603,68 +603,68 @@ n_e_to_p_e1(+E, +L, +N, -ELNK)
 */
 n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, N, app(Ekf@Lf:Xf:Tf, ELNKs)@L:N-->Kd) :- !,
         dpush_portray_clause(n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, N, app(Ekf@Lf:Xf:Tf, ELNKs)@L:N-->Kd)-in),
-        (   ( ml_const(Ef) ; ml_id(Ef) ) ->
-            (   ( Ef == not ; Ef == '&&' ; Ef == '||' ) ->
-                ml_const_to_prolog_const(Ef, Ep),
-                (   ELNs = [E1@L1:N1] ->
-                    n_ce_to_p_ce1(E1, L1, N1, ELN1-->K1),
-                    ELNKs = [ELN1-->K1],
-                    (   formals(N, [Formal:_]) ->
-                        uppercase_atom(Formal, UFormal),
-                        Call =.. [Ep|[K1, UFormal=1]],
-                        mk_conj(Call, Kd)
-                    ;   Kd =.. [Ep|[K1]]
-                    )
-                ;   ELNs = [E1@L1:N1, E2@L2:N2] ->
-                    n_ce_to_p_ce1(E1, L1, N1, ELN1-->K1),
-                    n_ce_to_p_ce1(E2, L2, N2, ELN2-->K2),
-                    ELNKs = [ELN1-->K1, ELN2-->K2],
-                    Call =.. [Ep|[K1, K2]],
+        (   ( Ef == not ; Ef == '&&' ; Ef == '||' ) ->
+            Ekf = Ef,
+            ml_const_to_prolog_const(Ef, Ep),
+            (   ELNs = [E1@L1:N1] ->
+                n_ce_to_p_ce1(E1, L1, N1, ELN1-->K1),
+                ELNKs = [ELN1-->K1],
+                (   formals(N, [Formal:_]) ->
+                    uppercase_atom(Formal, UFormal),
+                    Call =.. [Ep|[K1, UFormal=1]],
                     mk_conj(Call, Kd)
+                ;   Kd =.. [Ep|[K1]]
                 )
-            ;   (   foreach(Ei@Li:Xi:Ti, ELNs),
-                    foreach(ELNKi, ELNKs),
-                    foreach(Ai, Actuals),
-                    fromto([], InKs, OutKs, Ks)
-                do  n_e_to_p_e1(Ei, Li, Xi:Ti, ELNKi),
-                    (   ml_const(Ei) ->
-                        (_-->(_=Ai)) = ELNKi,
-                        OutKs = InKs
-                    ;   ml_id(Ei) ->
-                        uppercase_atom(Ei, Ai),
-                        OutKs = InKs
-                    ;   uppercase_atom(Xi, Ai),
-                        (_-->Ki) = ELNKi,
-                        OutKs = [Ki|InKs]
-                    )
-                ),
-                formals(N, NFormals),
-                maplist(name_of_type, NFormals, Formals),
-                maplist(uppercase_atom, Formals, UFormals),
-                append(Actuals, UFormals, AsFs),
-                return(N, R:B),
-                (   ml_const(Ef) ->
-                    (   ml_const_to_prolog_const(Ef, Ep) ->
-                        Call =.. [Ep|AsFs]
-                    ;   Call =.. [Ef|AsFs]
-                    ),
-                    (   ( B == bool ; B == unit ) ->
-                        list2tuple([Call|Ks], Kd)
-                    ;   uppercase_atom(R, Ru),
-                        list2tuple([Ru=Call|Ks], Kd)
-                    )
-                ;   summ_sy(Ef:Tf, Ssy),
-                    (   ( B == bool ; B == unit ) ->
-                        Call =.. [Ssy|AsFs],
-                        list2tuple([Call|Ks], Kd)
-                    ;   uppercase_atom(R, Ru),
-                        append(AsFs, [Ru], AsFsR),
-                        Call =.. [Ssy|AsFsR],
-                        list2tuple([Call|Ks], Kd)
-                    )
+            ;   ELNs = [E1@L1:N1, E2@L2:N2] ->
+                n_ce_to_p_ce1(E1, L1, N1, ELN1-->K1),
+                n_ce_to_p_ce1(E2, L2, N2, ELN2-->K2),
+                ELNKs = [ELN1-->K1, ELN2-->K2],
+                Call =.. [Ep|[K1, K2]],
+                mk_conj(Call, Kd)
+            )
+        ;   ( ml_const(Ef) ; ml_id(Ef) ) ->
+            Ekf = Ef,
+            (   foreach(Ei@Li:Xi:Ti, ELNs),
+                foreach(ELNKi, ELNKs),
+                foreach(Ai, Actuals),
+                fromto([], InKs, OutKs, Ks)
+            do  n_e_to_p_e1(Ei, Li, Xi:Ti, ELNKi),
+                (   ml_const(Ei) ->
+                    (_-->(_=Ai)) = ELNKi,
+                    OutKs = InKs
+                ;   ml_id(Ei) ->
+                    uppercase_atom(Ei, Ai),
+                    OutKs = InKs
+                ;   uppercase_atom(Xi, Ai),
+                    (_-->Ki) = ELNKi,
+                    OutKs = [Ki|InKs]
                 )
             ),
-            Ekf = Ef
+            formals(N, NFormals),
+            maplist(name_of_type, NFormals, Formals),
+            maplist(uppercase_atom, Formals, UFormals),
+            append(Actuals, UFormals, AsFs),
+            return(N, R:B),
+            (   ml_const(Ef) ->
+                (   ml_const_to_prolog_const(Ef, Ep) ->
+                    Call =.. [Ep|AsFs]
+                ;   Call =.. [Ef|AsFs]
+                ),
+                (   ( B == bool ; B == unit ) ->
+                    list2tuple([Call|Ks], Kd)
+                ;   uppercase_atom(R, Ru),
+                    list2tuple([Ru=Call|Ks], Kd)
+                )
+            ;   summ_sy(Ef:Tf, Ssy),
+                (   ( B == bool ; B == unit ) ->
+                    Call =.. [Ssy|AsFs],
+                    list2tuple([Call|Ks], Kd)
+                ;   uppercase_atom(R, Ru),
+                    append(AsFs, [Ru], AsFsR),
+                    Call =.. [Ssy|AsFsR],
+                    list2tuple([Call|Ks], Kd)
+                )
+            )
         ),
         dpop_portray_clause(n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, N, app(Ekf@Lf:Xf:Tf, ELNKs)@L:N-->Kd)-out).
 n_e_to_p_e1(abs(XLTs, Eb@Lb:Nb), L, N, abs(XLTs, ELNb-->Kb)@L:N-->Kb) :- !,

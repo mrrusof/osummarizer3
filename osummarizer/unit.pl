@@ -1622,7 +1622,26 @@ ut("summ   assert false", p_e_to_c1(assert(
                                            ), l1, v:unit, true, false,
                                      [(false :- true)])).
 
-ut("path   assert(comp 1 2)", false).
+ut("naming assert(comp 1 2)", t_e_to_n_e1(assert(app(comp@l:(int->int->bool),
+                                                     [1@l:int,
+                                                      2@l:int]
+                                                    )@l:bool
+                                                ), l, unit, v, node(comp, comp:(a_comp:int -> b_comp:(ba_comp:int -> bb_comp:bool)), 0, empty, empty),
+                                          assert(app(comp@l:comp_ase_v:(a_comp_ase_v:int->b_comp:(ba_comp_ase_v:int->ase_v:bool)),
+                                                     [1@l:a_comp_ase_v:int,
+                                                      2@l:ba_comp_ase_v:int]
+                                                    )@l:ase_v:bool
+                                                )@l:v:unit)).
+ut("path   assert(comp 1 2)", n_e_to_p_e1(assert(app(comp@l:comp_ase_v:(a_comp_ase_v:int->b_comp:(ba_comp_ase_v:int->ase_v:bool)),
+                                                     [1@l:a_comp_ase_v:int,
+                                                      2@l:ba_comp_ase_v:int]
+                                                    )@l:ase_v:bool
+                                                ), l, v:unit,
+                                          assert(app(comp@l:comp_ase_v:(a_comp_ase_v:int->b_comp:(ba_comp_ase_v:int->ase_v:bool)),
+                                                     [1@l:a_comp_ase_v:int --> ('A_COMP_ASE_V'=1),
+                                                      2@l:ba_comp_ase_v:int --> ('BA_COMP_ASE_V'=2)]
+                                                    )@l:ase_v:bool --> 'comp_int->int->bool'(1, 2)
+                                                )@l:v:unit --> 'comp_int->int->bool'(1, 2))).
 
 ut("path   let x = false in assert(x)", n_e_to_p_e1(let(x@l:x:bool,
                                                         false@l:x:bool,
