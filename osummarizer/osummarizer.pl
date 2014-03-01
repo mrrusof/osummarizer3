@@ -722,7 +722,7 @@ n_ce_to_p_ce1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->K
                 (   formals(X:T, [Formal:_]) ->
                     uppercase_atom(Formal, UFormal),
                     Call =.. [Ep|[K1, UFormal=1]],
-                    mk_conj(Call, Kd)
+                    simplify_formula(Call, Kd)
                 ;   Kd =.. [Ep|[K1]]
                 )
             ;   ELNs = [E1@L1:N1, E2@L2:N2] ->
@@ -730,7 +730,7 @@ n_ce_to_p_ce1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->K
                 n_ce_to_p_ce1(E2, L2, N2, ELN2-->K2),
                 ELNKs = [ELN1-->K1, ELN2-->K2],
                 Call =.. [Ep|[K1, K2]],
-                mk_conj(Call, Kd)
+                simplify_formula(Call, Kd)
             )
         ;   n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)
         ),
@@ -905,7 +905,7 @@ mk_conj(+Tuple, -Conj)
 */
 mk_conj(T, C) :-
         flatten_tuple(T, Flat),
-        remove_true(Flat, C).
+        simplify_formula(Flat, C).
 
 /*
 flatten_tuple(+K, -R)
@@ -915,17 +915,26 @@ flatten_tuple(K, R) :-
         list2tuple(L, R).
 
 /*
-remove_true(+K, -R)
+simplify_formula(+K, -R)
 */
-remove_true(K, R) :-
+simplify_formula(K, R) :-
         (   compound(K), K = (A, B) ->
-            remove_true(A, Ar),
-            remove_true(B, Br),
+            simplify_formula(A, Ar),
+            simplify_formula(B, Br),
             (   Ar == true ->
                 R = Br
             ;   Br == true ->
                 R = Ar
             ;   R = (Ar, Br)
+            )
+        ;   compound(K), K = (A ; B) ->
+            simplify_formula(A, Ar),
+            simplify_formula(B, Br),
+            (   Ar == false ->
+                R = Br
+            ;   Br == false ->
+                R = Ar
+            ;   R = (Ar ; Br)
             )
         ;   R = K
         ).

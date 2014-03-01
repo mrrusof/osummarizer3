@@ -299,10 +299,12 @@ ut("remove_formals 3", remove_formals(1, f:(g:(x:int -> y:bool) -> h:(z:int -> u
 ut("remove_formals 4", remove_formals(2, f:(g:(x:int -> y:bool) -> h:(z:int -> u:bool)),
                                                                                u:bool   )).
 ut("mk_conj 1", mk_conj(((('BA_ADD_V'=2, 'A_ADD_V'=1), true), true), ('BA_ADD_V'=2, 'A_ADD_V'=1))).
-ut("remove_true 1", remove_true(('X2'>1,'ctx_f1_int->unit'('X2'),true), ('X2'>1,'ctx_f1_int->unit'('X2'))) ).
-ut("remove_true 2", remove_true(('X2'>1,true,'ctx_f1_int->unit'('X2')), ('X2'>1,'ctx_f1_int->unit'('X2'))) ).
-ut("remove_true 3", remove_true((true,'X2'>1,'ctx_f1_int->unit'('X2')), ('X2'>1,'ctx_f1_int->unit'('X2'))) ).
-ut("remove_true 4", remove_true(('BA_ADD_V'=2,'A_ADD_V'=1,true,true), ('BA_ADD_V'=2,'A_ADD_V'=1))).
+ut("simplify_formula 1", simplify_formula(('X2'>1,'ctx_f1_int->unit'('X2'),true), ('X2'>1,'ctx_f1_int->unit'('X2'))) ).
+ut("simplify_formula 2", simplify_formula(('X2'>1,true,'ctx_f1_int->unit'('X2')), ('X2'>1,'ctx_f1_int->unit'('X2'))) ).
+ut("simplify_formula 3", simplify_formula((true,'X2'>1,'ctx_f1_int->unit'('X2')), ('X2'>1,'ctx_f1_int->unit'('X2'))) ).
+ut("simplify_formula 4", simplify_formula(('BA_ADD_V'=2,'A_ADD_V'=1,true,true), ('BA_ADD_V'=2,'A_ADD_V'=1))).
+ut("simplify_formula 5", simplify_formula(('BA_ADD_V'=2,'A_ADD_V'=1 ; false), ('BA_ADD_V'=2,'A_ADD_V'=1))).
+ut("simplify_formula 6", simplify_formula(((false, true) ; 'BA_ADD_V'=2,'A_ADD_V'=1), ('BA_ADD_V'=2,'A_ADD_V'=1))).
 ut("return 1", return(f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)), bb_f:i) ).
 ut("return 2", return(f:(g:(x:int -> y:bool) -> h:(z:int -> u:bool)), u:bool) ).
 ut("formals_return 1", formals_return(f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)),
