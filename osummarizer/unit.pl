@@ -1786,7 +1786,7 @@ ut("path   let x = false in not x", n_e_to_p_e1(let(x@l:x:bool,
                                                        false@l:x:bool --> ('X'=0),
                                                        app(not@l:not_v:(a_not_v:bool->v:bool),
                                                            [x@l:a_not_v:bool --> ('X'=1)]
-                                                          )@l:v:bool --> (\+ 'X'=1 -> 'V'=1)
+                                                          )@l:v:bool --> (\+ 'X'=1 -> 'V'=1 ; 'V'=0)
                                                       )@l:v:bool --> ((\+ 'X'=1 -> 'V'=1 ; 'V'=0), 'X'=0))).
 
 ut("naming let x = false in assert((x || not x) && true)", t_e_to_n_e1(let(x@l:bool,
