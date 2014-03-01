@@ -16,7 +16,7 @@ let('f1'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> unit),
         )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit
         )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> unit),
         app('f1'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> unit),
-            [app('Obj.magic'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(unit -> int),
+            [app(nondet@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(unit -> int),
                  [unit@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit
                  ]
              )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int

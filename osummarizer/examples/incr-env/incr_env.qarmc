@@ -1,2 +1,2 @@
-'ctx_incr2_int->int'(A_INCR2_V) :- A_INCR2_V=2.
+'ctx_incr2_int->int'(A_INCR2_V) :- A_INCR2_V=2, X1=1.
 'incr2_int->int'(Y3, RET_INCR2) :- RET_INCR2=Y3+X1, 'ctx_incr2_int->int'(Y3), X1=1.
