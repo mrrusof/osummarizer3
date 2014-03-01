@@ -1,7 +1,0 @@
-(let
-  x1:int
-=
-  1:int
-in
-  x1:int
-):int

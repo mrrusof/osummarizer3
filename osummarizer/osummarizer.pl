@@ -68,12 +68,12 @@ Typed expression: substitute e:t for e in Expression.
 Typed pattern: substitute p:t for p in Pattern.
 */
 
-ml_const(C) :- ground(C), ( number(C) ; string(C) ; ml_const_pervasives(C) ; ml_const_path(C) ).
+ml_const(C) :- ground(C), ( number(C) ; string(C) ; ml_const_pervasives(C) ; ml_const_path(C) ; ml_const_custom(C) ).
+ml_const_custom(nondet).
 ml_const_path('List.nil').
 ml_const_path('List.cons').
 ml_const_path('List.map').
 ml_const_path('List.length').
-ml_const_path('Obj.magic').
 ml_const_path('Random.int').
 ml_const_pervasives(+).
 ml_const_pervasives(-).
@@ -584,7 +584,7 @@ ml_const_to_name(<=, leq).
 ml_const_to_name(not, not).
 ml_const_to_name(&&, and).
 ml_const_to_name('||', or).
-ml_const_to_name('Obj.magic', 'magic').
+ml_const_to_name(nondet, nondet).
 
 
 
@@ -601,6 +601,10 @@ named_exp_to_path_exp(E@L:N, ELN-->K) :-
 /*
 n_e_to_p_e1(+E, +L, +N, -ELNK)
 */
+n_e_to_p_e1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, app(nondet@Lf:Nf, [unit@Lu:Nu])@L:X:T-->(Xu='_')) :- !,
+        dpush_portray_clause(n_e_to_p_e1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, app(nondet@Lf:Nf, [unit@Lu:Nu])@L:X:T-->(Xu='_'))-in),
+        uppercase_atom(X, Xu),
+        dpop_portray_clause(n_e_to_p_e1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, app(nondet@Lf:Nf, [unit@Lu:Nu])@L:X:T-->(Xu='_'))-out).
 n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd) :- !,
         dpush_portray_clause(n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)-in),
         (   ( Ef == not ; Ef == '&&' ; Ef == '||' ) ->
@@ -715,8 +719,11 @@ n_e_to_p_e1(E, L, X:T, E@L:X:T-->Kd) :- !,
 /*
 n_ce_to_p_ce1(+E, +L, +N, -ELNK)
 */
+n_ce_to_p_ce1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, app(nondet@Lf:Nf, [unit@Lu:Nu])@L:X:T-->'_') :- !,
+        dpush_portray_clause(n_ce_to_p_ce1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, app(nondet@Lf:Nf, [unit@Lu:Nu])@L:X:T-->'_')-in),
+        dpop_portray_clause(n_ce_to_p_ce1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, app(nondet@Lf:Nf, [unit@Lu:Nu])@L:X:T-->'_')-out).
 n_ce_to_p_ce1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd) :- !,
-        dpush_portray_clause(n_ce_to_p_ce1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)),
+        dpush_portray_clause(n_ce_to_p_ce1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)-in),
         (   ( Ef == not ; Ef == '&&' ; Ef == '||' ) ->
             Ekf = Ef,
             ml_const_to_prolog_const(Ef, Ep),
@@ -738,7 +745,7 @@ n_ce_to_p_ce1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->K
             )
         ;   n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)
         ),
-        dpop_portray_clause(n_ce_to_p_ce1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)).
+        dpop_portray_clause(n_ce_to_p_ce1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)-out).
 n_ce_to_p_ce1(E, L, X:T, ELNK) :- !,
         dpush_portray_clause(n_ce_to_p_ce1(E, L, X:T, ELNK)-id-cst-in),
         (   E == true ->

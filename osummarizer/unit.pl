@@ -2230,6 +2230,52 @@ ut("summ   let x = false || true in assume x", p_e_to_c1(let(x@l:x:bool,
                                                        ), l, v:unit, true, ('X'=1, (true -> 'X'=1 ; 'X'=0)), [])).
 
 
+
+% **********************************************************************
+% | c                                                      Constant
+% | e e ... e                                              Application
+% | nondet ()                                              Non-det value
+% | if e then e else e                                     If
+
+ut("naming   if nondet () then 1 else 0", t_e_to_n_e1(ite(app(nondet@l:(unit->bool),
+                                                              [unit@l:unit]
+                                                             )@l:bool,
+                                                          1@l:int, 0@l:int), l, int, res, empty,
+                                                      ite(app(nondet@l:nondet_c_res:(a_nondet_c_res:unit->c_res:bool),
+                                                              [unit@l:a_nondet_c_res:unit]
+                                                             )@l:c_res:bool,
+                                                          1@l:res:int,
+                                                          0@l:res:int
+                                                         )@l:res:int)).
+
+ut("path     if nondet () then 1 else 0", n_e_to_p_e1(ite(app(nondet@l:nondet_c_res:(a_nondet_c_res:unit->c_res:bool),
+                                                              [unit@l:a_nondet_c_res:unit]
+                                                             )@l:c_res:bool,
+                                                          1@l:res:int,
+                                                          0@l:res:int
+                                                         ), l, res:int,
+                                                      ite(app(nondet@l:nondet_c_res:(a_nondet_c_res:unit->c_res:bool),
+                                                              [unit@l:a_nondet_c_res:unit]
+                                                             )@l:c_res:bool-->'_',
+                                                          1@l:res:int-->('RES'=1),
+                                                          0@l:res:int-->('RES'=0)
+                                                         )@l:res:int-->('_'->'RES'=1;'RES'=0))).
+ut("summ     if nondet () then 1 else 0", p_e_to_c1(ite(app(nondet@l:nondet_c_res:(a_nondet_c_res:unit->c_res:bool),
+                                                              [unit@l:a_nondet_c_res:unit]
+                                                             )@l:c_res:bool-->'_',
+                                                          1@l:res:int-->('RES'=1),
+                                                          0@l:res:int-->('RES'=0)
+                                                         ), l, res:int, true, ('_'->'RES'=1;'RES'=0), [])).
+ut("PP path  if nondet () then 1 else 0", pp(ite(app(nondet@l:nondet_c_res:(a_nondet_c_res:unit->c_res:bool),
+                                                              [unit@l:a_nondet_c_res:unit]
+                                                             )@l:c_res:bool-->'_',
+                                                          1@l:res:int-->('RES'=1),
+                                                          0@l:res:int-->('RES'=0)
+                                                         )@l:res:int-->('_'->'RES'=1;'RES'=0),
+                                             "(if\n  (\n    nondet:nondet_c_res:(a_nondet_c_res:unit -> c_res:bool)\n    unit:a_nondet_c_res:unit\n  ):c_res:bool --> _\nthen\n  1:res:int --> RES=1\nelse\n  0:res:int --> RES=0\n):res:int --> (_ -> RES=1 ; RES=0)")).
+
+
+
 % **********************************************************************
 % Test
 

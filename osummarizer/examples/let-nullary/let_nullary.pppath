@@ -1,7 +1,0 @@
-(let
-  x1:x1:int
-=
-  1:x1:int --> X1=1
-in
-  x1:v:int --> V=X1
-):v:int --> X1=1, V=X1
