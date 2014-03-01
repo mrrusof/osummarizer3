@@ -675,6 +675,10 @@ n_e_to_p_e1(assert(Ec@Lc:Nc), L, N, assert(ELNc-->Kc)@L:N-->Kc) :- !,
         dpush_portray_clause(n_e_to_p_e1(assert(Ec@Lc:Nc), L, N, assert(ELNc-->Kc)@L:N-->Kc)-in),
         n_ce_to_p_ce1(Ec, Lc, Nc, ELNc-->Kc),
         dpop_portray_clause(n_e_to_p_e1(assert(Ec@Lc:Nc), L, N, assert(ELNc-->Kc)@L:N-->Kc)-out).
+n_e_to_p_e1(assume(Ec@Lc:Nc), L, N, assume(ELNc-->Kc)@L:N-->Kc) :- !,
+        dpush_portray_clause(n_e_to_p_e1(assume(Ec@Lc:Nc), L, N, assume(ELNc-->Kc)@L:N-->Kc)-in),
+        n_ce_to_p_ce1(Ec, Lc, Nc, ELNc-->Kc),
+        dpop_portray_clause(n_e_to_p_e1(assume(Ec@Lc:Nc), L, N, assume(ELNc-->Kc)@L:N-->Kc)-out).
 n_e_to_p_e1(E, L, X:T, E@L:X:T-->Kd) :- !,
         dpush_portray_clause(n_e_to_p_e1(E, L, X:T, ELNK)-id-cst-in),
         (   ml_const(E) ->
@@ -843,6 +847,10 @@ p_e_to_c1(assert(Ec@Lc:Nc-->Kc), L, X:T, K, Kd, S) :- !,
             ord_union([[(Kcflat :- Kflat)], Sc], S)
         ),
         dpop_portray_clause(p_e_to_c1(assert(Ec@Lc:Nc-->Kc), L, X:T, K, Kd, S)-out).
+p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, X:T, K, Kd, S) :- !,
+        dpush_portray_clause(p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, X:T, K, Kd, S)-in),
+        p_e_to_c1(Ec, Lc, Nc, K, Kc, S),
+        dpop_portray_clause(p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, X:T, K, Kd, S)-out).
 p_e_to_c1(E, L, X:T, K, Kd, S) :- !,
         dpush_portray_clause(p_e_to_c1(E, L, X:T, K, Kd, S)-id-cst-in),
         (   ml_const(E) ->
