@@ -1,3 +1,7 @@
+GREEN="\033[0;32m"
+RED="\033[0;31m"
+NO_COLOR="\033[0m"
+
 all: osummarizer
 
 osummarizer: osummarizer.sav
@@ -19,7 +23,7 @@ tests: osummarizer
 	./run-tests.sh
 
 unit:
-	sicstus -l unit.pl --goal 'flush_output, halt.' 2>/dev/null
+	sicstus -l unit.pl --goal 'flush_output, halt.' 2>/dev/null | sed -e 's/PASSED/\\033[0;32mPASSED\\033[0m/' -e 's/FAILED/\\033[0;31mFAILED\\033[0m/' | (while read -r l; do echo "$$l"; done)
 
 clean:
 	rm -f *.sav *.sav.log osummarizer 1 tests/*/*.qarmc
