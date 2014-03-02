@@ -2363,6 +2363,42 @@ ut("summ  assume-assert", p_e_to_c1(let(f1@l:f1:(x2:int->ret_f1:unit),
 
 
 
+% **********************************************************************
+% Polymorphism
+ut("naming polymorphic (>)", t_e_to_n_e1((>), l, (A->A->bool), v, empty, (>)@l:v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)))).
+% ut("path   polymorphic (>)", n_e_to_p_e1((>), l, v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)),
+%                                          (>)@l:v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)) --> ('A_V'>'BA_V'))).
+% ut("summ   polymorphic (>)", p_e_to_c1((>), l, v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)), true, ('A_V'>'BA_V'), [])).
+ut("naming polymorphic let gt = (>) in gt 2 1", t_e_to_n_e1(let(gt@l:(A->A->bool),
+                                                                (>)@l:(A->A->bool),
+                                                                app(gt@l:(int->int->bool),
+                                                                    [2@l:int,
+                                                                     1@l:int]
+                                                                   )@l:bool
+                                                               ), l, bool, v, empty,
+                                                            let(gt@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)),
+                                                                (>)@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)),
+                                                                app(gt@l:gt_v:(a_gt_v:int->b_gt:(ba_gt_v:int->v:bool)),
+                                                                    [2@l:a_gt_v:int,
+                                                                     1@l:ba_gt_v:int]
+                                                                   )@l:v:bool
+                                                               )@l:v:bool)).
+ut("path   polymorphic let gt = (>) in gt 2 1", n_e_to_p_e1(let(gt@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)),
+                                                               (>)@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)),
+                                                               app(gt@l:gt_v:(a_gt_v:int->b_gt:(ba_gt_v:int->v:bool)),
+                                                                   [2@l:a_gt_v:int,
+                                                                    1@l:ba_gt_v:int]
+                                                                  )@l:v:bool
+                                                              ), l, v:bool,
+                                                           let(gt@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)),
+                                                                (>)@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)) --> ('A_GT'>'BA_GT'),
+                                                                app(gt@l:gt_v:(a_gt_v:int->b_gt:(ba_gt_v:int->v:bool)),
+                                                                    [2@l:a_gt_v:int --> ('A_GT_V'=2),
+                                                                     1@l:ba_gt_v:int --> ('BA_GT_V'=1)]
+                                                                   )@l:v:bool --> 'gt_int->int->bool'(2, 1)
+                                                               )@l:v:bool --> 'gt_int->int->bool'(2, 1))).
+
+
 
 % **********************************************************************
 % Test

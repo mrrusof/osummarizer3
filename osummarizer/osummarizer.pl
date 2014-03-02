@@ -281,7 +281,6 @@ portray(Term) :-
         )
         )).
 
-
 /*
 paren_t(+T)
 */
