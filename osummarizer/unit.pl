@@ -1484,7 +1484,7 @@ ut("summ     let max1 = fun (x2 : int) y3 -> ... in max1 3 1", p_e_to_c1(let(max
 %   ):o:(y:i->r:i)                        --> R=X+Y, X=1         ==> {}
 % in ():v:unit                            --> V=1                ==> {}
 % */
-% ut("naming   let o = (fun x y -> x+y) 1 in ()", false).
+ut("naming   let o = (fun x y -> x+y) 1 in ()", false).
 % ut("path     let o = (fun x y -> x+y) 1 in ()", false).
 % ut("summ     let o = (fun x y -> x+y) 1 in ()", false).
 
@@ -1498,7 +1498,7 @@ ut("summ     let max1 = fun (x2 : int) y3 -> ... in max1 3 1", p_e_to_c1(let(max
 %   ):p:(b:i->r:i)                        --> R=X+B, X=1         ==> {}
 % in ():v:unit                            --> V=1                ==> {}
 % */
-% ut("naming   let p = (fun x -> (+) x) 1 in ()", false).
+ut("naming   let p = (fun x -> (+) x) 1 in ()", false).
 % ut("path     let p = (fun x -> (+) x) 1 in ()", false).
 % ut("summ     let p = (fun x -> (+) x) 1 in ()", false).
 
@@ -2384,19 +2384,27 @@ ut("naming polymorphic let gt = (>) in gt 2 1", t_e_to_n_e1(let(gt@l:(A->A->bool
                                                                    )@l:v:bool
                                                                )@l:v:bool)).
 ut("path   polymorphic let gt = (>) in gt 2 1", n_e_to_p_e1(let(gt@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)),
-                                                               (>)@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)),
-                                                               app(gt@l:gt_v:(a_gt_v:int->b_gt:(ba_gt_v:int->v:bool)),
-                                                                   [2@l:a_gt_v:int,
-                                                                    1@l:ba_gt_v:int]
-                                                                  )@l:v:bool
-                                                              ), l, v:bool,
-                                                           let(gt@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)),
+                                                                (>)@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)),
+                                                                app(gt@l:gt_v:(a_gt_v:int->b_gt:(ba_gt_v:int->v:bool)),
+                                                                    [2@l:a_gt_v:int,
+                                                                     1@l:ba_gt_v:int]
+                                                                   )@l:v:bool
+                                                               ), l, v:bool,
+                                                            let(gt@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)),
                                                                 (>)@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)) --> ('A_GT'>'BA_GT'),
                                                                 app(gt@l:gt_v:(a_gt_v:int->b_gt:(ba_gt_v:int->v:bool)),
                                                                     [2@l:a_gt_v:int --> ('A_GT_V'=2),
                                                                      1@l:ba_gt_v:int --> ('BA_GT_V'=1)]
                                                                    )@l:v:bool --> 'gt_int->int->bool'(2, 1)
                                                                )@l:v:bool --> 'gt_int->int->bool'(2, 1))).
+ut("summ   polymorphic let gt = (>) in gt 2 1", p_e_to_c1(let(gt@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)),
+                                                              (>)@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)) --> ('A_GT'>'BA_GT'),
+                                                              app(gt@l:gt_v:(a_gt_v:int->b_gt:(ba_gt_v:int->v:bool)),
+                                                                  [2@l:a_gt_v:int --> ('A_GT_V'=2),
+                                                                   1@l:ba_gt_v:int --> ('BA_GT_V'=1)]
+                                                                 )@l:v:bool --> 'gt_int->int->bool'(2, 1)
+                                                             ), l, v:bool, true, 'gt_int->int->bool'(2, 1),
+                                                          ['not safe at all'])).
 
 
 

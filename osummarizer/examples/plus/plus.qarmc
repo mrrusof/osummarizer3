@@ -1,0 +1,2 @@
+'ctx_plus1_int->int->int'(A_PLUS1_V, BA_PLUS1_V) :- BA_PLUS1_V=2, A_PLUS1_V=1.
+'plus1_int->int->int'(A_PLUS1, BA_PLUS1, BB_PLUS1) :- BB_PLUS1=A_PLUS1+BA_PLUS1, 'ctx_plus1_int->int->int'(A_PLUS1, BA_PLUS1).
