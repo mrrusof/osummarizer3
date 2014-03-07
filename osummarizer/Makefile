@@ -22,7 +22,7 @@ ext/utils/misc.pl:
 tests: osummarizer
 	@./run-tests.sh
 
-unit:
+check:
 	@sicstus -l unit.pl --goal 'flush_output, halt.' 2>/dev/null | sed -e 's/PASSED/\\033[0;32mPASSED\\033[0m/' -e 's/FAILED/\\033[0;31mFAILED\\033[0m/' | (while read -r l; do echo "$$l"; done)
 
 clean:

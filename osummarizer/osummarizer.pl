@@ -644,14 +644,10 @@ n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)
                     list2tuple([Ru=Call|Ks], Kd)
                 )
             ;   summ_sy(Ef:Tf, Ssy),
-                (   ( B == bool ; B == unit ) ->
-                    Call =.. [Ssy|AsFs],
-                    list2tuple([Call|Ks], Kd)
-                ;   uppercase_atom(R, Ru),
-                    append(AsFs, [Ru], AsFsR),
-                    Call =.. [Ssy|AsFsR],
-                    list2tuple([Call|Ks], Kd)
-                )
+                uppercase_atom(R, Ru),
+                append(AsFs, [Ru], AsFsR),
+                Call =.. [Ssy|AsFsR],
+                list2tuple([Call|Ks], Kd)
             )
         ),
         dpop_portray_clause(n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)-out).
