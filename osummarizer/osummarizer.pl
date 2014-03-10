@@ -633,18 +633,17 @@ n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)
             maplist(uppercase_atom, Formals, UFormals),
             append(Actuals, UFormals, AsFs),
             return(X:T, R:B),
+            uppercase_atom(R, Ru),
             (   ml_const(Ef) ->
                 (   ml_const_to_prolog_const(Ef, Ep) ->
                     Call =.. [Ep|AsFs]
                 ;   Call =.. [Ef|AsFs]
                 ),
                 (   ( B == bool ; B == unit ) ->
-                    list2tuple([Call|Ks], Kd)
-                ;   uppercase_atom(R, Ru),
-                    list2tuple([Ru=Call|Ks], Kd)
+                    list2tuple([(Call -> Ru=1 ; Ru=0)|Ks], Kd)
+                ;   list2tuple([Ru=Call|Ks], Kd)
                 )
             ;   summ_sy(Ef:Tf, Ssy),
-                uppercase_atom(R, Ru),
                 append(AsFs, [Ru], AsFsR),
                 Call =.. [Ssy|AsFsR],
                 list2tuple([Call|Ks], Kd)
@@ -738,7 +737,7 @@ n_ce_to_p_ce1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->K
                 Call =.. [Ep|[K1, K2]],
                 simplify_formula(Call, Kd)
             )
-        ;   n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)
+        ;   n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->(Kd -> _; _))
         ),
         dpop_portray_clause(n_ce_to_p_ce1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)-out).
 n_ce_to_p_ce1(E, L, X:T, ELNK) :- !,
