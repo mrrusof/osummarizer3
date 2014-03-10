@@ -606,11 +606,7 @@ n_e_to_p_e1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, app(nondet@Lf:Nf, [unit@Lu:
         dpop_portray_clause(n_e_to_p_e1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, app(nondet@Lf:Nf, [unit@Lu:Nu])@L:X:T-->(Xu='_'))-out).
 n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd) :- !,
         dpush_portray_clause(n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)-in),
-        (   ( Ef == not ; Ef == '&&' ; Ef == '||' ) ->
-            n_ce_to_p_ce1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Cond),
-            uppercase_atom(X, Xu),
-            Kd = (Cond -> Xu=1 ; Xu=0)
-        ;   ( ml_const(Ef) ; ml_id(Ef) ) ->
+        (   ( ml_const(Ef) ; ml_id(Ef) ) ->
             Ekf = Ef,
             (   foreach(Ei@Li:Xi:Ti, ELNs),
                 foreach(ELNKi, ELNKs),
