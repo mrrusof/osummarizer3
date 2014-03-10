@@ -690,10 +690,10 @@ n_e_to_p_e1(E, L, X:T, E@L:X:T-->Kd) :- !,
                 ;   Call =.. [E|UFormals]
                 ),
                 return(X:T, Y:R),
+                uppercase_atom(Y, Yu),
                 (   ( R == bool ; R == unit ) ->
-                    Kd = Call
-                ;   uppercase_atom(Y, Yu),
-                    Kd = (Yu=Call)
+                    Kd = (Call -> Yu=1 ; Yu=0)
+                ;   Kd = (Yu=Call)
                 )
             ;   uppercase_atom(X, Xu),
                 (   ml_const_to_prolog_const(E, C) ->
