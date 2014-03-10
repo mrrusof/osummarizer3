@@ -606,7 +606,32 @@ n_e_to_p_e1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, app(nondet@Lf:Nf, [unit@Lu:
         dpop_portray_clause(n_e_to_p_e1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, app(nondet@Lf:Nf, [unit@Lu:Nu])@L:X:T-->(Xu='_'))-out).
 n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd) :- !,
         dpush_portray_clause(n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)-in),
-        (   ( ml_const(Ef) ; ml_id(Ef) ) ->
+        (   ( Ef == not ; Ef == '&&' ; Ef == '||' ) ->
+            Ekf = Ef,
+            return(X:T, R:_),
+            uppercase_atom(R, Ru),
+            (   ELNs = [E1@L1:X1:T1] ->
+                n_e_to_p_e1(E1, L1, X1:T1, ELN1-->K1),
+                ELNKs = [ELN1-->K1],
+                uppercase_atom(X1, X1u),
+                (   formals(X:T, [Formal:_]) ->
+                    ml_const_to_prolog_const(Ef, Ep),
+                    uppercase_atom(Formal, UFormal),
+                    Call =.. [Ep|[X1u=1, UFormal=1]],
+                    Kd = ((Call -> Ru=1 ; Ru=0), K1)
+                ;   Kd = ((X1u=0 -> Ru=1 ; Ru=0), K1)
+                )
+            ;   ELNs = [E1@L1:X1:T1, E2@L2:X2:T2] ->
+                n_e_to_p_e1(E1, L1, X1:T1, ELN1-->K1),
+                n_e_to_p_e1(E2, L2, X2:T2, ELN2-->K2),
+                ELNKs = [ELN1-->K1, ELN2-->K2],
+                uppercase_atom(X1, X1u),
+                uppercase_atom(X2, X2u),
+                ml_const_to_prolog_const(Ef, Ep),
+                Call =.. [Ep|[X1u=1, X2u=1]],
+                Kd = ((Call -> Ru=1 ; Ru=0), K2, K1)
+            )
+        ;   ( ml_const(Ef) ; ml_id(Ef) ) ->
             Ekf = Ef,
             (   foreach(Ei@Li:Xi:Ti, ELNs),
                 foreach(ELNKi, ELNKs),

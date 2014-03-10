@@ -909,6 +909,66 @@ ut("PP path  (<) 1", pp(app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:b
                            )@l1:v:(ba_lt_v:bool -> bb_lt_v:bool) --> (1<'BA_LT_V'),
                         "(\n  (<):lt_v:(a_lt_v:bool -> v:(ba_lt_v:bool -> bb_lt_v:bool))\n  true:a_lt_v:bool --> A_LT_V=1\n):v:(ba_lt_v:bool -> bb_lt_v:bool) --> 1<BA_LT_V")).
 
+ut("naming false && true", t_e_to_n_e1(app('&&'@l:(bool -> bool -> bool),
+                                           [false@l:bool,
+                                            true@l:bool]
+                                          ), l, bool, v, empty,
+                                       app(&& @l:and_v:(a_and_v:bool->b_and_v:(ba_and_v:bool->v:bool)),
+                                           [false@l:a_and_v:bool,
+                                            true@l:ba_and_v:bool]
+                                          )@l:v:bool)).
+ut("path   false && true", n_e_to_p_e1(app(&& @l:and_v:(a_and_v:bool->b_and_v:(ba_and_v:bool->v:bool)),
+                                           [false@l:a_and_v:bool,
+                                            true@l:ba_and_v:bool]
+                                          ), l, v:bool,
+                                       app(&& @l:and_v:(a_and_v:bool->b_and_v:(ba_and_v:bool->v:bool)),
+                                           [false@l:a_and_v:bool --> ('A_AND_V'=0),
+                                            true@l:ba_and_v:bool --> ('BA_AND_V'=1)]
+                                          )@l:v:bool --> (('A_AND_V'=1, 'BA_AND_V'=1 -> 'V'=1 ; 'V'=0), 'BA_AND_V'=1, 'A_AND_V'=0))).
+ut("summ   false && true", p_e_to_c1(app(&& @l:and_v:(a_and_v:bool->b_and_v:(ba_and_v:bool->v:bool)),
+                                         [false@l:a_and_v:bool --> ('A_AND_V'=0),
+                                          true@l:ba_and_v:bool --> ('BA_AND_V'=1)]
+                                        ), l, v:bool, true, (('A_AND_V'=1, 'BA_AND_V'=1 -> 'V'=1 ; 'V'=0), 'BA_AND_V'=1, 'A_AND_V'=0),
+                                     [])).
+
+ut("path   (&&) false", n_e_to_p_e1(app(&& @l:and_v:(a_and_v:bool->v:(ba_and_v:bool->bb_and_v:bool)),
+                                           [false@l:a_and_v:bool]
+                                          ), l, v:(ba_and_v:bool->bb_and_v:bool),
+                                    app(&& @l:and_v:(a_and_v:bool->v:(ba_and_v:bool->bb_and_v:bool)),
+                                        [false@l:a_and_v:bool-->('A_AND_V'=0)]
+                                       )@l:v:(ba_and_v:bool->bb_and_v:bool)-->(('A_AND_V'=1,'BA_AND_V'=1->'BB_AND_V'=1;'BB_AND_V'=0),'A_AND_V'=0))).
+ut("summ   (&&) false", p_e_to_c1(app(&& @l:and_v:(a_and_v:bool->v:(ba_and_v:bool->bb_and_v:bool)),
+                                        [false@l:a_and_v:bool-->('A_AND_V'=0)]
+                                       ), l, v:(ba_and_v:bool->bb_and_v:bool), true, (('A_AND_V'=1,'BA_AND_V'=1->'BB_AND_V'=1;'BB_AND_V'=0),'A_AND_V'=0),
+                                  [])).
+
+ut("path   false || true", n_e_to_p_e1(app('||' @l:and_v:(a_or_v:bool->b_or_v:(ba_or_v:bool->v:bool)),
+                                           [false@l:a_or_v:bool,
+                                            true@l:ba_or_v:bool]
+                                          ), l, v:bool,
+                                       app('||' @l:and_v:(a_or_v:bool->b_or_v:(ba_or_v:bool->v:bool)),
+                                           [false@l:a_or_v:bool --> ('A_OR_V'=0),
+                                            true@l:ba_or_v:bool --> ('BA_OR_V'=1)]
+                                          )@l:v:bool --> ((('A_OR_V'=1 ; 'BA_OR_V'=1) -> 'V'=1 ; 'V'=0), 'BA_OR_V'=1, 'A_OR_V'=0))).
+ut("summ   false || true", p_e_to_c1(app('||' @l:and_v:(a_or_v:bool->b_or_v:(ba_or_v:bool->v:bool)),
+                                         [false@l:a_or_v:bool --> ('A_OR_V'=0),
+                                          true@l:ba_or_v:bool --> ('BA_OR_V'=1)]
+                                        ), l, v:bool, true, ((('A_OR_V'=1 ; 'BA_OR_V'=1) -> 'V'=1 ; 'V'=0), 'BA_OR_V'=1, 'A_OR_V'=0),
+                                     [])).
+
+ut("naming not true", t_e_to_n_e1(app(not@l:(bool -> bool),
+                                      [true@l:bool]
+                                     ), l, bool, v, empty,
+                                  app(not@l:not_v:(a_not_v:bool->v:bool),
+                                      [true@l:a_not_v:bool]
+                                     )@l:v:bool)).
+ut("path   not true", n_e_to_p_e1(app(not@l:not_v:(a_not_v:bool->v:bool),
+                                      [true@l:a_not_v:bool]
+                                     ), l, v:bool,
+                                  app(not@l:not_v:(a_not_v:bool->v:bool),
+                                      [true@l:a_not_v:bool --> ('A_NOT_V'=1)]
+                                     )@l:v:bool --> (('A_NOT_V'=0 -> 'V'=1 ; 'V'=0), 'A_NOT_V'=1))).
+
 
 
 % **********************************************************************
@@ -1723,6 +1783,43 @@ ut("path   let y = 1+3 in let x = comp x 2 in assert(x)", n_e_to_p_e1(let(y@l:y:
                                                                              )@l:v:unit --> ('X'=1, 'comp_int->int->bool'('Y', 2, 'X'))
                                                                          )@l:v:unit --> ('X'=1, 'comp_int->int->bool'('Y', 2, 'X'), 'Y'=1+3))).
 
+ut("naming let x = false && true in x", t_e_to_n_e1(let(x@l:bool,
+                                                        app('&&'@l:(bool -> bool -> bool),
+                                                            [false@l:bool,
+                                                             true@l:bool]
+                                                           )@l:bool,
+                                                        x@l:bool
+                                                       ), l, unit, v, empty,
+                                                    let(x@l:x:bool,
+                                                        app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
+                                                            [false@l:a_and_x:bool,
+                                                             true@l:ba_and_x:bool]
+                                                           )@l:x:bool,
+                                                        x@l:v:bool
+                                                       )@l:v:bool)).
+ut("path   let x = false && true in x", n_e_to_p_e1(let(x@l:x:bool,
+                                                        app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
+                                                            [false@l:a_and_x:bool,
+                                                             true@l:ba_and_x:bool]
+                                                           )@l:x:bool,
+                                                        x@l:v:bool
+                                                       ), l, v:bool,
+                                                    let(x@l:x:bool,
+                                                        app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
+                                                            [false@l:a_and_x:bool --> ('A_AND_X'=0),
+                                                             true@l:ba_and_x:bool --> ('BA_AND_X'=1)]
+                                                           )@l:x:bool --> (('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0),
+                                                        x@l:v:bool --> ('V'='X')
+                                                       )@l:v:bool --> ('V'='X', ('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0))).
+ut("summ   let x = false && true in x", p_e_to_c1(let(x@l:x:bool,
+                                                      app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
+                                                          [false@l:a_and_x:bool --> ('A_AND_X'=0),
+                                                           true@l:ba_and_x:bool --> ('BA_AND_X'=1)]
+                                                         )@l:x:bool --> (('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0),
+                                                      x@l:v:bool --> ('V'='X')
+                                                     ), l, v:bool, true, ('V'='X', ('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0),
+                                                  [])).
+
 % /*
 % assert(
 %        true@l2:ase_v:bool --> true ==> {}
@@ -1956,52 +2053,6 @@ ut("path   let y = 1+3 in let x = comp x 2 in assert(x)", n_e_to_p_e1(let(y@l:y:
 %                                                                           ), l, v:unit, true, (('X'=1 ; \+ 'X'=1), 'X'=0),
 %                                                                      [(('X'=1 ; \+ 'X'=1) :- 'X'=0)])).
 
-% ut("naming let x = false && true in assert x", t_e_to_n_e1(let(x@l:bool,
-%                                                         app('&&'@l:(bool -> bool -> bool),
-%                                                             [false@l:bool,
-%                                                              true@l:bool]
-%                                                            )@l:bool,
-%                                                         assert(
-%                                                                x@l:bool
-%                                                               )@l:unit
-%                                                        ), l, unit, v, empty,
-%                                                     let(x@l:x:bool,
-%                                                         app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-%                                                             [false@l:a_and_x:bool,
-%                                                              true@l:ba_and_x:bool]
-%                                                            )@l:x:bool,
-%                                                         assert(
-%                                                                x@l:ase_v:bool
-%                                                               )@l:v:unit
-%                                                        )@l:v:unit)).
-% ut("path   let x = false && true in assert x", n_e_to_p_e1(let(x@l:x:bool,
-%                                                         app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-%                                                             [false@l:a_and_x:bool,
-%                                                              true@l:ba_and_x:bool]
-%                                                            )@l:x:bool,
-%                                                         assert(
-%                                                                x@l:ase_v:bool
-%                                                               )@l:v:unit
-%                                                        ), l, v:unit,
-%                                                     let(x@l:x:bool,
-%                                                         app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-%                                                             [false@l:a_and_x:bool --> false,
-%                                                              true@l:ba_and_x:bool --> true]
-%                                                            )@l:x:bool --> (false -> 'X'=1 ; 'X'=0),
-%                                                         assert(
-%                                                                x@l:ase_v:bool --> ('X'=1)
-%                                                               )@l:v:unit --> ('X'=1)
-%                                                        )@l:v:unit --> ('X'=1, (false -> 'X'=1 ; 'X'=0)))).
-% ut("summ   let x = false && true in assert x", p_e_to_c1(let(x@l:x:bool,
-%                                                         app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-%                                                             [false@l:a_and_x:bool --> false,
-%                                                              true@l:ba_and_x:bool --> true]
-%                                                            )@l:x:bool --> (false -> 'X'=1 ; 'X'=0),
-%                                                         assert(
-%                                                                x@l:ase_v:bool --> ('X'=1)
-%                                                               )@l:v:unit --> ('X'=1)
-%                                                        ), l, v:unit, true, ('X'=1, (false -> 'X'=1 ; 'X'=0)),
-%                                                   [('X'=1 :- (false -> 'X'=1 ; 'X'=0))])).
 
 % ut("path   let x = false || true in assert x", n_e_to_p_e1(let(x@l:x:bool,
 %                                                         app('||'@l:or_x:(a_or_x:bool->b_or_x:(ba_or_x:bool->x:bool)),
