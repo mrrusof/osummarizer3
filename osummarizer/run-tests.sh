@@ -9,14 +9,19 @@ if [ ! -x osummarizer ]; then
 fi
 
 for f in `ls tests/*/*.of`; do
-    echo -n "$f "
+    f=${f%.of}
+    echo -n "$f.qarmc "
     for (( i=${#f}; i < 66; i++ )); do
         echo -n .
     done
     echo -n ' '
-    (   ./osummarizer $f ${f%.of}.qarmc >/dev/null 2>1 && \
-        diff ${f%.of}.qarmc.expected ${f%.of}.qarmc >/dev/null 2>1 && \
-        ../../qarmc5/qarmc ${f%.of}.qarmc | grep 'program is correct' >/dev/null 2>1 && \
+    (   ./osummarizer $f.of $f.qarmc >/dev/null 2>1 && \
+        diff $f.qarmc.expected $f.qarmc >/dev/null 2>1 && \
+        if [ "$f" = "${f%_false}" ]; then
+            ../../qarmc5/qarmc $f.qarmc | grep 'program is correct' >/dev/null 2>1
+        else
+            ../../qarmc5/qarmc $f.qarmc | grep 'program is not correct' >/dev/null 2>1
+        fi && \
         echo -e ${GREEN}PASSED$NO_COLOR
     ) || echo -e ${RED}FAILED$NO_COLOR
 done
