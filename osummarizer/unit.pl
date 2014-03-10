@@ -648,7 +648,7 @@ ut("summ            const (>):(int->int->int)", p_e_to_c1('>', loc('c.ml', 0, 0,
 
 ut("PP typed        const (>):(int->int->int)", pp('>'@loc('c.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool), "(>):(int -> int -> bool)")).
 ut("PP named        const (>):(int->int->int)", pp('>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)), "(>):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool))")).
-ut("PP path         const (>):(int->int->int)", pp('>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool))-->('A_GT_V'>'BA_GT_V' -> 'BB_GT_V'=1 ; 'BB_GT_V'=0)), "(>):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)) --> (A_GT_V>BA_GT_V -> BB_GT_V=1 ; BB_GT_V=0)")).
+ut("PP path         const (>):(int->int->int)", pp('>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool))-->('A_GT_V'>'BA_GT_V' -> 'BB_GT_V'=1 ; 'BB_GT_V'=0), "(>):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)) --> (A_GT_V>BA_GT_V -> BB_GT_V=1 ; BB_GT_V=0)")).
 
 
 
@@ -706,9 +706,10 @@ ut("PP path         add:(int->int->int)", pp(add@loc('x.ml', 0, 0, 0, 0, 0, 0):f
 % comp:g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)) --> 'comp_int->int->int'(A_COMP_V, BA_COMP_V)
 ut("naming          comp:(int->int->bool)", t_e_to_n_e1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), (int->int->bool), g, node(comp, comp:(a_comp:int -> b_comp:(ba_comp:int -> bb_comp:bool)), 0, empty, empty), comp@loc('x.ml', 0, 0, 0, 0, 0, 0):g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)))).
 ut("Negative naming comp:(int->int->bool)", \+ t_e_to_n_e1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), (int->int->bool), v, empty, comp@loc('x.ml', 0, 0, 0, 0, 0, 0):comp_g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)))).
-ut("path            comp:(int->int->bool)", n_e_to_p_e1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), comp@loc('x.ml', 0, 0, 0, 0, 0, 0):g:(a_g:int->b_comp:(ba_g:int->bb_g:bool))-->'comp_int->int->bool'('A_G', 'BA_G'))).
+ut("path            comp:(int->int->bool)", n_e_to_p_e1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), comp@loc('x.ml', 0, 0, 0, 0, 0, 0):g:(a_g:int->b_comp:(ba_g:int->bb_g:bool))-->'comp_int->int->bool'('A_G', 'BA_G', 'BB_G'))).
 ut("Negative path 1 comp:(int->int->bool)", \+ n_e_to_p_e1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), comp@loc('x.ml', 0, 0, 0, 0, 0, 0):g:(a_g:int->b_comp:(ba_g:int->bb_g:bool))-->true)).
 ut("Negative path 2 comp:(int->int->bool)", \+ n_e_to_p_e1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), comp@loc('x.ml', 0, 0, 0, 0, 0, 0):g:(a_g:int->b_comp:(ba_g:int->bb_g:bool))-->('G'='COMP'))).
+ut("Negative path 3 comp:(int->int->bool)", \+ n_e_to_p_e1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), comp@loc('x.ml', 0, 0, 0, 0, 0, 0):g:(a_g:int->b_comp:(ba_g:int->bb_g:bool))-->'comp_int->int->bool'('A_G', 'BA_G'))).
 ut("summ            comp:(int->int->bool)", p_e_to_c1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), true, 'comp_int->int->int'('A_G', 'BA_G'), [('ctx_comp_int->int->bool'('A_G', 'BA_G') :- 'ctx_g_int->int->bool'('A_G', 'BA_G'))])).
 ut("Negative summ   comp:(int->int->bool)", \+ p_e_to_c1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), true, 'comp_int->int->int'('A_G', 'BA_G'), [])).
 

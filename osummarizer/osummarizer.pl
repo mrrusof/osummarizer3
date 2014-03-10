@@ -872,17 +872,10 @@ mk_summ_pred(+N, -Summ)
 */
 mk_summ_pred(N, Summ) :-
         summ_sy(N, Sy),
-        return(N, _:RetT),
-        (   (RetT == bool ; RetT == unit) ->
-            formals(N, NFormals),
-            maplist(name_of_type, NFormals, Formals),
-            maplist(uppercase_atom, Formals, UFormals),
-            Summ =.. [Sy|UFormals]
-        ;   formals_return(N, NFormalsRet),
-            maplist(name_of_type, NFormalsRet, FormalsRet),
-            maplist(uppercase_atom, FormalsRet, UFormalsRet),
-            Summ =.. [Sy|UFormalsRet]
-        ).
+        formals_return(N, NFormalsRet),
+        maplist(name_of_type, NFormalsRet, FormalsRet),
+        maplist(uppercase_atom, FormalsRet, UFormalsRet),
+        Summ =.. [Sy|UFormalsRet].
 
 /*
 summ_sy(+N, -Sy)
