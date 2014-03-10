@@ -1,0 +1,2 @@
+'ctx_id1_int->int'(A_ID1_V) :- A_ID1_V=3.
+'id1_int->int'(X2, RET_ID1) :- RET_ID1=X2, 'ctx_id1_int->int'(X2).
