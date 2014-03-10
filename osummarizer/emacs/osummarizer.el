@@ -35,6 +35,7 @@
                                 ("\\.path$" . prolog-mode)
                                 ("\\.hsf$" . prolog-mode)
                                 ("\\.qarmc$" . prolog-mode)
+                                ("\\.qarmc.expected$" . prolog-mode)
                                 ("\\.qscript$" . prolog-mode)) auto-mode-alist))
 
 ;; Tuareg mode for the following files

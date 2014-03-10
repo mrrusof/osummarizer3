@@ -15,6 +15,7 @@ for f in `ls tests/*/*.of`; do
     done
     echo -n ' '
     (   ./osummarizer $f ${f%.of}.qarmc >/dev/null 2>1 && \
+        diff ${f%.of}.qarmc.expected ${f%.of}.qarmc >/dev/null 2>1 && \
         echo -e ${GREEN}PASSED$NO_COLOR
     ) || echo -e ${RED}FAILED$NO_COLOR
 done
