@@ -710,8 +710,8 @@ ut("path            comp:(int->int->bool)", n_e_to_p_e1(comp, loc('x.ml', 0, 0, 
 ut("Negative path 1 comp:(int->int->bool)", \+ n_e_to_p_e1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), comp@loc('x.ml', 0, 0, 0, 0, 0, 0):g:(a_g:int->b_comp:(ba_g:int->bb_g:bool))-->true)).
 ut("Negative path 2 comp:(int->int->bool)", \+ n_e_to_p_e1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), comp@loc('x.ml', 0, 0, 0, 0, 0, 0):g:(a_g:int->b_comp:(ba_g:int->bb_g:bool))-->('G'='COMP'))).
 ut("Negative path 3 comp:(int->int->bool)", \+ n_e_to_p_e1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), comp@loc('x.ml', 0, 0, 0, 0, 0, 0):g:(a_g:int->b_comp:(ba_g:int->bb_g:bool))-->'comp_int->int->bool'('A_G', 'BA_G'))).
-ut("summ            comp:(int->int->bool)", p_e_to_c1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), true, 'comp_int->int->int'('A_G', 'BA_G'), [('ctx_comp_int->int->bool'('A_G', 'BA_G') :- 'ctx_g_int->int->bool'('A_G', 'BA_G'))])).
-ut("Negative summ   comp:(int->int->bool)", \+ p_e_to_c1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), true, 'comp_int->int->int'('A_G', 'BA_G'), [])).
+ut("summ            comp:(int->int->bool)", p_e_to_c1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), true, 'comp_int->int->int'('A_G', 'BA_G', 'BB_G'), [('ctx_comp_int->int->bool'('A_G', 'BA_G') :- 'ctx_g_int->int->bool'('A_G', 'BA_G'))])).
+ut("Negative summ   comp:(int->int->bool)", \+ p_e_to_c1(comp, loc('x.ml', 0, 0, 0, 0, 0, 0), g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), true, 'comp_int->int->int'('A_G', 'BA_G', 'BB_G'), [])).
 
 
 
@@ -1588,14 +1588,14 @@ ut("Negative path 2 let neq = (<>) in neq 1 2", \+ n_e_to_p_e1(let(neq@l:neq:(a_
                                                                    )@l:v:bool --> _
                                                                )@l:v:bool --> _)).
 ut("summ            let neq = (<>) in neq 1 2", p_e_to_c1(let(neq@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
-                                                              (<>)@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)) --> ('A_NEQ'=\='BA_NEQ'),
+                                                              (<>)@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)) --> ('A_NEQ'=\='BA_NEQ' -> 'BB_NEQ'=1 ; 'BB_NEQ'=0),
                                                               app(neq@l:neq_v:(a_neq_v:int->b_neq:(ba_neq_v:int->v:bool)),
                                                                   [1@l:a_neq_v:int --> ('A_NEQ_V'=1),
                                                                    2@l:ba_neq_v:int --> ('BA_NEQ_V'=2)]
                                                                  )@l:v:bool --> 'neq_int->int->bool'(1, 2, 'V')
                                                              ), l, v:bool, true, 'neq_int->int->bool'(1, 2, 'V'),
                                                           [('ctx_neq_int->int->bool'('A_NEQ_V', 'BA_NEQ_V') :- ('BA_NEQ_V'=2, 'A_NEQ_V'=1)),
-                                                           ('neq_int->int->bool'('A_NEQ', 'BA_NEQ', 'BB_NEQ') :- ('A_NEQ'=\='BA_NEQ', 'ctx_neq_int->int->bool'('A_NEQ','BA_NEQ')))])).
+                                                           ('neq_int->int->bool'('A_NEQ', 'BA_NEQ', 'BB_NEQ') :- (('A_NEQ'=\='BA_NEQ' -> 'BB_NEQ'=1 ; 'BB_NEQ'=0), 'ctx_neq_int->int->bool'('A_NEQ','BA_NEQ')))])).
 
 
 
