@@ -1599,11 +1599,21 @@ ut("summ            let neq = (<>) in neq 1 2", p_e_to_c1(let(neq@l:neq:(a_neq:i
 
 
 
-% % **********************************************************************
-% % | c                                                      Constant
-% % | e e ... e                                              Application
-% % | assert(e)                                              Assert
-% % | assume(e)                                              Assume
+% **********************************************************************
+% | c                                                      Constant
+% | e e ... e                                              Application
+% | let x = e in e                                         Let
+% | assert(e)                                              Assert
+% | assume(e)                                              Assume
+
+ut("path   let x = false in x", n_e_to_p_e1(let(x@l:x:bool,
+                                                false@l:x:bool,
+                                                x@l:v:unit
+                                               ), l, v:unit,
+                                            let(x@l:x:bool,
+                                                false@l:x:bool --> ('X'=0),
+                                                       x@l:v:unit --> ('V'='X')
+                                               )@l:v:unit --> ('V'='X', 'X'=0))).
 
 ut("path   let x = false in assert x", n_e_to_p_e1(let(x@l:x:bool,
                                                         false@l:x:bool,
