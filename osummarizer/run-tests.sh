@@ -16,6 +16,7 @@ for f in `ls tests/*/*.of`; do
     echo -n ' '
     (   ./osummarizer $f ${f%.of}.qarmc >/dev/null 2>1 && \
         diff ${f%.of}.qarmc.expected ${f%.of}.qarmc >/dev/null 2>1 && \
+        ../../qarmc5/qarmc ${f%.of}.qarmc | grep 'program is correct' >/dev/null 2>1 && \
         echo -e ${GREEN}PASSED$NO_COLOR
     ) || echo -e ${RED}FAILED$NO_COLOR
 done
