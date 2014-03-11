@@ -20,10 +20,17 @@ ext/utils/misc.pl:
 	./ext/checkout-externals.sh
 
 tests: osummarizer
-	@./run-tests.sh
+	@./run-tests.sh | tee /tmp/osum-tests
 
-check:
-	@sicstus -l unit.pl --goal 'flush_output, halt.' 2>/dev/null | sed -e 's/PASSED/\\033[0;32mPASSED\\033[0m/' -e 's/FAILED/\\033[0;31mFAILED\\033[0m/' | (while read -r l; do echo "$$l"; done)
+unit:
+	@sicstus -l unit.pl --goal 'flush_output, halt.' 2>/dev/null | \
+	sed -e 's/PASSED/\\033[0;32mPASSED\\033[0m/' -e 's/FAILED/\\033[0;31mFAILED\\033[0m/' | \
+        tee /tmp/osum-unit | \
+	(while read -r l; do echo "$$l"; done)
+
+check: unit tests
+	@grep FAILED /tmp/osum-tests /tmp/osum-unit 2>/dev/null | sed 's/.*://' >/tmp/osum-failed
+	@test -s /tmp/osum-failed && echo '\nFAILED TESTS:\n' && cat /tmp/osum-failed
 
 clean:
 	rm -f *.sav *.sav.log osummarizer 1 tests/*/*.qarmc counterexample
