@@ -650,6 +650,16 @@ ut("PP typed        const (>):(int->int->int)", pp('>'@loc('c.ml', 0, 0, 0, 0, 0
 ut("PP named        const (>):(int->int->int)", pp('>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)), "(>):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool))")).
 ut("PP path         const (>):(int->int->int)", pp('>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool))-->('A_GT_V'>'BA_GT_V' -> 'BB_GT_V'=1 ; 'BB_GT_V'=0), "(>):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)) --> (A_GT_V>BA_GT_V -> BB_GT_V=1 ; BB_GT_V=0)")).
 
+ut("naming          const (&&):(bool->bool->bool)", t_e_to_n_e1('&&', l, (bool -> bool -> bool), v, empty, '&&'@l:v:(a_v:bool->b_v:(ba_v:bool->bb_v:bool)))).
+ut("path            const (&&):(bool->bool->bool)", n_e_to_p_e1('&&', l, v:(a_v:bool->b_v:(ba_v:bool->bb_v:bool)), '&&'@l:v:(a_v:bool->b_v:(ba_v:bool->bb_v:bool))-->('A_V'=1,'BA_V'=1->'BB_V'=1;'BB_V'=0))).
+
+ut("naming          const (||):(bool->bool->bool)", t_e_to_n_e1('||', l, (bool -> bool -> bool), v, empty, '||'@l:v:(a_v:bool->b_v:(ba_v:bool->bb_v:bool)))).
+ut("path            const (||):(bool->bool->bool)", n_e_to_p_e1('||', l, v:(a_v:bool->b_v:(ba_v:bool->bb_v:bool)), '||'@l:v:(a_v:bool->b_v:(ba_v:bool->bb_v:bool))-->(('A_V'=1 ; 'BA_V'=1)->'BB_V'=1;'BB_V'=0))).
+
+ut("naming          const not:(bool->bool)", t_e_to_n_e1(not, l, (bool -> bool), v, empty, not@l:v:(a_v:bool->b_v:bool))).
+ut("path            const not:(bool->bool)", n_e_to_p_e1(not, l, v:(a_v:bool->b_v:bool), not@l:v:(a_v:bool->b_v:bool) --> ('A_V'=0 -> 'B_V'=1 ; 'B_V'=0))).
+
+
 
 
 % **********************************************************************
@@ -932,14 +942,14 @@ ut("summ   false && true", p_e_to_c1(app(&& @l:and_v:(a_and_v:bool->b_and_v:(ba_
                                      [])).
 
 ut("path   (&&) false", n_e_to_p_e1(app(&& @l:and_v:(a_and_v:bool->v:(ba_and_v:bool->bb_and_v:bool)),
-                                           [false@l:a_and_v:bool]
-                                          ), l, v:(ba_and_v:bool->bb_and_v:bool),
+                                        [false@l:a_and_v:bool]
+                                       ), l, v:(ba_and_v:bool->bb_and_v:bool),
                                     app(&& @l:and_v:(a_and_v:bool->v:(ba_and_v:bool->bb_and_v:bool)),
                                         [false@l:a_and_v:bool-->('A_AND_V'=0)]
                                        )@l:v:(ba_and_v:bool->bb_and_v:bool)-->(('A_AND_V'=1,'BA_AND_V'=1->'BB_AND_V'=1;'BB_AND_V'=0),'A_AND_V'=0))).
 ut("summ   (&&) false", p_e_to_c1(app(&& @l:and_v:(a_and_v:bool->v:(ba_and_v:bool->bb_and_v:bool)),
-                                        [false@l:a_and_v:bool-->('A_AND_V'=0)]
-                                       ), l, v:(ba_and_v:bool->bb_and_v:bool), true, (('A_AND_V'=1,'BA_AND_V'=1->'BB_AND_V'=1;'BB_AND_V'=0),'A_AND_V'=0),
+                                      [false@l:a_and_v:bool-->('A_AND_V'=0)]
+                                     ), l, v:(ba_and_v:bool->bb_and_v:bool), true, (('A_AND_V'=1,'BA_AND_V'=1->'BB_AND_V'=1;'BB_AND_V'=0),'A_AND_V'=0),
                                   [])).
 
 ut("path   false || true", n_e_to_p_e1(app('||' @l:and_v:(a_or_v:bool->b_or_v:(ba_or_v:bool->v:bool)),
@@ -955,6 +965,13 @@ ut("summ   false || true", p_e_to_c1(app('||' @l:and_v:(a_or_v:bool->b_or_v:(ba_
                                           true@l:ba_or_v:bool --> ('BA_OR_V'=1)]
                                         ), l, v:bool, true, ((('A_OR_V'=1 ; 'BA_OR_V'=1) -> 'V'=1 ; 'V'=0), 'BA_OR_V'=1, 'A_OR_V'=0),
                                      [])).
+
+ut("path   (||) false", n_e_to_p_e1(app('||'@l:or_v:(a_or_v:bool->v:(ba_or_v:bool->bb_or_v:bool)),
+                                        [false@l:a_or_v:bool]
+                                       ), l, v:(ba_or_v:bool->bb_or_v:bool),
+                                    app('||'@l:or_v:(a_or_v:bool->v:(ba_or_v:bool->bb_or_v:bool)),
+                                        [false@l:a_or_v:bool-->('A_OR_V'=0)]
+                                       )@l:v:(ba_or_v:bool->bb_or_v:bool)-->((('A_OR_V'=1 ; 'BA_OR_V'=1)->'BB_OR_V'=1;'BB_OR_V'=0),'A_OR_V'=0))).
 
 ut("naming not true", t_e_to_n_e1(app(not@l:(bool -> bool),
                                       [true@l:bool]
