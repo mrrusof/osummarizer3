@@ -1094,6 +1094,20 @@ ut("summ     nested app (incr (1+2)):int", p_e_to_c1(app(incr@l:incr_r:(a_incr_r
                                                         ), l, r:int, true, ('incr_int->int'('A_INCR_R', 'R'), 'A_INCR_R'=1+2),
                                                      [('ctx_incr_int->int'('A_INCR_R') :- 'A_INCR_R'=1+2)])).
 
+ut("path     nested app true && comp 1 2", n_e_to_p_e1(app(&& @l:and_v:(a_and_v:bool->b_and_v:(ba_and_v:bool->v:bool)),
+                                                           [true@l:a_and_v:bool,
+                                                            app(comp@l:comp_ba_and_v:(a_comp_ba_and_v:int->b_comp:(ba_comp_ba_and_v:int->ba_and_v:bool)),
+                                                                [1@l:a_comp_ba_and_v:int,
+                                                                 2@l:ba_comp_ba_and_v:int]
+                                                               )@l:ba_and_v:bool]
+                                                          ), l, v:bool,
+                                                       app(&& @l:and_v:(a_and_v:bool->b_and_v:(ba_and_v:bool->v:bool)),
+                                                           [true@l:a_and_v:bool --> ('A_AND_V'=1),
+                                                            app(comp@l:comp_ba_and_v:(a_comp_ba_and_v:int->b_comp:(ba_comp_ba_and_v:int->ba_and_v:bool)),
+                                                                [1@l:a_comp_ba_and_v:int --> ('A_COMP_BA_AND_V'=1),
+                                                                 2@l:ba_comp_ba_and_v:int --> ('BA_COMP_BA_AND_V'=2)]
+                                                               )@l:ba_and_v:bool --> ('comp_int->int->bool'(1, 2, 'BA_AND_V'))]
+                                                          )@l:v:bool --> (('A_AND_V'=1, 'BA_AND_V'=1 -> 'V'=1 ; 'V'=0), 'comp_int->int->bool'(1, 2, 'BA_AND_V'), 'A_AND_V'=1))).
 
 
 % **********************************************************************
@@ -1919,571 +1933,339 @@ ut("summ   let x = false && true in x", p_e_to_c1(let(x@l:x:bool,
                                                      ), l, v:bool, true, ('V'='X', ('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0),
                                                   [])).
 
-% /*
-% assert(
-%        true@l2:ase_v:bool --> true ==> {}
-%       )@l1:v:unit --> true ==> {}
-% */
-% ut("path   assert true", n_e_to_p_e1(assert(true@l2:ase_v:bool), l1, v:unit,
-%                                      assert(
-%                                             true@l2:ase_v:bool --> true
-%                                            )@l1:v:unit --> true)).
-% ut("summ   assert true", p_e_to_c1(assert(
-%                                             true@l2:ase_v:bool --> true
-%                                            ), l1, v:unit, true, true,
-%                                      [(true :- true)])).
+/*
+assert(
+       true@l2:ase_v:bool --> 'ASE_V'=1 ==> {}
+      )@l1:v:unit --> 'ASE_V'=1, 'ASE_V'=1 ==> {}
+*/
+ut("path   assert true", n_e_to_p_e1(assert(true@l2:ase_v:bool), l1, v:unit,
+                                     assert(
+                                            true@l2:ase_v:bool --> ('ASE_V'=1)
+                                           )@l1:v:unit --> ('ASE_V'=1, 'ASE_V'=1))).
+ut("summ   assert true", p_e_to_c1(assert(
+                                            true@l2:ase_v:bool --> ('ASE_V'=1)
+                                           ), l1, v:unit, true, ('ASE_V'=1, 'ASE_V'=1),
+                                     [('ASE_V'=1 :- 'ASE_V'=1)])).
 
-% ut("summ   assert false", p_e_to_c1(assert(
-%                                             false@l2:ase_v:bool --> false
-%                                            ), l1, v:unit, true, false,
-%                                      [(false :- true)])).
+ut("path   assert false", n_e_to_p_e1(assert(false@l2:ase_v:bool), l1, v:unit,
+                                     assert(
+                                            false@l2:ase_v:bool --> ('ASE_V'=0)
+                                           )@l1:v:unit --> ('ASE_V'=1, 'ASE_V'=0))).
+ut("summ   assert false", p_e_to_c1(assert(
+                                           false@l2:ase_v:bool --> ('ASE_V'=0)
+                                          ), l1, v:unit, true, ('ASE_V'=1, 'ASE_V'=0),
+                                    [('ASE_V'=1 :- 'ASE_V'=0)])).
 
-% ut("naming assert(comp 1 2)", t_e_to_n_e1(assert(app(comp@l:(int->int->bool),
-%                                                      [1@l:int,
-%                                                       2@l:int]
-%                                                     )@l:bool
-%                                                 ), l, unit, v, node(comp, comp:(a_comp:int -> b_comp:(ba_comp:int -> bb_comp:bool)), 0, empty, empty),
-%                                           assert(app(comp@l:comp_ase_v:(a_comp_ase_v:int->b_comp:(ba_comp_ase_v:int->ase_v:bool)),
-%                                                      [1@l:a_comp_ase_v:int,
-%                                                       2@l:ba_comp_ase_v:int]
-%                                                     )@l:ase_v:bool
-%                                                 )@l:v:unit)).
-% ut("path   assert(comp 1 2)", n_e_to_p_e1(assert(app(comp@l:comp_ase_v:(a_comp_ase_v:int->b_comp:(ba_comp_ase_v:int->ase_v:bool)),
-%                                                      [1@l:a_comp_ase_v:int,
-%                                                       2@l:ba_comp_ase_v:int]
-%                                                     )@l:ase_v:bool
-%                                                 ), l, v:unit,
-%                                           assert(app(comp@l:comp_ase_v:(a_comp_ase_v:int->b_comp:(ba_comp_ase_v:int->ase_v:bool)),
-%                                                      [1@l:a_comp_ase_v:int --> ('A_COMP_ASE_V'=1),
-%                                                       2@l:ba_comp_ase_v:int --> ('BA_COMP_ASE_V'=2)]
-%                                                     )@l:ase_v:bool --> 'comp_int->int->bool'(1, 2, 'ASE_V')
-%                                                 )@l:v:unit --> ('ASE_V'=1, 'comp_int->int->bool'(1, 2, 'ASE_V')))).
-% ut("summ   assert(comp 1 2)", p_e_to_c1(assert(app(comp@l:comp_ase_v:(a_comp_ase_v:int->b_comp:(ba_comp_ase_v:int->ase_v:bool)),
-%                                                    [1@l:a_comp_ase_v:int --> ('A_COMP_ASE_V'=1),
-%                                                     2@l:ba_comp_ase_v:int --> ('BA_COMP_ASE_V'=2)]
-%                                                   )@l:ase_v:bool --> 'comp_int->int->bool'(1, 2, 'ASE_V')
-%                                               ), l, v:unit, true, ('V'=1, 'comp_int->int->bool'(1, 2, 'ASE_V')),
-%                                         [('ASE_V'=1 :- 'comp_int->int->bool'(1, 2, 'ASE_V')),
-%                                          ('ctx_comp_int->int->bool'('A_COMP_ASE_V', 'BA_COMP_ASE_V') :- ('BA_COMP_ASE_V'=2, 'A_COMP_ASE_V'=1))])).
+ut("naming assert(comp 1 2)", t_e_to_n_e1(assert(app(comp@l:(int->int->bool),
+                                                     [1@l:int,
+                                                      2@l:int]
+                                                    )@l:bool
+                                                ), l, unit, v, node(comp, comp:(a_comp:int -> b_comp:(ba_comp:int -> bb_comp:bool)), 0, empty, empty),
+                                          assert(app(comp@l:comp_ase_v:(a_comp_ase_v:int->b_comp:(ba_comp_ase_v:int->ase_v:bool)),
+                                                     [1@l:a_comp_ase_v:int,
+                                                      2@l:ba_comp_ase_v:int]
+                                                    )@l:ase_v:bool
+                                                )@l:v:unit)).
+ut("path   assert(comp 1 2)", n_e_to_p_e1(assert(app(comp@l:comp_ase_v:(a_comp_ase_v:int->b_comp:(ba_comp_ase_v:int->ase_v:bool)),
+                                                     [1@l:a_comp_ase_v:int,
+                                                      2@l:ba_comp_ase_v:int]
+                                                    )@l:ase_v:bool
+                                                ), l, v:unit,
+                                          assert(app(comp@l:comp_ase_v:(a_comp_ase_v:int->b_comp:(ba_comp_ase_v:int->ase_v:bool)),
+                                                     [1@l:a_comp_ase_v:int --> ('A_COMP_ASE_V'=1),
+                                                      2@l:ba_comp_ase_v:int --> ('BA_COMP_ASE_V'=2)]
+                                                    )@l:ase_v:bool --> 'comp_int->int->bool'(1, 2, 'ASE_V')
+                                                )@l:v:unit --> ('ASE_V'=1, 'comp_int->int->bool'(1, 2, 'ASE_V')))).
+ut("summ   assert(comp 1 2)", p_e_to_c1(assert(app(comp@l:comp_ase_v:(a_comp_ase_v:int->b_comp:(ba_comp_ase_v:int->ase_v:bool)),
+                                                   [1@l:a_comp_ase_v:int --> ('A_COMP_ASE_V'=1),
+                                                    2@l:ba_comp_ase_v:int --> ('BA_COMP_ASE_V'=2)]
+                                                  )@l:ase_v:bool --> 'comp_int->int->bool'(1, 2, 'ASE_V')
+                                              ), l, v:unit, true, ('V'=1, 'comp_int->int->bool'(1, 2, 'ASE_V')),
+                                        [('ASE_V'=1 :- 'comp_int->int->bool'(1, 2, 'ASE_V')),
+                                         ('ctx_comp_int->int->bool'('A_COMP_ASE_V', 'BA_COMP_ASE_V') :- ('BA_COMP_ASE_V'=2, 'A_COMP_ASE_V'=1))])).
 
-% ut("path   let x = false in assert(x=true)", n_e_to_p_e1(let(x@l:x:bool,
-%                                                              false@l:x:bool,
-%                                                              assert(app(= @l:eq_ase_v:(a_eq_ase_v:bool->b_eq_ase_v:(ba_eq_ase_v:bool->ase_v:bool)),
-%                                                                         [x@l:a_eq_ase_v:bool,
-%                                                                          true@l:ba_eq_ase_v:bool]
-%                                                                        )@l:ase_v:bool
-%                                                                    )@l:v:unit
-%                                                             ), l, v:unit,
-%                                                          let(x@l:x:bool,
-%                                                              false@l:x:bool --> ('X'=0),
-%                                                              assert(app(= @l:eq_ase_v:(a_eq_ase_v:bool->b_eq_ase_v:(ba_eq_ase_v:bool->ase_v:bool)),
-%                                                                         [x@l:a_eq_ase_v:bool --> ('A_EQ_ASE_V'='X'),
-%                                                                          true@l:ba_eq_ase_v:bool --> ('BA_EQ_ASE_V'=1)]
-%                                                                        )@l:ase_v:bool --> ('X'=1)
-%                                                                    )@l:v:unit --> ('X'=1)
-%                                                             )@l:v:unit --> ('X'=1, 'X'=0))).
+ut("path   assert(1>2)", n_e_to_p_e1(assert(app((>)@l2:gt_ase_v:(a_gt_ase_v:int -> b_gt_ase_v:(ba_gt_ase_v:int -> v:bool)),
+                                                [1@l3:a_gt_ase_v:int,
+                                                 2@l4:ba_gt_ase_v:int]
+                                               )@l1:ase_v:bool
+                                           ), l, v:bool,
+                                     assert(app((>)@l2:gt_ase_v:(a_gt_ase_v:int -> b_gt_ase_v:(ba_gt_ase_v:int -> v:bool)),
+                                                [1@l3:a_gt_ase_v:int --> ('A_GT_ASE_V'=1),
+                                                 2@l4:ba_gt_ase_v:int --> ('BA_GT_ASE_V'=2)]
+                                               )@l1:ase_v:bool --> (1>2 -> 'ASE_V'=1 ; 'ASE_V'=0)
+                                           )@l:v:bool --> ('ASE_V'=1, (1>2 -> 'ASE_V'=1 ; 'ASE_V'=0)))).
+ut("summ   assert(1>2)", p_e_to_c1(assert(app((>)@l2:gt_ase_v:(a_gt_ase_v:int -> b_gt_ase_v:(ba_gt_ase_v:int -> v:bool)),
+                                              [1@l3:a_gt_ase_v:int --> ('A_GT_ASE_V'=1),
+                                               2@l4:ba_gt_ase_v:int --> ('BA_GT_ASE_V'=2)]
+                                             )@l1:ase_v:bool --> (1>2 -> 'ASE_V'=1 ; 'ASE_V'=0)
+                                         ), l, v:bool, true, ('ASE_V'=1, (1>2 -> 'ASE_V'=1 ; 'ASE_V'=0)),
+                                   [('ASE_V'=1 :- (1>2 -> 'ASE_V'=1 ; 'ASE_V'=0))])).
 
-% ut("path   let x = 0 in assert(x=1)", n_e_to_p_e1(let(x@l:x:bool,
-%                                                              0@l:x:bool,
-%                                                              assert(app(= @l:eq_ase_v:(a_eq_ase_v:bool->b_eq_ase_v:(ba_eq_ase_v:bool->ase_v:bool)),
-%                                                                         [x@l:a_eq_ase_v:bool,
-%                                                                          1@l:ba_eq_ase_v:bool]
-%                                                                        )@l:ase_v:bool
-%                                                                    )@l:v:unit
-%                                                             ), l, v:unit,
-%                                                          let(x@l:x:bool,
-%                                                              0@l:x:bool --> ('X'=0),
-%                                                              assert(app(= @l:eq_ase_v:(a_eq_ase_v:bool->b_eq_ase_v:(ba_eq_ase_v:bool->ase_v:bool)),
-%                                                                         [x@l:a_eq_ase_v:bool --> ('A_EQ_ASE_V'='X'),
-%                                                                          1@l:ba_eq_ase_v:bool --> ('BA_EQ_ASE_V'=1)]
-%                                                                        )@l:ase_v:bool --> ('X'=1)
-%                                                                    )@l:v:unit --> ('X'=1)
-%                                                             )@l:v:unit --> ('X'=1, 'X'=0))).
+ut("path   assert(if true then false else true)", n_e_to_p_e1(assume(ite(true@l2:c_ase_res:bool, false@l2:ase_res:bool, true@l3:ase_res:bool)@l1:ase_res:bool), l0, res:unit,
+                                                              assume(ite(true@l2:c_ase_res:bool --> ('C_ASE_RES'=1),
+                                                                         false@l2:ase_res:bool --> ('ASE_RES'=0),
+                                                                         true@l3:ase_res:bool --> ('ASE_RES'=1)
+                                                                        )@l1:ase_res:bool --> (('C_ASE_RES'=1 -> 'ASE_RES'=0 ; 'ASE_RES'=1), 'C_ASE_RES'=1)
+                                                                    )@l0:res:unit --> ('ASE_RES'=1, (('C_ASE_RES'=1 -> 'ASE_RES'=0 ; 'ASE_RES'=1), 'C_ASE_RES'=1)))).
 
-% ut("naming let x = false in assert(x || true)", t_e_to_n_e1(let(x@l:bool,
-%                                                                   false@l:bool,
-%                                                                   assert(app('||'@l:(bool->bool->bool),
-%                                                                              [x@l:bool,
-%                                                                               true@l:bool]
-%                                                                             )@l:bool
-%                                                                         )@l:unit
-%                                                                  ), l, unit, v, empty,
-%                                                               let(x@l:x:bool,
-%                                                                   false@l:x:bool,
-%                                                                   assert(app('||'@l:or_ase_v:(a_or_ase_v:bool->b_or_ase_v:(ba_or_ase_v:bool->ase_v:bool)),
-%                                                                              [x@l:a_or_ase_v:bool,
-%                                                                               true@l:ba_or_ase_v:bool]
-%                                                                             )@l:ase_v:bool
-%                                                                         )@l:v:unit
-%                                                                  )@l:v:unit)).
-% ut("path   let x = false in assert(x || true)", n_e_to_p_e1(let(x@l:x:bool,
-%                                                                   false@l:x:bool,
-%                                                                   assert(app('||'@l:or_ase_v:(a_or_ase_v:bool->b_or_ase_v:(ba_or_ase_v:bool->ase_v:bool)),
-%                                                                              [x@l:a_or_ase_v:bool,
-%                                                                               true@l:ba_or_ase_v:bool]
-%                                                                             )@l:ase_v:bool
-%                                                                         )@l:v:unit
-%                                                                  ), l, v:unit,
-%                                                               let(x@l:x:bool,
-%                                                                   false@l:x:bool --> ('X'=0),
-%                                                                   assert(app('||'@l:or_ase_v:(a_or_ase_v:bool->b_or_ase_v:(ba_or_ase_v:bool->ase_v:bool)),
-%                                                                              [x@l:a_or_ase_v:bool --> ('X'=1),
-%                                                                               true@l:ba_or_ase_v:bool --> true]
-%                                                                             )@l:ase_v:bool --> ('X'=1 ; true)
-%                                                                         )@l:v:unit --> ('X'=1 ; true)
-%                                                                  )@l:v:unit --> (('X'=1 ; true), 'X'=0))).
+ut("path   let x = false in assert(x=true)", n_e_to_p_e1(let(x@l:x:bool,
+                                                             false@l:x:bool,
+                                                             assert(app(= @l:eq_ase_v:(a_eq_ase_v:bool->b_eq_ase_v:(ba_eq_ase_v:bool->ase_v:bool)),
+                                                                        [x@l:a_eq_ase_v:bool,
+                                                                         true@l:ba_eq_ase_v:bool]
+                                                                       )@l:ase_v:bool
+                                                                   )@l:v:unit
+                                                            ), l, v:unit,
+                                                         let(x@l:x:bool,
+                                                             false@l:x:bool --> ('X'=0),
+                                                             assert(app(= @l:eq_ase_v:(a_eq_ase_v:bool->b_eq_ase_v:(ba_eq_ase_v:bool->ase_v:bool)),
+                                                                        [x@l:a_eq_ase_v:bool --> ('A_EQ_ASE_V'='X'),
+                                                                         true@l:ba_eq_ase_v:bool --> ('BA_EQ_ASE_V'=1)]
+                                                                       )@l:ase_v:bool --> ('X'=1 -> 'ASE_V'=1 ; 'ASE_V'=0)
+                                                                   )@l:v:unit --> ('ASE_V'=1, ('X'=1 -> 'ASE_V'=1 ; 'ASE_V'=0))
+                                                            )@l:v:unit --> ('ASE_V'=1, ('X'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'X'=0))).
 
-% ut("path   let x = false in assert(x && true)", n_e_to_p_e1(let(x@l:x:bool,
-%                                                                   false@l:x:bool,
-%                                                                   assert(app('&&'@l:and_ase_v:(a_and_ase_v:bool->b_and_ase_v:(ba_and_ase_v:bool->ase_v:bool)),
-%                                                                              [x@l:a_and_ase_v:bool,
-%                                                                               true@l:ba_and_ase_v:bool]
-%                                                                             )@l:ase_v:bool
-%                                                                         )@l:v:unit
-%                                                                  ), l, v:unit,
-%                                                               let(x@l:x:bool,
-%                                                                   false@l:x:bool --> ('X'=0),
-%                                                                   assert(app('&&'@l:and_ase_v:(a_and_ase_v:bool->b_and_ase_v:(ba_and_ase_v:bool->ase_v:bool)),
-%                                                                              [x@l:a_and_ase_v:bool --> ('X'=1),
-%                                                                               true@l:ba_and_ase_v:bool --> true]
-%                                                                             )@l:ase_v:bool --> ('X'=1)
-%                                                                         )@l:v:unit --> ('X'=1)
-%                                                                  )@l:v:unit --> ('X'=1, 'X'=0))).
-% ut("summ   let x = false in assert(x && true)", p_e_to_c1(let(x@l:x:bool,
-%                                                                 false@l:x:bool --> ('X'=0),
-%                                                                 assert(app('&&'@l:and_ase_v:(a_and_ase_v:bool->b_and_ase_v:(ba_and_ase_v:bool->ase_v:bool)),
-%                                                                            [x@l:a_and_ase_v:bool --> ('X'=1),
-%                                                                             true@l:ba_and_ase_v:bool --> true]
-%                                                                           )@l:ase_v:bool --> ('X'=1)
-%                                                                       )@l:v:unit --> ('X'=1)
-%                                                                ), l, v:unit, true, ('X'=1, 'X'=0),
-%                                                           [('X'=1 :- 'X'=0)])).
+ut("path   let x = 0 in assert(x=1)", n_e_to_p_e1(let(x@l:x:bool,
+                                                             0@l:x:bool,
+                                                             assert(app(= @l:eq_ase_v:(a_eq_ase_v:bool->b_eq_ase_v:(ba_eq_ase_v:bool->ase_v:bool)),
+                                                                        [x@l:a_eq_ase_v:bool,
+                                                                         1@l:ba_eq_ase_v:bool]
+                                                                       )@l:ase_v:bool
+                                                                   )@l:v:unit
+                                                            ), l, v:unit,
+                                                         let(x@l:x:bool,
+                                                             0@l:x:bool --> ('X'=0),
+                                                             assert(app(= @l:eq_ase_v:(a_eq_ase_v:bool->b_eq_ase_v:(ba_eq_ase_v:bool->ase_v:bool)),
+                                                                        [x@l:a_eq_ase_v:bool --> ('A_EQ_ASE_V'='X'),
+                                                                         1@l:ba_eq_ase_v:bool --> ('BA_EQ_ASE_V'=1)]
+                                                                       )@l:ase_v:bool --> ('X'=1 -> 'ASE_V'=1 ; 'ASE_V'=0)
+                                                                   )@l:v:unit --> ('ASE_V'=1, ('X'=1 -> 'ASE_V'=1 ; 'ASE_V'=0))
+                                                            )@l:v:unit --> ('ASE_V'=1, ('X'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'X'=0))).
 
-% ut("path   let x = false in (&&) x", n_e_to_p_e1(let(x@l:x:bool,
-%                                                        false@l:x:bool,
-%                                                        app('&&'@l:and_v:(a_and_v:bool->v:(ba_and_v:bool->bb_and_v:bool)),
-%                                                            [x@l:a_and_v:bool]
-%                                                           )@l:v:(ba_and_v:bool->bb_and_v:bool)
-%                                                       ), l, v:(ba_and_v:bool->bb_and_v:bool),
-%                                                    let(x@l:x:bool,
-%                                                        false@l:x:bool --> ('X'=0),
-%                                                        app('&&'@l:and_v:(a_and_v:bool->v:(ba_and_v:bool->bb_and_v:bool)),
-%                                                            [x@l:a_and_v:bool --> ('X'=1)]
-%                                                           )@l:v:(ba_and_v:bool->bb_and_v:bool) --> ('X'=1, 'BA_AND_V'=1 -> 'V'=1 ; 'V'=0)
-%                                                       )@l:v:(ba_and_v:bool->bb_and_v:bool) --> (('X'=1, 'BA_AND_V'=1 -> 'V'=1 ; 'V'=0), 'X'=0))).
+ut("naming let x = false in assert(x || true)", t_e_to_n_e1(let(x@l:bool,
+                                                                  false@l:bool,
+                                                                  assert(app('||'@l:(bool->bool->bool),
+                                                                             [x@l:bool,
+                                                                              true@l:bool]
+                                                                            )@l:bool
+                                                                        )@l:unit
+                                                                 ), l, unit, v, empty,
+                                                              let(x@l:x:bool,
+                                                                  false@l:x:bool,
+                                                                  assert(app('||'@l:or_ase_v:(a_or_ase_v:bool->b_or_ase_v:(ba_or_ase_v:bool->ase_v:bool)),
+                                                                             [x@l:a_or_ase_v:bool,
+                                                                              true@l:ba_or_ase_v:bool]
+                                                                            )@l:ase_v:bool
+                                                                        )@l:v:unit
+                                                                 )@l:v:unit)).
+ut("path   let x = false in assert(x || true)", n_e_to_p_e1(let(x@l:x:bool,
+                                                                false@l:x:bool,
+                                                                assert(app('||'@l:or_ase_v:(a_or_ase_v:bool->b_or_ase_v:(ba_or_ase_v:bool->ase_v:bool)),
+                                                                           [x@l:a_or_ase_v:bool,
+                                                                            true@l:ba_or_ase_v:bool]
+                                                                          )@l:ase_v:bool
+                                                                      )@l:v:unit
+                                                               ), l, v:unit,
+                                                            let(x@l:x:bool,
+                                                                false@l:x:bool --> ('X'=0),
+                                                                assert(app('||'@l:or_ase_v:(a_or_ase_v:bool->b_or_ase_v:(ba_or_ase_v:bool->ase_v:bool)),
+                                                                           [x@l:a_or_ase_v:bool --> ('A_OR_ASE_V'='X'),
+                                                                            true@l:ba_or_ase_v:bool --> ('BA_OR_ASE_V'=1)]
+                                                                          )@l:ase_v:bool --> ((('A_OR_ASE_V'=1 ; 'BA_OR_ASE_V'=1) -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_OR_ASE_V'=1, 'A_OR_ASE_V'='X')
+                                                                      )@l:v:unit --> ('ASE_V'=1, (('A_OR_ASE_V'=1 ; 'BA_OR_ASE_V'=1) -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_OR_ASE_V'=1, 'A_OR_ASE_V'='X')
+                                                               )@l:v:unit --> ('ASE_V'=1, (('A_OR_ASE_V'=1 ; 'BA_OR_ASE_V'=1) -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_OR_ASE_V'=1, 'A_OR_ASE_V'='X', 'X'=0))).
 
-% ut("path   let x = false in not x", n_e_to_p_e1(let(x@l:x:bool,
-%                                                        false@l:x:bool,
-%                                                        app(not@l:not_v:(a_not_v:bool->v:bool),
-%                                                            [x@l:a_not_v:bool]
-%                                                           )@l:v:bool
-%                                                       ), l, v:bool,
-%                                                    let(x@l:x:bool,
-%                                                        false@l:x:bool --> ('X'=0),
-%                                                        app(not@l:not_v:(a_not_v:bool->v:bool),
-%                                                            [x@l:a_not_v:bool --> ('X'=1)]
-%                                                           )@l:v:bool --> (\+ 'X'=1 -> 'V'=1 ; 'V'=0)
-%                                                       )@l:v:bool --> ((\+ 'X'=1 -> 'V'=1 ; 'V'=0), 'X'=0))).
+ut("path   let x = false in assert(x && true)", n_e_to_p_e1(let(x@l:x:bool,
+                                                                false@l:x:bool,
+                                                                assert(app('&&'@l:and_ase_v:(a_and_ase_v:bool->b_and_ase_v:(ba_and_ase_v:bool->ase_v:bool)),
+                                                                           [x@l:a_and_ase_v:bool,
+                                                                            true@l:ba_and_ase_v:bool]
+                                                                          )@l:ase_v:bool
+                                                                      )@l:v:unit
+                                                               ), l, v:unit,
+                                                            let(x@l:x:bool,
+                                                                false@l:x:bool --> ('X'=0),
+                                                                assert(app('&&'@l:and_ase_v:(a_and_ase_v:bool->b_and_ase_v:(ba_and_ase_v:bool->ase_v:bool)),
+                                                                           [x@l:a_and_ase_v:bool --> ('A_AND_ASE_V'='X'),
+                                                                            true@l:ba_and_ase_v:bool --> ('BA_AND_ASE_V'=1)]
+                                                                          )@l:ase_v:bool --> (('A_AND_ASE_V'=1, 'BA_AND_ASE_V'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_AND_ASE_V'=1, 'A_AND_ASE_V'='X')
+                                                                      )@l:v:unit --> ('ASE_V'=1, ('A_AND_ASE_V'=1, 'BA_AND_ASE_V'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_AND_ASE_V'=1, 'A_AND_ASE_V'='X')
+                                                               )@l:v:unit --> ('ASE_V'=1, ('A_AND_ASE_V'=1, 'BA_AND_ASE_V'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_AND_ASE_V'=1, 'A_AND_ASE_V'='X', 'X'=0))).
+ut("summ   let x = false in assert(x && true)", p_e_to_c1(let(x@l:x:bool,
+                                                              false@l:x:bool --> ('X'=0),
+                                                              assert(app('&&'@l:and_ase_v:(a_and_ase_v:bool->b_and_ase_v:(ba_and_ase_v:bool->ase_v:bool)),
+                                                                         [x@l:a_and_ase_v:bool --> ('A_AND_ASE_V'='X'),
+                                                                          true@l:ba_and_ase_v:bool --> ('BA_AND_ASE_V'=1)]
+                                                                        )@l:ase_v:bool --> (('A_AND_ASE_V'=1, 'BA_AND_ASE_V'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_AND_ASE_V'=1, 'A_AND_ASE_V'='X')
+                                                                    )@l:v:unit --> ('ASE_V'=1, ('A_AND_ASE_V'=1, 'BA_AND_ASE_V'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_AND_ASE_V'=1, 'A_AND_ASE_V'='X')
+                                                             ), l, v:unit, true, ('ASE_V'=1, ('A_AND_ASE_V'=1, 'BA_AND_ASE_V'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_AND_ASE_V'=1, 'A_AND_ASE_V'='X', 'X'=0),
+                                                          [('ASE_V'=1 :- (('A_AND_ASE_V'=1, 'BA_AND_ASE_V'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_AND_ASE_V'=1, 'A_AND_ASE_V'='X', 'X'=0))])).
 
-% ut("naming let x = false in assert((x || not x) && true)", t_e_to_n_e1(let(x@l:bool,
-%                                                                            false@l:bool,
-%                                                                            assert(app('&&'@l:(bool -> bool -> bool),
-%                                                                                       [app('||'@l:(bool -> bool -> bool),
-%                                                                                            [x@l:bool,
-%                                                                                             app(not@l:(bool -> bool),
-%                                                                                                 [x@l:bool]
-%                                                                                                )@l:bool]
-%                                                                                           )@l:bool,
-%                                                                                        true@l:bool]
-%                                                                                      )@l:bool
-%                                                                                  )@l:unit
-%                                                                           ), l, unit, v, empty,
-%                                                                        let(x@l:x:bool,
-%                                                                            false@l:x:bool,
-%                                                                            assert(app(&& @l:and_ase_v:(a_and_ase_v:bool->b_and_ase_v:(ba_and_ase_v:bool->ase_v:bool)),
-%                                                                                       [app('||'@l:or_a_and_ase_v:(a_or_a_and_ase_v:bool->b_or_a_and_ase_v:(ba_or_a_and_ase_v:bool->a_and_ase_v:bool)),
-%                                                                                            [x@l:a_or_a_and_ase_v:bool,
-%                                                                                             app(not@l:not_ba_or_a_and_ase_v:(a_not_ba_or_a_and_ase_v:bool->ba_or_a_and_ase_v:bool),
-%                                                                                                 [x@l:a_not_ba_or_a_and_ase_v:bool]
-%                                                                                                )@l:ba_or_a_and_ase_v:bool]
-%                                                                                           )@l:a_and_ase_v:bool,
-%                                                                                        true@l:ba_and_ase_v:bool]
-%                                                                                      )@l:ase_v:bool
-%                                                                                  )@l:v:unit
-%                                                                           )@l:v:unit)).
-% ut("path   let x = false in assert((x || not x) && true)", n_e_to_p_e1(let(x@l:x:bool,
-%                                                                            false@l:x:bool,
-%                                                                            assert(app(&& @l:and_ase_v:(a_and_ase_v:bool->b_and_ase_v:(ba_and_ase_v:bool->ase_v:bool)),
-%                                                                                       [app('||'@l:or_a_and_ase_v:(a_or_a_and_ase_v:bool->b_or_a_and_ase_v:(ba_or_a_and_ase_v:bool->a_and_ase_v:bool)),
-%                                                                                            [x@l:a_or_a_and_ase_v:bool,
-%                                                                                             app(not@l:not_ba_or_a_and_ase_v:(a_not_ba_or_a_and_ase_v:bool->ba_or_a_and_ase_v:bool),
-%                                                                                                 [x@l:a_not_ba_or_a_and_ase_v:bool]
-%                                                                                                )@l:ba_or_a_and_ase_v:bool]
-%                                                                                           )@l:a_and_ase_v:bool,
-%                                                                                        true@l:ba_and_ase_v:bool]
-%                                                                                      )@l:ase_v:bool
-%                                                                                  )@l:v:unit
-%                                                                           ), l, v:unit,
-%                                                                        let(x@l:x:bool,
-%                                                                            false@l:x:bool --> ('X'=0),
-%                                                                            assert(app(&& @l:and_ase_v:(a_and_ase_v:bool->b_and_ase_v:(ba_and_ase_v:bool->ase_v:bool)),
-%                                                                                       [app('||'@l:or_a_and_ase_v:(a_or_a_and_ase_v:bool->b_or_a_and_ase_v:(ba_or_a_and_ase_v:bool->a_and_ase_v:bool)),
-%                                                                                            [x@l:a_or_a_and_ase_v:bool --> ('X'=1),
-%                                                                                             app(not@l:not_ba_or_a_and_ase_v:(a_not_ba_or_a_and_ase_v:bool->ba_or_a_and_ase_v:bool),
-%                                                                                                 [x@l:a_not_ba_or_a_and_ase_v:bool --> ('X'=1)]
-%                                                                                                )@l:ba_or_a_and_ase_v:bool --> (\+ 'X'=1)]
-%                                                                                           )@l:a_and_ase_v:bool --> ('X'=1 ; \+ 'X'=1),
-%                                                                                        true@l:ba_and_ase_v:bool --> true]
-%                                                                                      )@l:ase_v:bool --> ('X'=1 ; \+ 'X'=1)
-%                                                                                  )@l:v:unit --> ('X'=1 ; \+ 'X'=1)
-%                                                                           )@l:v:unit --> (('X'=1 ; \+ 'X'=1), 'X'=0))).
-% ut("summ   let x = false in assert((x || not x) && true)", p_e_to_c1(let(x@l:x:bool,
-%                                                                            false@l:x:bool --> ('X'=0),
-%                                                                            assert(app(&& @l:and_ase_v:(a_and_ase_v:bool->b_and_ase_v:(ba_and_ase_v:bool->ase_v:bool)),
-%                                                                                       [app('||'@l:or_a_and_ase_v:(a_or_a_and_ase_v:bool->b_or_a_and_ase_v:(ba_or_a_and_ase_v:bool->a_and_ase_v:bool)),
-%                                                                                            [x@l:a_or_a_and_ase_v:bool --> ('X'=1),
-%                                                                                             app(not@l:not_ba_or_a_and_ase_v:(a_not_ba_or_a_and_ase_v:bool->ba_or_a_and_ase_v:bool),
-%                                                                                                 [x@l:a_not_ba_or_a_and_ase_v:bool --> ('X'=1)]
-%                                                                                                )@l:ba_or_a_and_ase_v:bool --> (\+ 'X'=1)]
-%                                                                                           )@l:a_and_ase_v:bool --> ('X'=1 ; \+ 'X'=1),
-%                                                                                        true@l:ba_and_ase_v:bool --> true]
-%                                                                                      )@l:ase_v:bool --> ('X'=1 ; \+ 'X'=1)
-%                                                                                  )@l:v:unit --> ('X'=1 ; \+ 'X'=1)
-%                                                                           ), l, v:unit, true, (('X'=1 ; \+ 'X'=1), 'X'=0),
-%                                                                      [(('X'=1 ; \+ 'X'=1) :- 'X'=0)])).
+ut("path   let x = false in assume x", n_e_to_p_e1(let(x@l:x:bool,
+                                                        false@l:x:bool,
+                                                        assume(
+                                                               x@l:asu_v:bool
+                                                              )@l:v:unit
+                                                       ), l, v:unit,
+                                                   let(x@l:x:bool,
+                                                       false@l:x:bool --> ('X'=0),
+                                                       assume(
+                                                              x@l:asu_v:bool --> ('ASU_V'='X')
+                                                             )@l:v:unit --> ('ASU_V'=1, 'ASU_V'='X')
+                                                      )@l:v:unit --> ('ASU_V'=1, 'ASU_V'='X', 'X'=0))).
+ut("summ   let x = false in assume x", p_e_to_c1(let(x@l:x:bool,
+                                                       false@l:x:bool --> ('X'=0),
+                                                       assume(
+                                                              x@l:asu_v:bool --> ('ASU_V'='X')
+                                                              )@l:v:unit --> ('ASU_V'=1, 'ASU_V'='X')
+                                                       ), l, v:unit, true, ('ASU_V'=1, 'ASU_V'='X', 'X'=0), [])).
 
+ut("path   let x = false in assume(x=true)", n_e_to_p_e1(let(x@l:x:bool,
+                                                             false@l:x:bool,
+                                                             assume(app(= @l:eq_asu_v:(a_eq_asu_v:bool->b_eq_asu_v:(ba_eq_asu_v:bool->asu_v:bool)),
+                                                                        [x@l:a_eq_asu_v:bool,
+                                                                         true@l:ba_eq_asu_v:bool]
+                                                                       )@l:asu_v:bool
+                                                                   )@l:v:unit
+                                                            ), l, v:unit,
+                                                         let(x@l:x:bool,
+                                                             false@l:x:bool --> ('X'=0),
+                                                             assume(app(= @l:eq_asu_v:(a_eq_asu_v:bool->b_eq_asu_v:(ba_eq_asu_v:bool->asu_v:bool)),
+                                                                        [x@l:a_eq_asu_v:bool --> ('A_EQ_ASU_V'='X'),
+                                                                         true@l:ba_eq_asu_v:bool --> ('BA_EQ_ASU_V'=1)]
+                                                                       )@l:asu_v:bool --> ('X'=1 -> 'ASU_V'=1 ; 'ASU_V'=0)
+                                                                   )@l:v:unit --> ('ASU_V'=1, ('X'=1 -> 'ASU_V'=1 ; 'ASU_V'=0))
+                                                            )@l:v:unit --> ('ASU_V'=1, ('X'=1 -> 'ASU_V'=1 ; 'ASU_V'=0), 'X'=0))).
 
-% ut("path   let x = false || true in assert x", n_e_to_p_e1(let(x@l:x:bool,
-%                                                         app('||'@l:or_x:(a_or_x:bool->b_or_x:(ba_or_x:bool->x:bool)),
-%                                                             [false@l:a_or_x:bool,
-%                                                              true@l:ba_or_x:bool]
-%                                                            )@l:x:bool,
-%                                                         assert(
-%                                                                x@l:ase_v:bool
-%                                                               )@l:v:unit
-%                                                        ), l, v:unit,
-%                                                     let(x@l:x:bool,
-%                                                         app('||' @l:or_x:(a_or_x:bool->b_or_x:(ba_or_x:bool->x:bool)),
-%                                                             [false@l:a_or_x:bool --> false,
-%                                                              true@l:ba_or_x:bool --> true]
-%                                                            )@l:x:bool --> (true -> 'X'=1 ; 'X'=0),
-%                                                         assert(
-%                                                                x@l:ase_v:bool --> ('X'=1)
-%                                                               )@l:v:unit --> ('X'=1)
-%                                                        )@l:v:unit --> ('X'=1, (true -> 'X'=1 ; 'X'=0)))).
-% ut("summ   let x = false || true in assert x", p_e_to_c1(let(x@l:x:bool,
-%                                                         app('||' @l:or_x:(a_or_x:bool->b_or_x:(ba_or_x:bool->x:bool)),
-%                                                             [false@l:a_or_x:bool --> false,
-%                                                              true@l:ba_or_x:bool --> true]
-%                                                            )@l:x:bool --> (true -> 'X'=1 ; 'X'=0),
-%                                                         assert(
-%                                                                x@l:ase_v:bool --> ('X'=1)
-%                                                               )@l:v:unit --> ('X'=1)
-%                                                        ), l, v:unit, true, ('X'=1, (true -> 'X'=1 ; 'X'=0)),
-%                                                   [('X'=1 :- (true -> 'X'=1 ; 'X'=0))])).
+ut("path   let x = 0 in assume(x=1)", n_e_to_p_e1(let(x@l:x:bool,
+                                                             0@l:x:bool,
+                                                             assume(app(= @l:eq_asu_v:(a_eq_asu_v:bool->b_eq_asu_v:(ba_eq_asu_v:bool->asu_v:bool)),
+                                                                        [x@l:a_eq_asu_v:bool,
+                                                                         1@l:ba_eq_asu_v:bool]
+                                                                       )@l:asu_v:bool
+                                                                   )@l:v:unit
+                                                            ), l, v:unit,
+                                                         let(x@l:x:bool,
+                                                             0@l:x:bool --> ('X'=0),
+                                                             assume(app(= @l:eq_asu_v:(a_eq_asu_v:bool->b_eq_asu_v:(ba_eq_asu_v:bool->asu_v:bool)),
+                                                                        [x@l:a_eq_asu_v:bool --> ('A_EQ_ASU_V'='X'),
+                                                                         1@l:ba_eq_asu_v:bool --> ('BA_EQ_ASU_V'=1)]
+                                                                       )@l:asu_v:bool --> ('X'=1 -> 'ASU_V'=1 ; 'ASU_V'=0)
+                                                                   )@l:v:unit --> ('ASU_V'=1, ('X'=1 -> 'ASU_V'=1 ; 'ASU_V'=0))
+                                                            )@l:v:unit --> ('ASU_V'=1, ('X'=1 -> 'ASU_V'=1 ; 'ASU_V'=0), 'X'=0))).
 
-% ut("naming let x = false && true in x", t_e_to_n_e1(let(x@l:bool,
-%                                                         app('&&'@l:(bool -> bool -> bool),
-%                                                             [false@l:bool,
-%                                                              true@l:bool]
-%                                                            )@l:bool,
-%                                                         x@l:bool
-%                                                        ), l, bool, v, empty,
-%                                                     let(x@l:x:bool,
-%                                                         app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-%                                                             [false@l:a_and_x:bool,
-%                                                              true@l:ba_and_x:bool]
-%                                                            )@l:x:bool,
-%                                                         x@l:v:bool
-%                                                        )@l:v:bool)).
-% ut("path   let x = false && true in x", n_e_to_p_e1(let(x@l:x:bool,
-%                                                         app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-%                                                             [false@l:a_and_x:bool,
-%                                                              true@l:ba_and_x:bool]
-%                                                            )@l:x:bool,
-%                                                         x@l:v:bool
-%                                                        ), l, v:bool,
-%                                                     let(x@l:x:bool,
-%                                                         app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-%                                                             [false@l:a_and_x:bool --> false,
-%                                                              true@l:ba_and_x:bool --> true]
-%                                                            )@l:x:bool --> (false -> 'X'=1 ; 'X'=0),
-%                                                         x@l:v:bool --> ('V'='X')
-%                                                        )@l:v:bool --> ('V'='X', (false -> 'X'=1 ; 'X'=0)))).
-% ut("summ   let x = false && true in x", p_e_to_c1(let(x@l:x:bool,
-%                                                       app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-%                                                           [false@l:a_and_x:bool --> false,
-%                                                            true@l:ba_and_x:bool --> true]
-%                                                          )@l:x:bool --> (false -> 'X'=1 ; 'X'=0),
-%                                                       x@l:v:bool --> ('V'='X')
-%                                                      ), l, v:bool, true, ('V'='X', (false -> 'X'=1 ; 'X'=0)), [])).
+ut("naming let x = false in assume(x || true)", t_e_to_n_e1(let(x@l:bool,
+                                                                  false@l:bool,
+                                                                  assume(app('||'@l:(bool->bool->bool),
+                                                                             [x@l:bool,
+                                                                              true@l:bool]
+                                                                            )@l:bool
+                                                                        )@l:unit
+                                                                 ), l, unit, v, empty,
+                                                              let(x@l:x:bool,
+                                                                  false@l:x:bool,
+                                                                  assume(app('||'@l:or_asu_v:(a_or_asu_v:bool->b_or_asu_v:(ba_or_asu_v:bool->asu_v:bool)),
+                                                                             [x@l:a_or_asu_v:bool,
+                                                                              true@l:ba_or_asu_v:bool]
+                                                                            )@l:asu_v:bool
+                                                                        )@l:v:unit
+                                                                 )@l:v:unit)).
+ut("path   let x = false in assume(x || true)", n_e_to_p_e1(let(x@l:x:bool,
+                                                                  false@l:x:bool,
+                                                                  assume(app('||'@l:or_asu_v:(a_or_asu_v:bool->b_or_asu_v:(ba_or_asu_v:bool->asu_v:bool)),
+                                                                             [x@l:a_or_asu_v:bool,
+                                                                              true@l:ba_or_asu_v:bool]
+                                                                            )@l:asu_v:bool
+                                                                        )@l:v:unit
+                                                                 ), l, v:unit,
+                                                              let(x@l:x:bool,
+                                                                  false@l:x:bool --> ('X'=0),
+                                                                  assume(app('||'@l:or_asu_v:(a_or_asu_v:bool->b_or_asu_v:(ba_or_asu_v:bool->asu_v:bool)),
+                                                                             [x@l:a_or_asu_v:bool --> ('A_OR_ASU_V'='X'),
+                                                                              true@l:ba_or_asu_v:bool --> ('BA_OR_ASU_V'=1)]
+                                                                            )@l:asu_v:bool --> ((('A_OR_ASU_V'=1 ; 'BA_OR_ASU_V'=1) -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_OR_ASU_V'=1, 'A_OR_ASU_V'='X')
+                                                                        )@l:v:unit --> ('ASU_V'=1, (('A_OR_ASU_V'=1 ; 'BA_OR_ASU_V'=1) -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_OR_ASU_V'=1, 'A_OR_ASU_V'='X')
+                                                                 )@l:v:unit --> ('ASU_V'=1, (('A_OR_ASU_V'=1 ; 'BA_OR_ASU_V'=1) -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_OR_ASU_V'=1, 'A_OR_ASU_V'='X', 'X'=0))).
 
-% % % assert(true || false)
-% % ut("path   assert(true || false)", false).
-% % ut("summ   assert(true || false)", false).
+ut("path   let x = false in assume(x && true)", n_e_to_p_e1(let(x@l:x:bool,
+                                                                  false@l:x:bool,
+                                                                  assume(app('&&'@l:and_asu_v:(a_and_asu_v:bool->b_and_asu_v:(ba_and_asu_v:bool->asu_v:bool)),
+                                                                             [x@l:a_and_asu_v:bool,
+                                                                              true@l:ba_and_asu_v:bool]
+                                                                            )@l:asu_v:bool
+                                                                        )@l:v:unit
+                                                                 ), l, v:unit,
+                                                            let(x@l:x:bool,
+                                                                false@l:x:bool --> ('X'=0),
+                                                                assume(app('&&'@l:and_asu_v:(a_and_asu_v:bool->b_and_asu_v:(ba_and_asu_v:bool->asu_v:bool)),
+                                                                           [x@l:a_and_asu_v:bool --> ('A_AND_ASU_V'='X'),
+                                                                            true@l:ba_and_asu_v:bool --> ('BA_AND_ASU_V'=1)]
+                                                                          )@l:asu_v:bool --> (('A_AND_ASU_V'=1, 'BA_AND_ASU_V'=1 -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_AND_ASU_V'=1, 'A_AND_ASU_V'='X')
+                                                                      )@l:v:unit --> ('ASU_V'=1, ('A_AND_ASU_V'=1, 'BA_AND_ASU_V'=1 -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_AND_ASU_V'=1, 'A_AND_ASU_V'='X')
+                                                               )@l:v:unit --> ('ASU_V'=1, ('A_AND_ASU_V'=1, 'BA_AND_ASU_V'=1 -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_AND_ASU_V'=1, 'A_AND_ASU_V'='X', 'X'=0))).
 
-% % % assert(1>0 && false)
-% % ut("path   assert(1>0 && false)", false).
-% % ut("summ   assert(1>0 && false)", false).
+ut("summ   let x = false in assume(x && true)", p_e_to_c1(let(x@l:x:bool,
+                                                              false@l:x:bool --> ('X'=0),
+                                                              assume(app('&&'@l:and_asu_v:(a_and_asu_v:bool->b_and_asu_v:(ba_and_asu_v:bool->asu_v:bool)),
+                                                                         [x@l:a_and_asu_v:bool --> ('A_AND_ASU_V'='X'),
+                                                                          true@l:ba_and_asu_v:bool --> ('BA_AND_ASU_V'=1)]
+                                                                        )@l:asu_v:bool --> (('A_AND_ASU_V'=1, 'BA_AND_ASU_V'=1 -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_AND_ASU_V'=1, 'A_AND_ASU_V'='X')
+                                                                    )@l:v:unit --> ('ASU_V'=1, ('A_AND_ASU_V'=1, 'BA_AND_ASU_V'=1 -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_AND_ASU_V'=1, 'A_AND_ASU_V'='X')
+                                                             ), l, v:unit, true, ('ASU_V'=1, ('A_AND_ASU_V'=1, 'BA_AND_ASU_V'=1 -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_AND_ASU_V'=1, 'A_AND_ASU_V'='X', 'X'=0), [])).
 
-% ut("path   let x = false in assume x", n_e_to_p_e1(let(x@l:x:bool,
-%                                                         false@l:x:bool,
-%                                                         assume(
-%                                                                x@l:asu_v:bool
-%                                                               )@l:v:unit
-%                                                        ), l, v:unit,
-%                                                     let(x@l:x:bool,
-%                                                         false@l:x:bool --> ('X'=0),
-%                                                         assume(
-%                                                                x@l:asu_v:bool --> ('X'=1)
-%                                                               )@l:v:unit --> ('X'=1)
-%                                                        )@l:v:unit --> ('X'=1, 'X'=0))).
-% ut("summ   let x = false in assume x", p_e_to_c1(let(x@l:x:bool,
-%                                                      false@l:x:bool --> ('X'=0),
-%                                                      assume(
-%                                                             x@l:asu_v:bool --> ('X'=1)
-%                                                            )@l:v:unit --> ('X'=1)
-%                                                     ), l, v:unit, true, ('X'=1, 'X'=0), [])).
-
-% ut("path   let x = false in assume(x=true)", n_e_to_p_e1(let(x@l:x:bool,
-%                                                              false@l:x:bool,
-%                                                              assume(app(= @l:eq_asu_v:(a_eq_asu_v:bool->b_eq_asu_v:(ba_eq_asu_v:bool->asu_v:bool)),
-%                                                                         [x@l:a_eq_asu_v:bool,
-%                                                                          true@l:ba_eq_asu_v:bool]
-%                                                                        )@l:asu_v:bool
-%                                                                    )@l:v:unit
-%                                                             ), l, v:unit,
-%                                                          let(x@l:x:bool,
-%                                                              false@l:x:bool --> ('X'=0),
-%                                                              assume(app(= @l:eq_asu_v:(a_eq_asu_v:bool->b_eq_asu_v:(ba_eq_asu_v:bool->asu_v:bool)),
-%                                                                         [x@l:a_eq_asu_v:bool --> ('A_EQ_ASU_V'='X'),
-%                                                                          true@l:ba_eq_asu_v:bool --> ('BA_EQ_ASU_V'=1)]
-%                                                                        )@l:asu_v:bool --> ('X'=1)
-%                                                                    )@l:v:unit --> ('X'=1)
-%                                                             )@l:v:unit --> ('X'=1, 'X'=0))).
-
-% ut("path   let x = 0 in assume(x=1)", n_e_to_p_e1(let(x@l:x:bool,
-%                                                              0@l:x:bool,
-%                                                              assume(app(= @l:eq_asu_v:(a_eq_asu_v:bool->b_eq_asu_v:(ba_eq_asu_v:bool->asu_v:bool)),
-%                                                                         [x@l:a_eq_asu_v:bool,
-%                                                                          1@l:ba_eq_asu_v:bool]
-%                                                                        )@l:asu_v:bool
-%                                                                    )@l:v:unit
-%                                                             ), l, v:unit,
-%                                                          let(x@l:x:bool,
-%                                                              0@l:x:bool --> ('X'=0),
-%                                                              assume(app(= @l:eq_asu_v:(a_eq_asu_v:bool->b_eq_asu_v:(ba_eq_asu_v:bool->asu_v:bool)),
-%                                                                         [x@l:a_eq_asu_v:bool --> ('A_EQ_ASU_V'='X'),
-%                                                                          1@l:ba_eq_asu_v:bool --> ('BA_EQ_ASU_V'=1)]
-%                                                                        )@l:asu_v:bool --> ('X'=1)
-%                                                                    )@l:v:unit --> ('X'=1)
-%                                                             )@l:v:unit --> ('X'=1, 'X'=0))).
-
-% ut("naming let x = false in assume(x || true)", t_e_to_n_e1(let(x@l:bool,
-%                                                                   false@l:bool,
-%                                                                   assume(app('||'@l:(bool->bool->bool),
-%                                                                              [x@l:bool,
-%                                                                               true@l:bool]
-%                                                                             )@l:bool
-%                                                                         )@l:unit
-%                                                                  ), l, unit, v, empty,
-%                                                               let(x@l:x:bool,
-%                                                                   false@l:x:bool,
-%                                                                   assume(app('||'@l:or_asu_v:(a_or_asu_v:bool->b_or_asu_v:(ba_or_asu_v:bool->asu_v:bool)),
-%                                                                              [x@l:a_or_asu_v:bool,
-%                                                                               true@l:ba_or_asu_v:bool]
-%                                                                             )@l:asu_v:bool
-%                                                                         )@l:v:unit
-%                                                                  )@l:v:unit)).
-% ut("path   let x = false in assume(x || true)", n_e_to_p_e1(let(x@l:x:bool,
-%                                                                   false@l:x:bool,
-%                                                                   assume(app('||'@l:or_asu_v:(a_or_asu_v:bool->b_or_asu_v:(ba_or_asu_v:bool->asu_v:bool)),
-%                                                                              [x@l:a_or_asu_v:bool,
-%                                                                               true@l:ba_or_asu_v:bool]
-%                                                                             )@l:asu_v:bool
-%                                                                         )@l:v:unit
-%                                                                  ), l, v:unit,
-%                                                               let(x@l:x:bool,
-%                                                                   false@l:x:bool --> ('X'=0),
-%                                                                   assume(app('||'@l:or_asu_v:(a_or_asu_v:bool->b_or_asu_v:(ba_or_asu_v:bool->asu_v:bool)),
-%                                                                              [x@l:a_or_asu_v:bool --> ('X'=1),
-%                                                                               true@l:ba_or_asu_v:bool --> true]
-%                                                                             )@l:asu_v:bool --> ('X'=1 ; true)
-%                                                                         )@l:v:unit --> ('X'=1 ; true)
-%                                                                  )@l:v:unit --> (('X'=1 ; true), 'X'=0))).
-
-% ut("path   let x = false in assume(x && true)", n_e_to_p_e1(let(x@l:x:bool,
-%                                                                   false@l:x:bool,
-%                                                                   assume(app('&&'@l:and_asu_v:(a_and_asu_v:bool->b_and_asu_v:(ba_and_asu_v:bool->asu_v:bool)),
-%                                                                              [x@l:a_and_asu_v:bool,
-%                                                                               true@l:ba_and_asu_v:bool]
-%                                                                             )@l:asu_v:bool
-%                                                                         )@l:v:unit
-%                                                                  ), l, v:unit,
-%                                                               let(x@l:x:bool,
-%                                                                   false@l:x:bool --> ('X'=0),
-%                                                                   assume(app('&&'@l:and_asu_v:(a_and_asu_v:bool->b_and_asu_v:(ba_and_asu_v:bool->asu_v:bool)),
-%                                                                              [x@l:a_and_asu_v:bool --> ('X'=1),
-%                                                                               true@l:ba_and_asu_v:bool --> true]
-%                                                                             )@l:asu_v:bool --> ('X'=1)
-%                                                                         )@l:v:unit --> ('X'=1)
-%                                                                  )@l:v:unit --> ('X'=1, 'X'=0))).
-% ut("summ   let x = false in assume(x && true)", p_e_to_c1(let(x@l:x:bool,
-%                                                                 false@l:x:bool --> ('X'=0),
-%                                                                 assume(app('&&'@l:and_asu_v:(a_and_asu_v:bool->b_and_asu_v:(ba_and_asu_v:bool->asu_v:bool)),
-%                                                                            [x@l:a_and_asu_v:bool --> ('X'=1),
-%                                                                             true@l:ba_and_asu_v:bool --> true]
-%                                                                           )@l:asu_v:bool --> ('X'=1)
-%                                                                       )@l:v:unit --> ('X'=1)
-%                                                                ), l, v:unit, true, ('X'=1, 'X'=0), [])).
-
-% ut("naming let x = false in assume((x || not x) && true)", t_e_to_n_e1(let(x@l:bool,
-%                                                                            false@l:bool,
-%                                                                            assume(app('&&'@l:(bool -> bool -> bool),
-%                                                                                       [app('||'@l:(bool -> bool -> bool),
-%                                                                                            [x@l:bool,
-%                                                                                             app(not@l:(bool -> bool),
-%                                                                                                 [x@l:bool]
-%                                                                                                )@l:bool]
-%                                                                                           )@l:bool,
-%                                                                                        true@l:bool]
-%                                                                                      )@l:bool
-%                                                                                  )@l:unit
-%                                                                           ), l, unit, v, empty,
-%                                                                        let(x@l:x:bool,
-%                                                                            false@l:x:bool,
-%                                                                            assume(app(&& @l:and_asu_v:(a_and_asu_v:bool->b_and_asu_v:(ba_and_asu_v:bool->asu_v:bool)),
-%                                                                                       [app('||'@l:or_a_and_asu_v:(a_or_a_and_asu_v:bool->b_or_a_and_asu_v:(ba_or_a_and_asu_v:bool->a_and_asu_v:bool)),
-%                                                                                            [x@l:a_or_a_and_asu_v:bool,
-%                                                                                             app(not@l:not_ba_or_a_and_asu_v:(a_not_ba_or_a_and_asu_v:bool->ba_or_a_and_asu_v:bool),
-%                                                                                                 [x@l:a_not_ba_or_a_and_asu_v:bool]
-%                                                                                                )@l:ba_or_a_and_asu_v:bool]
-%                                                                                           )@l:a_and_asu_v:bool,
-%                                                                                        true@l:ba_and_asu_v:bool]
-%                                                                                      )@l:asu_v:bool
-%                                                                                  )@l:v:unit
-%                                                                           )@l:v:unit)).
-% ut("path   let x = false in assume((x || not x) && true)", n_e_to_p_e1(let(x@l:x:bool,
-%                                                                            false@l:x:bool,
-%                                                                            assume(app(&& @l:and_asu_v:(a_and_asu_v:bool->b_and_asu_v:(ba_and_asu_v:bool->asu_v:bool)),
-%                                                                                       [app('||'@l:or_a_and_asu_v:(a_or_a_and_asu_v:bool->b_or_a_and_asu_v:(ba_or_a_and_asu_v:bool->a_and_asu_v:bool)),
-%                                                                                            [x@l:a_or_a_and_asu_v:bool,
-%                                                                                             app(not@l:not_ba_or_a_and_asu_v:(a_not_ba_or_a_and_asu_v:bool->ba_or_a_and_asu_v:bool),
-%                                                                                                 [x@l:a_not_ba_or_a_and_asu_v:bool]
-%                                                                                                )@l:ba_or_a_and_asu_v:bool]
-%                                                                                           )@l:a_and_asu_v:bool,
-%                                                                                        true@l:ba_and_asu_v:bool]
-%                                                                                      )@l:asu_v:bool
-%                                                                                  )@l:v:unit
-%                                                                           ), l, v:unit,
-%                                                                        let(x@l:x:bool,
-%                                                                            false@l:x:bool --> ('X'=0),
-%                                                                            assume(app(&& @l:and_asu_v:(a_and_asu_v:bool->b_and_asu_v:(ba_and_asu_v:bool->asu_v:bool)),
-%                                                                                       [app('||'@l:or_a_and_asu_v:(a_or_a_and_asu_v:bool->b_or_a_and_asu_v:(ba_or_a_and_asu_v:bool->a_and_asu_v:bool)),
-%                                                                                            [x@l:a_or_a_and_asu_v:bool --> ('X'=1),
-%                                                                                             app(not@l:not_ba_or_a_and_asu_v:(a_not_ba_or_a_and_asu_v:bool->ba_or_a_and_asu_v:bool),
-%                                                                                                 [x@l:a_not_ba_or_a_and_asu_v:bool --> ('X'=1)]
-%                                                                                                )@l:ba_or_a_and_asu_v:bool --> (\+ 'X'=1)]
-%                                                                                           )@l:a_and_asu_v:bool --> ('X'=1 ; \+ 'X'=1),
-%                                                                                        true@l:ba_and_asu_v:bool --> true]
-%                                                                                      )@l:asu_v:bool --> ('X'=1 ; \+ 'X'=1)
-%                                                                                  )@l:v:unit --> ('X'=1 ; \+ 'X'=1)
-%                                                                           )@l:v:unit --> (('X'=1 ; \+ 'X'=1), 'X'=0))).
-% ut("summ   let x = false in assume((x || not x) && true)", p_e_to_c1(let(x@l:x:bool,
-%                                                                            false@l:x:bool --> ('X'=0),
-%                                                                            assume(app(&& @l:and_asu_v:(a_and_asu_v:bool->b_and_asu_v:(ba_and_asu_v:bool->asu_v:bool)),
-%                                                                                       [app('||'@l:or_a_and_asu_v:(a_or_a_and_asu_v:bool->b_or_a_and_asu_v:(ba_or_a_and_asu_v:bool->a_and_asu_v:bool)),
-%                                                                                            [x@l:a_or_a_and_asu_v:bool --> ('X'=1),
-%                                                                                             app(not@l:not_ba_or_a_and_asu_v:(a_not_ba_or_a_and_asu_v:bool->ba_or_a_and_asu_v:bool),
-%                                                                                                 [x@l:a_not_ba_or_a_and_asu_v:bool --> ('X'=1)]
-%                                                                                                )@l:ba_or_a_and_asu_v:bool --> (\+ 'X'=1)]
-%                                                                                           )@l:a_and_asu_v:bool --> ('X'=1 ; \+ 'X'=1),
-%                                                                                        true@l:ba_and_asu_v:bool --> true]
-%                                                                                      )@l:asu_v:bool --> ('X'=1 ; \+ 'X'=1)
-%                                                                                  )@l:v:unit --> ('X'=1 ; \+ 'X'=1)
-%                                                                           ), l, v:unit, true, (('X'=1 ; \+ 'X'=1), 'X'=0), [])).
-
-% ut("naming let x = false && true in assume x", t_e_to_n_e1(let(x@l:bool,
-%                                                         app('&&'@l:(bool -> bool -> bool),
-%                                                             [false@l:bool,
-%                                                              true@l:bool]
-%                                                            )@l:bool,
-%                                                         assume(
-%                                                                x@l:bool
-%                                                               )@l:unit
-%                                                        ), l, unit, v, empty,
-%                                                     let(x@l:x:bool,
-%                                                         app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-%                                                             [false@l:a_and_x:bool,
-%                                                              true@l:ba_and_x:bool]
-%                                                            )@l:x:bool,
-%                                                         assume(
-%                                                                x@l:asu_v:bool
-%                                                               )@l:v:unit
-%                                                        )@l:v:unit)).
-% ut("path   let x = false && true in assume x", n_e_to_p_e1(let(x@l:x:bool,
-%                                                         app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-%                                                             [false@l:a_and_x:bool,
-%                                                              true@l:ba_and_x:bool]
-%                                                            )@l:x:bool,
-%                                                         assume(
-%                                                                x@l:asu_v:bool
-%                                                               )@l:v:unit
-%                                                        ), l, v:unit,
-%                                                     let(x@l:x:bool,
-%                                                         app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-%                                                             [false@l:a_and_x:bool --> false,
-%                                                              true@l:ba_and_x:bool --> true]
-%                                                            )@l:x:bool --> (false -> 'X'=1 ; 'X'=0),
-%                                                         assume(
-%                                                                x@l:asu_v:bool --> ('X'=1)
-%                                                               )@l:v:unit --> ('X'=1)
-%                                                        )@l:v:unit --> ('X'=1, (false -> 'X'=1 ; 'X'=0)))).
-% ut("summ   let x = false && true in assume x", p_e_to_c1(let(x@l:x:bool,
-%                                                         app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-%                                                             [false@l:a_and_x:bool --> false,
-%                                                              true@l:ba_and_x:bool --> true]
-%                                                            )@l:x:bool --> (false -> 'X'=1 ; 'X'=0),
-%                                                         assume(
-%                                                                x@l:asu_v:bool --> ('X'=1)
-%                                                               )@l:v:unit --> ('X'=1)
-%                                                        ), l, v:unit, true, ('X'=1, (false -> 'X'=1 ; 'X'=0)), [])).
-
-% ut("path   let x = false || true in assume x", n_e_to_p_e1(let(x@l:x:bool,
-%                                                         app('||'@l:or_x:(a_or_x:bool->b_or_x:(ba_or_x:bool->x:bool)),
-%                                                             [false@l:a_or_x:bool,
-%                                                              true@l:ba_or_x:bool]
-%                                                            )@l:x:bool,
-%                                                         assume(
-%                                                                x@l:asu_v:bool
-%                                                               )@l:v:unit
-%                                                        ), l, v:unit,
-%                                                     let(x@l:x:bool,
-%                                                         app('||' @l:or_x:(a_or_x:bool->b_or_x:(ba_or_x:bool->x:bool)),
-%                                                             [false@l:a_or_x:bool --> false,
-%                                                              true@l:ba_or_x:bool --> true]
-%                                                            )@l:x:bool --> (true -> 'X'=1 ; 'X'=0),
-%                                                         assume(
-%                                                                x@l:asu_v:bool --> ('X'=1)
-%                                                               )@l:v:unit --> ('X'=1)
-%                                                        )@l:v:unit --> ('X'=1, (true -> 'X'=1 ; 'X'=0)))).
-% ut("summ   let x = false || true in assume x", p_e_to_c1(let(x@l:x:bool,
-%                                                         app('||' @l:or_x:(a_or_x:bool->b_or_x:(ba_or_x:bool->x:bool)),
-%                                                             [false@l:a_or_x:bool --> false,
-%                                                              true@l:ba_or_x:bool --> true]
-%                                                            )@l:x:bool --> (true -> 'X'=1 ; 'X'=0),
-%                                                         assume(
-%                                                                x@l:asu_v:bool --> ('X'=1)
-%                                                               )@l:v:unit --> ('X'=1)
-%                                                        ), l, v:unit, true, ('X'=1, (true -> 'X'=1 ; 'X'=0)), [])).
+ut("naming let x = false && true in assume x", t_e_to_n_e1(let(x@l:bool,
+                                                        app('&&'@l:(bool -> bool -> bool),
+                                                            [false@l:bool,
+                                                             true@l:bool]
+                                                           )@l:bool,
+                                                        assume(
+                                                               x@l:bool
+                                                              )@l:unit
+                                                       ), l, unit, v, empty,
+                                                    let(x@l:x:bool,
+                                                        app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
+                                                            [false@l:a_and_x:bool,
+                                                             true@l:ba_and_x:bool]
+                                                           )@l:x:bool,
+                                                        assume(
+                                                               x@l:asu_v:bool
+                                                              )@l:v:unit
+                                                       )@l:v:unit)).
+ut("path   let x = false && true in assume x", n_e_to_p_e1(let(x@l:x:bool,
+                                                               app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
+                                                                   [false@l:a_and_x:bool,
+                                                                    true@l:ba_and_x:bool]
+                                                                  )@l:x:bool,
+                                                               assume(
+                                                                      x@l:asu_v:bool
+                                                                     )@l:v:unit
+                                                              ), l, v:unit,
+                                                           let(x@l:x:bool,
+                                                               app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
+                                                                   [false@l:a_and_x:bool --> ('A_AND_X'=0),
+                                                                    true@l:ba_and_x:bool --> ('BA_AND_X'=1)]
+                                                                  )@l:x:bool --> (('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0),
+                                                               assume(
+                                                                      x@l:asu_v:bool --> ('ASU_V'='X')
+                                                                     )@l:v:unit --> ('ASU_V'=1, 'ASU_V'='X')
+                                                              )@l:v:unit --> ('ASU_V'=1, 'ASU_V'='X', (('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0)))).
+ut("summ   let x = false && true in assume x", p_e_to_c1(let(x@l:x:bool,
+                                                        app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
+                                                            [false@l:a_and_x:bool --> ('A_AND_X'=0),
+                                                             true@l:ba_and_x:bool --> ('BA_AND_X'=1)]
+                                                           )@l:x:bool --> (('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0),
+                                                        assume(
+                                                               x@l:asu_v:bool --> ('ASU_V'='X')
+                                                              )@l:v:unit --> ('ASU_V'=1, 'ASU_V'='X')
+                                                       ), l, v:unit, true, ('ASU_V'=1, 'ASU_V'='X', (('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0)), [])).
 
 
 
-% % **********************************************************************
-% % | c                                                      Constant
-% % | e e ... e                                              Application
-% % | nondet ()                                              Non-det value
-% % | if e then e else e                                     If
+% **********************************************************************
+% | c                                                      Constant
+% | e e ... e                                              Application
+% | nondet ()                                              Non-det value
+% | if e then e else e                                     If
 
 % ut("naming   if nondet () then 1 else 0", t_e_to_n_e1(ite(app(nondet@l:(unit->bool),
 %                                                               [unit@l:unit]
