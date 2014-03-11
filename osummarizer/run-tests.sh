@@ -16,7 +16,6 @@ for f in `ls tests/*/*.of`; do
     done
     echo -n ' '
     (   ./osummarizer $f.of $f.qarmc >/dev/null 2>1 && \
-        diff $f.qarmc.expected $f.qarmc >/dev/null 2>1 && \
         if [ "$f" = "${f%_false}" ]; then
             ../../qarmc5/qarmc $f.qarmc | grep 'program is correct' >/dev/null 2>1
         else
