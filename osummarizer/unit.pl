@@ -1705,18 +1705,23 @@ ut("summ     let max1 = fun (x2 : int) y3 -> ... in max1 3 1", p_e_to_c1(let(max
 % ut("path     let p = (fun x -> (+) x) 1 in ()", false).
 % ut("summ     let p = (fun x -> (+) x) 1 in ()", false).
 
+
 /*
 (let
-  plus:plus:(x:int -> y:int -> r:int)                         ==> { plus_i->i->i(X,Y,R) :- R=X+Y, ctx_plus_i->i->i(X,Y) }
+  plus:plus:(x:int -> y:int -> r:int)                         ++> plus := < ctx_plus_i->i->i(X,Y), (+):plus:(x:int -> y:int -> r:int) >
 =
-  (+):plus:(x:int -> y:int -> r:int)          --> R=X+Y
+  (+):plus:(x:int -> y:int -> r:int)
 in
   (
     plus:plus_v:(x_v:int -> y_v:int -> v:int)
-    1:x_v:int                                 --> X_V=1       ==> {}
-    2:y_v:int                                 --> Y_V=2       ==> {}
-  ):v:int                                     --> plus(1,2,V) ==> { ctx_plus_i->i->i(X_V,Y_V) :- X_V=1, Y_V=1. }
-):v:int                                       --> plus(1,2,V)
+    1:x_v:int                                 --> X_V=1                  ==> {}
+    2:y_v:int                                 --> Y_V=2                  ==> {}
+  ):v:int                                     --> plus(1,2,V)            ==> (goto defn of plus)
+):v:int                                       --> plus(1,2,V)                 |
+                                                                              | {}, ctx_plus_i->i->i(X,Y) |- (+):plus:(x:int -> y:int -> r:int) --> R=X+Y ==> {}
+                                                                              |
+                                                                             { plus_i->i->i(X,Y,R)       :- R=X+Y, ctx_plus_i->i->i(X,Y).
+                                                                               ctx_plus_i->i->i(X_V,Y_V) :- X_V=1, Y_V=1.                 }
 */
 ut("path            let plus = (+) in plus 1 2", n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
                                                                  (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
@@ -1726,7 +1731,7 @@ ut("path            let plus = (+) in plus 1 2", n_e_to_p_e1(let(plus@l:plus:(a_
                                                                     )@l:v:int
                                                                 ), l, v:int,
                                                              let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
-                                                                 (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)) --> ('BB_PLUS'='A_PLUS'+'BA_PLUS'),
+                                                                 (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
                                                                  app(plus@l:plus_v:(a_plus_v:int->b_plus:(ba_plus_v:int->v:int)),
                                                                      [1@l:a_plus_v:int --> ('A_PLUS_V'=1),
                                                                       2@l:ba_plus_v:int --> ('BA_PLUS_V'=2)]
