@@ -798,11 +798,7 @@ p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, X:T, K, Kd, S) :- !,
                 param(K)
             do  p_e_to_c1(Ei, Li, Ni, K, Ki, Si)
             ),
-            (   function_type(T) ->
-                mk_ctx_pred(X:T, CtxX),
-                mk_conj((CtxX, Ks, K), Body)
-            ;   mk_conj((Ks, K), Body)
-            ),
+            mk_conj((Ks, K), Body),
             ord_union([[(CtxEf :- Body)]|Ss], S)
         ),
         dpop_portray_clause(p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, X:T, K, Kd, S)-out).
@@ -810,13 +806,13 @@ p_e_to_c1(abs(XLTs, E@L:Nb-->Kb), L, X:T, K, Kb, S) :- !,
         dpush_portray_clause(p_e_to_c1(abs(XLTs, E@L:Nb-->Kb), L, X:T, K, Kb, S)-in),
         p_e_to_c1(E, L, Nb, K, Kb, S),
         dpop_portray_clause(p_e_to_c1(abs(XLTs, E@L:Nb-->Kb), L, X:T, K, Kb, S)-out).
-p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, S) :- !,
-        dpush_portray_clause(p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, S)-in),
-        p_e_to_c1(E1, L1, N1, K, K1, S1),
-        p_e_to_c1(E2, L2, N2, (   K1, K), K2, S2),
-        p_e_to_c1(E3, L3, N3, (\+ K1, K), K3, S3),
+p_e_to_c1(ite(E1@L1:X1:T1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, S) :- !,
+        dpush_portray_clause(p_e_to_c1(ite(E1@L1:X1:T1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, S)-in),
+        p_e_to_c1(E1, L1, X1:T1, K, K1, S1),
+        p_e_to_c1(E2, L2, N2, (X1=1, K1, K), K2, S2),
+        p_e_to_c1(E3, L3, N3, (X1=0, K1, K), K3, S3),
         ord_union([S1, S2, S3], S),
-        dpop_portray_clause(p_e_to_c1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, S)-out).
+        dpop_portray_clause(p_e_to_c1(ite(E1@L1:X1:T1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, S)-out).
 p_e_to_c1(let(X1Lx1Nx1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N2, K, Kd, S) :- !,
         dpush_portray_clause(p_e_to_c1(let(X1Lx1Nx1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N2, K, Kd, S)-in),
         (   function_type(T1) ->

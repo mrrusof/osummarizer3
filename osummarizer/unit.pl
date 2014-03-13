@@ -1030,7 +1030,7 @@ ut("path          partial app (add 1):(int->int)", n_e_to_p_e1(app(add@l2:add_v:
 ut("summ          partial app (add 1):(int->int)", p_e_to_c1(app(add@l2:add_v:(a_add_v:int->v:(ba_add_v:int->bb_add_v:int)),
                                                                    [1@l3:a_add_v:int --> ('A_ADD_V'=1)]
                                                                 ), l1, v:(ba_add_v:int->bb_add_v:int), true, 'add_int->int->int'(1, 'BA_ADD_V', 'BB_ADD_V'),
-                                                             [('ctx_add_int->int->int'('A_ADD_V', 'BA_ADD_V') :- ('ctx_v_int->int'('BA_ADD_V'), 'A_ADD_V'=1))])).
+                                                             [('ctx_add_int->int->int'('A_ADD_V', 'BA_ADD_V') :- 'A_ADD_V'=1)])).
 
 ut("naming   nested app (incr (incr 1)):int", t_e_to_n_e1(app(incr@l:(int->int),
                                                               [app(incr@l:(int->int),
@@ -1405,12 +1405,66 @@ in
 */
 % ut("naming   let g = f in ()", false).
 % ut("path     let g = f in ()", false).
+ut("path     let g = add in ()", n_e_to_p_e1(let(g@l2:g:(a_g:int->b_add:(ba_g:int->bb_g:int)),
+                                                 add@l3:g:(a_g:int->b_add:(ba_g:int->bb_g:int)),
+                                                 unit@l4:v:unit
+                                                ), l1, v:unit,
+                                             let(g@l2:g:(a_g:int->b_add:(ba_g:int->bb_g:int)),
+                                                 add@l3:g:(a_g:int->b_add:(ba_g:int->bb_g:int))-->'add_int->int->int'('A_G','BA_G','BB_G'),
+                                                 unit@l4:v:unit-->('V'=1)
+                                                )@l1:v:unit --> ('V'=1))).
 ut("summ     let g = add in ()", p_e_to_c1(let(g@l2:g:(a_g:int->b_add:(ba_g:int->bb_g:int)),
                                                add@l3:g:(a_g:int->b_add:(ba_g:int->bb_g:int))-->'add_int->int->int'('A_G','BA_G','BB_G'),
                                                unit@l4:v:unit-->('V'=1)
                                               ), l1, v:unit, true, ('V'=1),
                                            [('ctx_add_int->int->int'('A_G','BA_G'):-'ctx_g_int->int->int'('A_G','BA_G')),
                                             ('g_int->int->int'('A_G', 'BA_G', 'BB_G') :- ('add_int->int->int'('A_G', 'BA_G', 'BB_G'), 'ctx_g_int->int->int'('A_G', 'BA_G')))])).
+
+/*
+(let
+  g:g:(ba_add_g:int -> bb_add_g:int)                                                             ==> { 'g_int->int'(BA_ADD_G, BB_ADD_G) :- 'add_int->int->int'(1, BA_ADD_G, BB_ADD_G), 'ctx_g_int->int'(BB_ADD_G) }
+=
+  (
+    add:add_g:(a_add_g:int -> g:(ba_add_g:int -> bb_add_g:int))
+    1:a_add_g:int                                 --> A_ADD_G=1                                  ==> {}
+  ):g:(ba_add_g:int -> bb_add_g:int)              --> 'add_int->int->int'(1, BA_ADD_G, BB_ADD_G) ==> { 'ctx_add_int->int->int'(BA_ADD_G, BB_ADD_G) :- BA_ADD_G=1, 'ctx_g_int->int'(BB_ADD_G) }
+in
+  unit:v:unit                                     --> V=1                                        ==> {}
+):v:unit                                          --> V=1                                        ==> {}
+*/
+ut("naming   let g = add 1 in ()", t_e_to_n_e1(let(g@l2:(int-> int -> int),
+                                                   app(add@l4:(int -> int -> int),
+                                                       [1@l5:int]
+                                                      )@l3:(int -> int),
+                                                   unit@l6:unit
+                                                   ), l1, unit, v, node(add, add:(a_add:int -> b_add:(ba_add:int -> bb_add:int)), 0, empty, empty),
+                                               let(g@l2:g:(ba_add_g:int->bb_add_g:int),
+                                                   app(add@l4:add_g:(a_add_g:int->g:(ba_add_g:int->bb_add_g:int)),
+                                                       [1@l5:a_add_g:int]
+                                                      )@l3:g:(ba_add_g:int->bb_add_g:int),
+                                                   unit@l6:v:unit
+                                                  )@l1:v:unit)).
+ut("path     let g = add 1 in ()", n_e_to_p_e1(let(g@l2:g:(ba_add_g:int->bb_add_g:int),
+                                                   app(add@l4:add_g:(a_add_g:int->g:(ba_add_g:int->bb_add_g:int)),
+                                                       [1@l5:a_add_g:int]
+                                                      )@l3:g:(ba_add_g:int->bb_add_g:int),
+                                                   unit@l6:v:unit
+                                                  ), l1, v:unit,
+                                              let(g@l2:g:(ba_add_g:int->bb_add_g:int),
+                                                   app(add@l4:add_g:(a_add_g:int->g:(ba_add_g:int->bb_add_g:int)),
+                                                       [1@l5:a_add_g:int --> ('A_ADD_G'=1)]
+                                                      )@l3:g:(ba_add_g:int->bb_add_g:int) --> 'add_int->int->int'(1,'BA_ADD_G','BB_ADD_G'),
+                                                   unit@l6:v:unit --> ('V'=1)
+                                                  )@l1:v:unit --> ('V'=1))).
+ut("summ     let g = add 1 in ()", p_e_to_c1(let(g@l2:g:(ba_add_g:int->bb_add_g:int),
+                                               app(add@l4:add_g:(a_add_g:int->g:(ba_add_g:int->bb_add_g:int)),
+                                                       [1@l5:a_add_g:int --> ('A_ADD_G'=1)]
+                                                      )@l3:g:(ba_add_g:int->bb_add_g:int) --> 'add_int->int->int'(1,'BA_ADD_G','BB_ADD_G'),
+                                               unit@l6:v:unit --> ('V'=1)
+                                              ), l1, v:unit, true, ('V'=1),
+                                           [('ctx_add_int->int->int'('A_ADD_G','BA_ADD_G'):- ('A_ADD_G'=1, 'ctx_g_int->int'('BA_ADD_G'))),
+                                            ('g_int->int'('BA_ADD_G', 'BB_ADD_G') :- ('add_int->int->int'(1, 'BA_ADD_G', 'BB_ADD_G'), 'ctx_g_int->int'('BA_ADD_G')))])).
+
 
 /*
 let h =                                                        ==> { h_i->i(Y,R) :- R=1+Y }
