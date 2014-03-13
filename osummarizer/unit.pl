@@ -1705,21 +1705,33 @@ ut("summ     let max1 = fun (x2 : int) y3 -> ... in max1 3 1", p_e_to_c1(let(max
 % ut("path     let p = (fun x -> (+) x) 1 in ()", false).
 % ut("summ     let p = (fun x -> (+) x) 1 in ()", false).
 
-
+/*
+(let
+  plus:plus:(x:int -> y:int -> r:int)                         ==> { plus_i->i->i(X,Y,R) :- R=X+Y, ctx_plus_i->i->i(X,Y) }
+=
+  (+):plus:(x:int -> y:int -> r:int)          --> R=X+Y
+in
+  (
+    plus:plus_v:(x_v:int -> y_v:int -> v:int)
+    1:x_v:int                                 --> X_V=1       ==> {}
+    2:y_v:int                                 --> Y_V=2       ==> {}
+  ):v:int                                     --> plus(1,2,V) ==> { ctx_plus_i->i->i(X_V,Y_V) :- X_V=1, Y_V=1. }
+):v:int                                       --> plus(1,2,V)
+*/
 ut("path            let plus = (+) in plus 1 2", n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
-                                                        (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
-                                                        app(plus@l:plus_v:(a_plus_v:int->b_plus:(ba_plus_v:int->v:int)),
-                                                            [1@l:a_plus_v:int,
-                                                             2@l:ba_plus_v:int]
-                                                           )@l:v:int
-                                                       ), l, v:int,
-                                                    let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
-                                                        (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)) --> ('BB_PLUS'='A_PLUS'+'BA_PLUS'),
-                                                        app(plus@l:plus_v:(a_plus_v:int->b_plus:(ba_plus_v:int->v:int)),
-                                                            [1@l:a_plus_v:int --> ('A_PLUS_V'=1),
-                                                             2@l:ba_plus_v:int --> ('BA_PLUS_V'=2)]
-                                                           )@l:v:int --> 'plus_int->int->int'(1,2,'V')
-                                                       )@l:v:int --> 'plus_int->int->int'(1,2,'V'))).
+                                                                 (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
+                                                                 app(plus@l:plus_v:(a_plus_v:int->b_plus:(ba_plus_v:int->v:int)),
+                                                                     [1@l:a_plus_v:int,
+                                                                      2@l:ba_plus_v:int]
+                                                                    )@l:v:int
+                                                                ), l, v:int,
+                                                             let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
+                                                                 (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)) --> ('BB_PLUS'='A_PLUS'+'BA_PLUS'),
+                                                                 app(plus@l:plus_v:(a_plus_v:int->b_plus:(ba_plus_v:int->v:int)),
+                                                                     [1@l:a_plus_v:int --> ('A_PLUS_V'=1),
+                                                                      2@l:ba_plus_v:int --> ('BA_PLUS_V'=2)]
+                                                                    )@l:v:int --> 'plus_int->int->int'(1,2,'V')
+                                                                )@l:v:int --> 'plus_int->int->int'(1,2,'V'))).
 ut("summ            let plus = (+) in plus 1 2", p_e_to_c1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
                                                                (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)) --> ('BB_PLUS'='A_PLUS'+'BA_PLUS'),
                                                                app(plus@l:plus_v:(a_plus_v:int->b_plus:(ba_plus_v:int->v:int)),
@@ -1730,21 +1742,21 @@ ut("summ            let plus = (+) in plus 1 2", p_e_to_c1(let(plus@l:plus:(a_pl
                                                            [('ctx_plus_int->int->int'('A_PLUS_V', 'BA_PLUS_V') :- ('BA_PLUS_V'=2, 'A_PLUS_V'=1)),
                                                             ('plus_int->int->int'('A_PLUS', 'BA_PLUS', 'BB_PLUS') :- ('BB_PLUS'='A_PLUS'+'BA_PLUS', 'ctx_plus_int->int->int'('A_PLUS', 'BA_PLUS')))])).
 ut("Negative summ 1 let plus = (+) in plus 1 2", \+ p_e_to_c1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
-                                                               (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)) --> ('BB_PLUS'='A_PLUS'+'BA_PLUS'),
-                                                               app(plus@l:plus_v:(a_plus_v:int->b_plus:(ba_plus_v:int->v:int)),
-                                                                   [1@l:a_plus_v:int --> ('A_PLUS_V'=1),
-                                                                    2@l:ba_plus_v:int --> ('BA_PLUS_V'=2)]
-                                                                  )@l:v:int --> 'plus_int->int->int'(1,2,'V')
-                                                              ), l, v:int, true, 'plus_int->int->int'(1,2,'V'),
-                                                           [(_)])).
+                                                                  (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)) --> ('BB_PLUS'='A_PLUS'+'BA_PLUS'),
+                                                                  app(plus@l:plus_v:(a_plus_v:int->b_plus:(ba_plus_v:int->v:int)),
+                                                                      [1@l:a_plus_v:int --> ('A_PLUS_V'=1),
+                                                                       2@l:ba_plus_v:int --> ('BA_PLUS_V'=2)]
+                                                                     )@l:v:int --> 'plus_int->int->int'(1,2,'V')
+                                                                 ), l, v:int, true, 'plus_int->int->int'(1,2,'V'),
+                                                              [(_)])).
 ut("Negative summ 2 let plus = (+) in plus 1 2", \+ p_e_to_c1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
-                                                               (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)) --> ('BB_PLUS'='A_PLUS'+'BA_PLUS'),
-                                                               app(plus@l:plus_v:(a_plus_v:int->b_plus:(ba_plus_v:int->v:int)),
-                                                                   [1@l:a_plus_v:int --> ('A_PLUS_V'=1),
-                                                                    2@l:ba_plus_v:int --> ('BA_PLUS_V'=2)]
-                                                                  )@l:v:int --> 'plus_int->int->int'(1,2,'V')
-                                                              ), l, v:int, true, 'plus_int->int->int'(1,2,'V'),
-                                                           [])).
+                                                                  (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)) --> ('BB_PLUS'='A_PLUS'+'BA_PLUS'),
+                                                                  app(plus@l:plus_v:(a_plus_v:int->b_plus:(ba_plus_v:int->v:int)),
+                                                                      [1@l:a_plus_v:int --> ('A_PLUS_V'=1),
+                                                                       2@l:ba_plus_v:int --> ('BA_PLUS_V'=2)]
+                                                                     )@l:v:int --> 'plus_int->int->int'(1,2,'V')
+                                                                 ), l, v:int, true, 'plus_int->int->int'(1,2,'V'),
+                                                              [])).
 
 ut("path            let neq = (<>) in neq 1 2", n_e_to_p_e1(let(neq@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
                                                                 (<>)@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
@@ -1761,33 +1773,33 @@ ut("path            let neq = (<>) in neq 1 2", n_e_to_p_e1(let(neq@l:neq:(a_neq
                                                                    )@l:v:bool --> 'neq_int->int->bool'(1, 2, 'V')
                                                                )@l:v:bool --> 'neq_int->int->bool'(1, 2, 'V'))).
 ut("Negative path 1 let neq = (<>) in neq 1 2", \+ n_e_to_p_e1(let(neq@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
-                                                                (<>)@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
-                                                                app(neq@l:neq_v:(a_neq_v:int->b_neq:(ba_neq_v:int->v:bool)),
-                                                                    [1@l:a_neq_v:int,
-                                                                     2@l:ba_neq_v:int]
-                                                                   )@l:v:bool
-                                                               ), l, v:bool,
-                                                            let(neq@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
-                                                                (<>)@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)) --> _,
-                                                                app(neq@l:neq_v:(a_neq_v:int->b_neq:(ba_neq_v:int->v:bool)),
-                                                                    [1@l:a_neq_v:int --> _,
-                                                                     2@l:ba_neq_v:int --> _]
-                                                                   )@l:v:bool --> 'neq_int->int->bool'(1, 2)
-                                                               )@l:v:bool --> 'neq_int->int->bool'(1, 2))).
+                                                                   (<>)@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
+                                                                   app(neq@l:neq_v:(a_neq_v:int->b_neq:(ba_neq_v:int->v:bool)),
+                                                                       [1@l:a_neq_v:int,
+                                                                        2@l:ba_neq_v:int]
+                                                                      )@l:v:bool
+                                                                  ), l, v:bool,
+                                                               let(neq@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
+                                                                   (<>)@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)) --> _,
+                                                                   app(neq@l:neq_v:(a_neq_v:int->b_neq:(ba_neq_v:int->v:bool)),
+                                                                       [1@l:a_neq_v:int --> _,
+                                                                        2@l:ba_neq_v:int --> _]
+                                                                      )@l:v:bool --> 'neq_int->int->bool'(1, 2)
+                                                                  )@l:v:bool --> 'neq_int->int->bool'(1, 2))).
 ut("Negative path 2 let neq = (<>) in neq 1 2", \+ n_e_to_p_e1(let(neq@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
-                                                                (<>)@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
-                                                                app(neq@l:neq_v:(a_neq_v:int->b_neq:(ba_neq_v:int->v:bool)),
-                                                                    [1@l:a_neq_v:int,
-                                                                     2@l:ba_neq_v:int]
-                                                                   )@l:v:bool
-                                                               ), l, v:bool,
-                                                            let(neq@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
-                                                                (<>)@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)) --> ('A_NEQ'=\='BA_NEQ'),
-                                                                app(neq@l:neq_v:(a_neq_v:int->b_neq:(ba_neq_v:int->v:bool)),
-                                                                    [1@l:a_neq_v:int --> _,
-                                                                     2@l:ba_neq_v:int --> _]
-                                                                   )@l:v:bool --> _
-                                                               )@l:v:bool --> _)).
+                                                                   (<>)@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
+                                                                   app(neq@l:neq_v:(a_neq_v:int->b_neq:(ba_neq_v:int->v:bool)),
+                                                                       [1@l:a_neq_v:int,
+                                                                        2@l:ba_neq_v:int]
+                                                                      )@l:v:bool
+                                                                  ), l, v:bool,
+                                                               let(neq@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
+                                                                   (<>)@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)) --> ('A_NEQ'=\='BA_NEQ'),
+                                                                   app(neq@l:neq_v:(a_neq_v:int->b_neq:(ba_neq_v:int->v:bool)),
+                                                                       [1@l:a_neq_v:int --> _,
+                                                                        2@l:ba_neq_v:int --> _]
+                                                                      )@l:v:bool --> _
+                                                                  )@l:v:bool --> _)).
 ut("summ            let neq = (<>) in neq 1 2", p_e_to_c1(let(neq@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
                                                               (<>)@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)) --> ('A_NEQ'=\='BA_NEQ' -> 'BB_NEQ'=1 ; 'BB_NEQ'=0),
                                                               app(neq@l:neq_v:(a_neq_v:int->b_neq:(ba_neq_v:int->v:bool)),
@@ -2479,10 +2491,10 @@ ut("summ  assume-assert", p_e_to_c1(let(f1@l:f1:(x2:int->ret_f1:unit),
 
 % **********************************************************************
 % Polymorphism
-% ut("naming polymorphic (>)", t_e_to_n_e1((>), l, (A->A->bool), v, empty, (>)@l:v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)))).
-% ut("path   polymorphic (>)", n_e_to_p_e1((>), l, v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)),
-%                                          (>)@l:v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)) --> ('A_V'>'BA_V'))).
-% ut("summ   polymorphic (>)", p_e_to_c1((>), l, v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)), true, ('A_V'>'BA_V'), [])).
+ut("naming polymorphic (>)", t_e_to_n_e1((>), l, (A->A->bool), v, empty, (>)@l:v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)))).
+ut("path   polymorphic (>)", n_e_to_p_e1((>), l, v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)),
+                                         (>)@l:v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)) --> ('A_V'>'BA_V' -> 'BB_V'=1 ; 'BB_V'=0))).
+ut("summ   polymorphic (>)", p_e_to_c1((>), l, v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)), true, ('A_V'>'BA_V'), [])).
 
 % ut("naming polymorphic let gt = (>) in gt 2 1", t_e_to_n_e1(let(gt@l:(A->A->bool),
 %                                                                 (>)@l:(A->A->bool),
