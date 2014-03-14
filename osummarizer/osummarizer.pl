@@ -816,6 +816,14 @@ p_e_to_f_d1(let(Y@Ly:N1, E1L1N1K1, E2@L2:N2-->K2), L, N, K, Kd, D, Dd) :- !,
             p_e_to_f_d1(E1, L1, X1, (K1, K), K1, D1, Dd)
         ),
         dpop_portray_clause(p_e_to_f_d1(let(Y@Ly:N1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N, K, Kd, D, Dd)-out).
+p_e_to_f_d1(assert(Ec@Lc:Nc-->Kc), L, N, K, Kd, D, Dd) :- !,
+        dpush_portray_clause(p_e_to_f_d1(assert(Ec@Lc:Nc-->Kc), L, N, K, Kd, D, Dd)-in),
+        p_e_to_f_d1(Ec, Lc, Nc, K, Kc, D, Dd),
+        dpop_portray_clause(p_e_to_f_d1(assert(Ec@Lc:Nc-->Kc), L, N, K, Kd, D, Dd)-out).
+p_e_to_f_d1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, D, Dd) :- !,
+        dpush_portray_clause(p_e_to_f_d1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, D, Dd)-in),
+        p_e_to_f_d1(Ec, Lc, Nc, K, Kc, D, Dd),
+        dpop_portray_clause(p_e_to_f_d1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, D, Dd)-out).
 p_e_to_f_d1(E, L, N, K, Kd, D, D) :- !,
         dpush_portray_clause(p_e_to_f_d1(E, L, N, K, Kd, D, D)-in),
         dpop_portray_clause(p_e_to_f_d1(E, L, N, K, Kd, D, D)-out).
