@@ -599,8 +599,8 @@ ut("Negative naming const ()", \+ t_e_to_n_e1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0
 ut("path   const ()", n_e_to_p_e1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit-->('V'=1))).
 ut("Negative path 1 const ()", \+ n_e_to_p_e1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit-->1)).
 ut("Negative path 2 const ()", \+ n_e_to_p_e1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit-->true)).
-ut("summ   const ()", p_e_to_c1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, true, 'V'=1, [])).
-ut("Negative summ   const ()", \+ p_e_to_c1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, true, 'V'=1, [_])).
+ut("summ   const ()", p_e_to_c1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, true, 'V'=1, empty, [])).
+ut("Negative summ   const ()", \+ p_e_to_c1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, true, 'V'=1, empty, [_])).
 
 ut("PP typed const ()", pp(unit@loc('c.ml', 0, 0, 0, 0, 0, 0):unit, "unit:unit")).
 ut("PP named const ()", pp(unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit, "unit:v:unit")).
@@ -612,7 +612,7 @@ ut("path   const true", n_e_to_p_e1(true, loc('c.ml', 0, 0, 0, 0, 0, 0), v:bool,
 ut("Negative path 1 const true", \+ n_e_to_p_e1(true, loc('c.ml', 0, 0, 0, 0, 0, 0), v:bool, true@loc('c.ml', 0, 0, 0, 0, 0, 0):v:bool-->('V'=true))).
 ut("Negative path 2 const true", \+ n_e_to_p_e1(true, loc('c.ml', 0, 0, 0, 0, 0, 0), v:bool, true@loc('c.ml', 0, 0, 0, 0, 0, 0):v:bool-->true)).
 ut("Negative path 3 const true", \+ n_e_to_p_e1(true, loc('c.ml', 0, 0, 0, 0, 0, 0), v:bool, true@loc('c.ml', 0, 0, 0, 0, 0, 0):v:bool-->1)).
-ut("summ   const true", p_e_to_c1(true, loc('c.ml', 0, 0, 0, 0, 0, 0), v:bool, true, 'V'=1, [])).
+ut("summ   const true", p_e_to_c1(true, loc('c.ml', 0, 0, 0, 0, 0, 0), v:bool, true, 'V'=1, empty, [])).
 
 ut("PP typed const true", pp(true@loc('c.ml', 0, 0, 0, 0, 0, 0):bool, "true:bool")).
 ut("PP named const true", pp(true@loc('c.ml', 0, 0, 0, 0, 0, 0):v:bool, "true:v:bool")).
@@ -621,19 +621,19 @@ ut("PP path  const true", pp(true@loc('c.ml', 0, 0, 0, 0, 0, 0):v:bool-->'V'=1, 
 % 10:v:int --> V=10
 ut("naming const 10", t_e_to_n_e1(10, loc('c.ml', 0, 0, 0, 0, 0, 0), int, v, empty, 10@loc('c.ml', 0, 0, 0, 0, 0, 0):v:int)).
 ut("path   const 10", n_e_to_p_e1(10, loc('c.ml', 0, 0, 0, 0, 0, 0), v:int, 10@loc('c.ml', 0, 0, 0, 0, 0, 0):v:int-->('V'=10))).
-ut("summ   const 10", p_e_to_c1(10, loc('c.ml', 0, 0, 0, 0, 0, 0), v:int, true, 'V'=10, [])).
+ut("summ   const 10", p_e_to_c1(10, loc('c.ml', 0, 0, 0, 0, 0, 0), v:int, true, 'V'=10, empty, [])).
 
 % "hola":str:string --> STR="hola"
 ut("naming const \"hola\"", t_e_to_n_e1("hola", loc('c.ml', 0, 0, 0, 0, 0, 0), string, str, empty, "hola"@loc('c.ml', 0, 0, 0, 0, 0, 0):str:string)).
 ut("path   const \"hola\"", n_e_to_p_e1("hola", loc('c.ml', 0, 0, 0, 0, 0, 0), str:string, "hola"@loc('c.ml', 0, 0, 0, 0, 0, 0):str:string-->('STR'="hola"))).
-ut("summ   const \"hola\"", p_e_to_c1("hola", loc('c.ml', 0, 0, 0, 0, 0, 0), v:int, true, 'STR'="hola", [])).
+ut("summ   const \"hola\"", p_e_to_c1("hola", loc('c.ml', 0, 0, 0, 0, 0, 0), v:int, true, 'STR'="hola", empty, [])).
 
 % (+):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)) --> BB_PLUS_V=A_PLUS_V+BA_PLUS_V
 ut("naming          const +", t_e_to_n_e1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), (int -> int -> int), plus_v, empty, '+'@loc('c.ml', 0, 0, 0, 0, 0, 0):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)))).
 ut("path            const +", n_e_to_p_e1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), '+'@loc('c.ml', 0, 0, 0, 0, 0, 0):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int))-->('BB_PLUS_V'='A_PLUS_V'+'BA_PLUS_V'))).
 ut("Negative path 1 const +", \+ n_e_to_p_e1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), '+'@loc('c.ml', 0, 0, 0, 0, 0, 0):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int))-->true)).
-ut("summ            const +", p_e_to_c1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), true, ('BB_PLUS_V'='A_PLUS_V'+'BA_PLUS_V'), [])).
-ut("Negative summ   const +", \+ p_e_to_c1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), true, ('BB_PLUS_V'='A_PLUS_V'+'BA_PLUS_V'), [_])).
+ut("summ            const +", p_e_to_c1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), true, ('BB_PLUS_V'='A_PLUS_V'+'BA_PLUS_V'), empty, [])).
+ut("Negative summ   const +", \+ p_e_to_c1('+', loc('c.ml', 0, 0, 0, 0, 0, 0), v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), true, ('BB_PLUS_V'='A_PLUS_V'+'BA_PLUS_V'), empty, [_])).
 
 ut("PP typed const +", pp('+'@loc('c.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int), "(+):(int -> int -> int)")).
 ut("PP named const +", pp('+'@loc('c.ml', 0, 0, 0, 0, 0, 0):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int)), "(+):plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> bb_plus_v:int))")).
@@ -644,7 +644,7 @@ ut("naming          const (>):(int->int->int)", t_e_to_n_e1('>', loc('c.ml', 0, 
 ut("path            const (>):(int->int->int)", n_e_to_p_e1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)), '>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool))-->('A_GT_V'>'BA_GT_V' -> 'BB_GT_V'=1 ; 'BB_GT_V'=0))).
 ut("Negative path 1 const (>):(int->int->int)", \+ n_e_to_p_e1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)), '>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool))-->('A_GT_V'>'BA_GT_V'))).
 ut("Negative path 2 const (>):(int->int->int)", \+ n_e_to_p_e1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)), '>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool))-->true)).
-ut("summ            const (>):(int->int->int)", p_e_to_c1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), gt_v:(a_gt_v:int -> b_v:(ba_gt_v:int -> bb_gt_v:bool)), true, ('A_GT_V'>'BA_GT_V' -> 'BB_GT_V'=1 ; 'BB_GT_V'=0), [])).
+ut("summ            const (>):(int->int->int)", p_e_to_c1('>', loc('c.ml', 0, 0, 0, 0, 0, 0), gt_v:(a_gt_v:int -> b_v:(ba_gt_v:int -> bb_gt_v:bool)), true, ('A_GT_V'>'BA_GT_V' -> 'BB_GT_V'=1 ; 'BB_GT_V'=0), empty, [])).
 
 ut("PP typed        const (>):(int->int->int)", pp('>'@loc('c.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool), "(>):(int -> int -> bool)")).
 ut("PP named        const (>):(int->int->int)", pp('>'@loc('c.ml', 0, 0, 0, 0, 0, 0):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool)), "(>):gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> bb_gt_v:bool))")).
@@ -672,8 +672,8 @@ ut("path            x:unit", n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:uni
 ut("Negative path 1 x:unit", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:unit-->true)).
 ut("Negative path 2 x:unit", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, (x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:unit-->'V')='X')).
 ut("Negative path 3 x:unit", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:unit-->('X'='V'))).
-ut("summ            x:unit", p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, true, 'V'='X', [])).
-ut("Negative summ   x:unit", \+ p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, true, 'V'='X', [_])).
+ut("summ            x:unit", p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, true, 'V'='X', empty, [])).
+ut("Negative summ   x:unit", \+ p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:unit, true, 'V'='X', empty, [_])).
 
 ut("PP typed        x:unit", pp(x@loc('x.ml', 0, 0, 0, 0, 0, 0):unit, "x:unit")).
 ut("PP named        x:unit", pp(x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:unit, "x:v:unit")).
@@ -686,8 +686,8 @@ ut("path            x:bool", n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:boo
 ut("Negative path 1 x:bool", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:bool, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:bool-->true)).
 ut("Negative path 2 x:bool", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:bool, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:bool-->'V'='X')).
 ut("Negative path 3 x:bool", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:bool, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:bool-->'X'='V')).
-ut("summ            x:bool", p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:bool, true, 'V'='X', [])).
-ut("Negative summ   x:bool", \+ p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:bool, true, 'V'='X', [_])).
+ut("summ            x:bool", p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:bool, true, 'V'='X', empty, [])).
+ut("Negative summ   x:bool", \+ p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:bool, true, 'V'='X', empty, [_])).
 
 % x:v:int --> V=X
 ut("naming          x:int", t_e_to_n_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), int, v, empty, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:int)).
@@ -696,8 +696,8 @@ ut("path            x:int", n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int,
 ut("Negative path 1 x:int", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:int-->true)).
 ut("Negative path 2 x:int", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:int-->'V'='X')).
 ut("Negative path 3 x:int", \+ n_e_to_p_e1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int, x@loc('x.ml', 0, 0, 0, 0, 0, 0):v:int-->'X'='V')).
-ut("summ            x:int", p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int, true, 'V'='X', [])).
-ut("Negative summ   x:int", \+ p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int, true, 'V'='X', [_])).
+ut("summ            x:int", p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int, true, 'V'='X', empty, [])).
+ut("Negative summ   x:int", \+ p_e_to_c1(x, loc('x.ml', 0, 0, 0, 0, 0, 0), v:int, true, 'V'='X', empty, [_])).
 
 % add:v:(a_add_v:int -> b_add:(ba_add_v:int -> bb_add_v:int)) --> 'add_int->int->int'(A_ADD_V, BA_ADD_V, BB_ADD_V)
 ut("naming 1        add:(int->int->int)", t_e_to_n_e1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), (int->int->int), add_v, node(add, add:(a_add:int -> b_add:(ba_add:int -> bb_add:int)), 0, empty, empty), add@loc('x.ml', 0, 0, 0, 0, 0, 0):add_v:(a_add_v:int->b_add:(ba_add_v:int->bb_add_v:int)))).
@@ -706,8 +706,8 @@ ut("Negative naming add:(int->int->int)", \+ t_e_to_n_e1(add, loc('x.ml', 0, 0, 
 ut("path            add:(int->int->int)", n_e_to_p_e1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), f:(a_f:int->b_add:(ba_f:int->bb_f:int)), add@loc('x.ml', 0, 0, 0, 0, 0, 0):f:(a_f:int->b_add:(ba_f:int->bb_f:int))-->'add_int->int->int'('A_F', 'BA_F', 'BB_F'))).
 ut("Negative path 1 add:(int->int->int)", \+ n_e_to_p_e1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), f:(a_f:int->b_add:(ba_f:int->bb_f:int)), add@loc('x.ml', 0, 0, 0, 0, 0, 0):f:(a_f:int->b_add:(ba_f:int->bb_f:int))-->true)).
 ut("Negative path 2 add:(int->int->int)", \+ n_e_to_p_e1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), f:(a_f:int->b_add:(ba_f:int->bb_f:int)), add@loc('x.ml', 0, 0, 0, 0, 0, 0):f:(a_f:int->b_add:(ba_f:int->bb_f:int))-->('F'='ADD'))).
-ut("summ            add:(int->int->int)", p_e_to_c1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), f:(a_f:int->b_add:(ba_f:int->bb_f:int)), true, 'add_int->int->int'('A_F', 'BA_F', 'BB_F'), [('ctx_add_int->int->int'('A_F', 'BA_F') :- 'ctx_f_int->int->int'('A_F', 'BA_F'))])).
-ut("Negative summ   add:(int->int->int)", \+ p_e_to_c1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), f:(a_f:int->b_add:(ba_f:int->bb_f:int)), true, 'add_int->int->int'('A_F', 'BA_F', 'BB_F'), [])).
+ut("summ            add:(int->int->int)", p_e_to_c1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), f:(a_f:int->b_add:(ba_f:int->bb_f:int)), true, 'add_int->int->int'('A_F', 'BA_F', 'BB_F'), empty, [('ctx_add_int->int->int'('A_F', 'BA_F') :- 'ctx_f_int->int->int'('A_F', 'BA_F'))])).
+ut("Negative summ   add:(int->int->int)", \+ p_e_to_c1(add, loc('x.ml', 0, 0, 0, 0, 0, 0), f:(a_f:int->b_add:(ba_f:int->bb_f:int)), true, 'add_int->int->int'('A_F', 'BA_F', 'BB_F'), empty, [])).
 
 ut("PP typed        add:(int->int->int)", pp(add@loc('x.ml', 0, 0, 0, 0, 0, 0):(int->int->int), "add:(int -> int -> int)")).
 ut("PP named        add:(int->int->int)", pp(add@loc('x.ml', 0, 0, 0, 0, 0, 0):f:(a_f:int->b_add:(ba_f:int->bb_f:int)), "add:f:(a_f:int -> b_add:(ba_f:int -> bb_f:int))")).
@@ -720,8 +720,8 @@ ut("path            comp:(int->int->bool)", n_e_to_p_e1(comp, l, g:(a_g:int->b_c
 ut("Negative path 1 comp:(int->int->bool)", \+ n_e_to_p_e1(comp, l, g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), comp@l:g:(a_g:int->b_comp:(ba_g:int->bb_g:bool))-->true)).
 ut("Negative path 2 comp:(int->int->bool)", \+ n_e_to_p_e1(comp, l, g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), comp@l:g:(a_g:int->b_comp:(ba_g:int->bb_g:bool))-->('G'='COMP'))).
 ut("Negative path 3 comp:(int->int->bool)", \+ n_e_to_p_e1(comp, l, g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), comp@l:g:(a_g:int->b_comp:(ba_g:int->bb_g:bool))-->'comp_int->int->bool'('A_G', 'BA_G'))).
-ut("summ            comp:(int->int->bool)", p_e_to_c1(comp, l, g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), true, 'comp_int->int->int'('A_G', 'BA_G', 'BB_G'), [('ctx_comp_int->int->bool'('A_G', 'BA_G') :- 'ctx_g_int->int->bool'('A_G', 'BA_G'))])).
-ut("Negative summ   comp:(int->int->bool)", \+ p_e_to_c1(comp, l, g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), true, 'comp_int->int->int'('A_G', 'BA_G', 'BB_G'), [])).
+ut("summ            comp:(int->int->bool)", p_e_to_c1(comp, l, g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), true, 'comp_int->int->int'('A_G', 'BA_G', 'BB_G'), empty, [('ctx_comp_int->int->bool'('A_G', 'BA_G') :- 'ctx_g_int->int->bool'('A_G', 'BA_G'))])).
+ut("Negative summ   comp:(int->int->bool)", \+ p_e_to_c1(comp, l, g:(a_g:int->b_comp:(ba_g:int->bb_g:bool)), true, 'comp_int->int->int'('A_G', 'BA_G', 'BB_G'), empty, [])).
 
 
 
@@ -742,11 +742,11 @@ ut("path   1+2", n_e_to_p_e1(app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plu
 ut("summ   1+2", p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> v:int)),
                                [1@l3:a_plus_v:int --> ('A_PLUS_V'=1),
                                 2@l4:ba_plus_v:int --> ('BA_PLUS_V'=2)]
-                              ), l1, v:int, true, ('V'=1+2), [])).
+                              ), l1, v:int, true, ('V'=1+2), empty, [])).
 ut("Negative summ   1+2", \+ p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> v:int)),
                                [1@l3:a_plus_v:int --> ('A_PLUS_V'=1),
                                 2@l4:ba_plus_v:int --> ('BA_PLUS_V'=2)]
-                              ), l1, v:int, true, ('V'=1+2), [_])).
+                              ), l1, v:int, true, ('V'=1+2), empty, [_])).
 
 ut("PP typed 1+2", pp(app('+'@l2:(int -> int -> bool), [1@l3:int, 2@l4:int])@l1:bool, "(\n  (+):(int -> int -> bool)\n  1:int\n  2:int\n):bool")).
 
@@ -764,15 +764,15 @@ ut("Negative path 1  1>2", \+ n_e_to_p_e1(app((>)@l2:gt_v:(a_gt_v:int -> b_gt_v:
 ut("summ             1>2", p_e_to_c1(app((>)@l2:gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> v:bool)),
                                          [1@l3:a_gt_v:int --> ('A_GT_V'=1),
                                           2@l4:ba_gt_v:int --> ('BA_GT_V'=2)]
-                                        ), l1, v:bool, true, (1>2 -> 'V'=1 ; 'V'=0), [])).
+                                        ), l1, v:bool, true, (1>2 -> 'V'=1 ; 'V'=0), empty, [])).
 ut("Negative summ 1  1>2", \+ p_e_to_c1(app((>)@l2:gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> v:bool)),
                                             [1@l3:a_gt_v:int --> ('A_GT_V'=1),
                                              2@l4:ba_gt_v:int --> ('BA_GT_V'=2)]
-                                           ), l1, v:bool, true, (1>2 -> 'V'=1 ; 'V'=0), [_])).
+                                           ), l1, v:bool, true, (1>2 -> 'V'=1 ; 'V'=0), empty, [_])).
 ut("Negative summ 2  1>2", \+ p_e_to_c1(app((>)@l2:gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> v:bool)),
                                             [1@l3:a_gt_v:int --> ('A_GT_V'=1),
                                              2@l4:ba_gt_v:int --> ('BA_GT_V'=2)]
-                                           ), l1, v:bool, true, (1>2 -> 'V'=1 ; 'V'=0), [_|_])).
+                                           ), l1, v:bool, true, (1>2 -> 'V'=1 ; 'V'=0), empty, [_|_])).
 
 ut("naming           (1+2)+3", t_e_to_n_e1(app((+)@l2:(int->int->int), [app((+)@l4:(int->int->int), [1@l5:int, 2@l6:int])@l3:int, 3@l7:int]), l1, int, v, empty,
                                            app((+)@l2:plus_v:(a_plus_v:int->b_plus_v:(ba_plus_v:int->v:int)),
@@ -802,21 +802,21 @@ ut("summ             (1+2)+3", p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int->b_plus
                                                    2@l6:ba_plus_a_plus_v:int --> ('BA_PLUS_A_PLUS_V'=2)]
                                                  )@l3:a_plus_v:int --> ('A_PLUS_V'=1+2),
                                               3@l7:ba_plus_v:int --> ('BA_PLUS_V'=3)]
-                                            ), l1, v:int, true, ('V'='A_PLUS_V'+3, 'A_PLUS_V'=1+2), [])).
+                                            ), l1, v:int, true, ('V'='A_PLUS_V'+3, 'A_PLUS_V'=1+2), empty, [])).
 ut("Negative summ 1  (1+2)+3", \+ p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int->b_plus_v:(ba_plus_v:int->v:int)),
                                                 [app((+)@l4:plus_a_plus_v:(a_plus_a_plus_v:int->b_plus_a_plus_v:(ba_plus_a_plus_v:int->a_plus_v:int)),
                                                      [1@l5:a_plus_a_plus_v:int --> ('A_PLUS_A_PLUS_V'=1),
                                                       2@l6:ba_plus_a_plus_v:int --> ('BA_PLUS_A_PLUS_V'=2)]
                                                     )@l3:a_plus_v:int --> ('A_PLUS_V'=1+2),
                                                  3@l7:ba_plus_v:int --> ('BA_PLUS_V'=3)]
-                                               ), l1, v:int, true, ('V'='A_PLUS_V'+3, 'A_PLUS_V'=1+2), [_])).
+                                               ), l1, v:int, true, ('V'='A_PLUS_V'+3, 'A_PLUS_V'=1+2), empty, [_])).
 ut("Negative summ 2  (1+2)+3", \+ p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int->b_plus_v:(ba_plus_v:int->v:int)),
                                                 [app((+)@l4:plus_a_plus_v:(a_plus_a_plus_v:int->b_plus_a_plus_v:(ba_plus_a_plus_v:int->a_plus_v:int)),
                                                      [1@l5:a_plus_a_plus_v:int --> ('A_PLUS_A_PLUS_V'=1),
                                                       2@l6:ba_plus_a_plus_v:int --> ('BA_PLUS_A_PLUS_V'=2)]
                                                     )@l3:a_plus_v:int --> ('A_PLUS_V'=1+2),
                                                  3@l7:ba_plus_v:int --> ('BA_PLUS_V'=3)]
-                                               ), l1, v:int, true, ('V'='A_PLUS_V'+3, 'A_PLUS_V'=1+2), [_|_])).
+                                               ), l1, v:int, true, ('V'='A_PLUS_V'+3, 'A_PLUS_V'=1+2), empty, [_|_])).
 
 ut("PP path          (1+2)+3", pp(app((+)@l2:plus_v:(a_plus_v:int->b_plus_v:(ba_plus_v:int->v:int)),
                                       [app((+)@l4:plus_a_plus_v:(a_plus_a_plus_v:int->b_plus_a_plus_v:(ba_plus_a_plus_v:int->a_plus_v:int)),
@@ -861,21 +861,21 @@ ut("summ             (1+2)=3", p_e_to_c1(app((=)@l2:eq_v:(a_eq_v:int->b_eq_v:(ba
                                             2@l6:ba_plus_a_eq_v:int --> ('BA_PLUS_A_EQ_V'=2)]
                                           )@l3:a_eq_v:int --> ('A_EQ_V'=1+2),
                                        3@l7:ba_eq_v:int --> ('BA_EQ_V'=3)]
-                                     ), l1, v:bool, true, (('A_EQ_V'=3 -> 'V'=1 ; 'V'=0), 'A_EQ_V'=1+2), [])).
+                                     ), l1, v:bool, true, (('A_EQ_V'=3 -> 'V'=1 ; 'V'=0), 'A_EQ_V'=1+2), empty, [])).
 ut("Negative summ 1  (1+2)=3", \+ p_e_to_c1(app((=)@l2:eq_v:(a_eq_v:int->b_eq_v:(ba_eq_v:int->v:bool)),
                                       [app((+)@l4:plus_a_eq_v:(a_plus_a_eq_v:int -> b_plus_a_eq_v:(ba_plus_a_eq_v:int -> a_eq_v:int)),
                                            [1@l5:a_plus_a_eq_v:int --> ('A_PLUS_A_EQ_V'=1),
                                             2@l6:ba_plus_a_eq_v:int --> ('BA_PLUS_A_EQ_V'=2)]
                                           )@l3:a_eq_v:int --> ('A_EQ_V'=1+2),
                                        3@l7:ba_eq_v:int --> ('BA_EQ_V'=3)]
-                                     ), l1, v:bool, true, (('A_EQ_V'=3 -> 'V'=1 ; 'V'=0), 'A_EQ_V'=1+2), [_])).
+                                     ), l1, v:bool, true, (('A_EQ_V'=3 -> 'V'=1 ; 'V'=0), 'A_EQ_V'=1+2), empty, [_])).
 ut("Negative summ 2  (1+2)=3", \+ p_e_to_c1(app((=)@l2:eq_v:(a_eq_v:int->b_eq_v:(ba_eq_v:int->v:bool)),
                                       [app((+)@l4:plus_a_eq_v:(a_plus_a_eq_v:int -> b_plus_a_eq_v:(ba_plus_a_eq_v:int -> a_eq_v:int)),
                                            [1@l5:a_plus_a_eq_v:int --> ('A_PLUS_A_EQ_V'=1),
                                             2@l6:ba_plus_a_eq_v:int --> ('BA_PLUS_A_EQ_V'=2)]
                                           )@l3:a_eq_v:int --> ('A_EQ_V'=1+2),
                                        3@l7:ba_eq_v:int --> ('BA_EQ_V'=3)]
-                                     ), l1, v:bool, true, (('A_EQ_V'=3 -> 'V'=1 ; 'V'=0), 'A_EQ_V'=1+2), [_|_])).
+                                     ), l1, v:bool, true, (('A_EQ_V'=3 -> 'V'=1 ; 'V'=0), 'A_EQ_V'=1+2), empty, [_|_])).
 
 ut("naming (+) 1", t_e_to_n_e1(app((+)@l2:(int->int->int), [1@l3:int]), l1, (int->int), v, empty, app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)), [1@l3:a_plus_v:int])@l1:v:(ba_plus_v:int -> bb_plus_v:int))).
 ut("path   (+) 1", n_e_to_p_e1(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
@@ -886,13 +886,13 @@ ut("path   (+) 1", n_e_to_p_e1(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:i
                                   )@l1:v:(ba_plus_v:int -> bb_plus_v:int)-->('BB_PLUS_V'=1+'BA_PLUS_V'))).
 ut("summ   (+) 1", p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
                                  [1@l3:a_plus_v:int --> ('A_PLUS_V'=1)]
-                                ), l1, v:(ba_plus_v:int -> bb_plus_v:int), true, 'BB_PLUS_V'=1+'BA_PLUS_V', [])).
+                                ), l1, v:(ba_plus_v:int -> bb_plus_v:int), true, 'BB_PLUS_V'=1+'BA_PLUS_V', empty, [])).
 ut("Negative summ 1 (+) 1", \+ p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
                                  [1@l3:a_plus_v:int --> ('A_PLUS_V'=1)]
-                                ), l1, v:(ba_plus_v:int -> bb_plus_v:int), true, 'BB_PLUS_V'=1+'BA_PLUS_V', [_])).
+                                ), l1, v:(ba_plus_v:int -> bb_plus_v:int), true, 'BB_PLUS_V'=1+'BA_PLUS_V', empty, [_])).
 ut("Negative summ 2 (+) 1", \+ p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
                                  [1@l3:a_plus_v:int --> ('A_PLUS_V'=1)]
-                                ), l1, v:(ba_plus_v:int -> bb_plus_v:int), true, 'BB_PLUS_V'=1+'BA_PLUS_V', [_|_])).
+                                ), l1, v:(ba_plus_v:int -> bb_plus_v:int), true, 'BB_PLUS_V'=1+'BA_PLUS_V', empty, [_|_])).
 
 ut("PP path  (+) 1", pp(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
                                    [1@l3:a_plus_v:int]
@@ -906,13 +906,13 @@ ut("path            (<) true", n_e_to_p_e1(app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_l
                                      )@l1:v:(ba_lt_v:bool -> bb_lt_v:bool)-->(1<'BA_LT_V' -> 'BB_LT_V'=1 ; 'BB_LT_V'=0))).
 ut("summ            (<) true", p_e_to_c1(app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:bool)),
                                     [true@l3:a_lt_v:bool --> ('A_LT_V'=1)]
-                                   ), l1, v:(ba_lt_v:bool -> bb_lt_v:bool), true, (1<'BA_LT_V' -> 'BB_LT_V'=1 ; 'BB_LT_V'=0), [])).
+                                   ), l1, v:(ba_lt_v:bool -> bb_lt_v:bool), true, (1<'BA_LT_V' -> 'BB_LT_V'=1 ; 'BB_LT_V'=0), empty, [])).
 ut("Negative summ 1 (<) true", \+ p_e_to_c1(app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:bool)),
                                     [true@l3:a_lt_v:bool --> ('A_LT_V'=1)]
-                                   ), l1, v:(ba_lt_v:bool -> bb_lt_v:bool), true, (1<'BA_LT_V' -> 'BB_LT_V'=1 ; 'BB_LT_V'=0), [_])).
+                                   ), l1, v:(ba_lt_v:bool -> bb_lt_v:bool), true, (1<'BA_LT_V' -> 'BB_LT_V'=1 ; 'BB_LT_V'=0), empty, [_])).
 ut("Negative summ 2 (<) true", \+ p_e_to_c1(app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:bool)),
                                     [true@l3:a_lt_v:bool --> ('A_LT_V'=1)]
-                                   ), l1, v:(ba_lt_v:bool -> bb_lt_v:bool), true, (1<'BA_LT_V' -> 'BB_LT_V'=1 ; 'BB_LT_V'=0), [_|_])).
+                                   ), l1, v:(ba_lt_v:bool -> bb_lt_v:bool), true, (1<'BA_LT_V' -> 'BB_LT_V'=1 ; 'BB_LT_V'=0), empty, [_|_])).
 
 ut("PP path  (<) 1", pp(app((<)@l2:lt_v:(a_lt_v:bool->v:(ba_lt_v:bool->bb_lt_v:bool)),
                             [true@l3:a_lt_v:bool --> ('A_LT_V'=1)]
@@ -939,7 +939,7 @@ ut("summ   false && true", p_e_to_c1(app(&& @l:and_v:(a_and_v:bool->b_and_v:(ba_
                                          [false@l:a_and_v:bool --> ('A_AND_V'=0),
                                           true@l:ba_and_v:bool --> ('BA_AND_V'=1)]
                                         ), l, v:bool, true, (('A_AND_V'=1, 'BA_AND_V'=1 -> 'V'=1 ; 'V'=0), 'BA_AND_V'=1, 'A_AND_V'=0),
-                                     [])).
+                                     empty, [])).
 
 ut("path   (&&) false", n_e_to_p_e1(app(&& @l:and_v:(a_and_v:bool->v:(ba_and_v:bool->bb_and_v:bool)),
                                         [false@l:a_and_v:bool]
@@ -950,7 +950,7 @@ ut("path   (&&) false", n_e_to_p_e1(app(&& @l:and_v:(a_and_v:bool->v:(ba_and_v:b
 ut("summ   (&&) false", p_e_to_c1(app(&& @l:and_v:(a_and_v:bool->v:(ba_and_v:bool->bb_and_v:bool)),
                                       [false@l:a_and_v:bool-->('A_AND_V'=0)]
                                      ), l, v:(ba_and_v:bool->bb_and_v:bool), true, (('A_AND_V'=1,'BA_AND_V'=1->'BB_AND_V'=1;'BB_AND_V'=0),'A_AND_V'=0),
-                                  [])).
+                                  empty, [])).
 
 ut("path   false || true", n_e_to_p_e1(app('||' @l:and_v:(a_or_v:bool->b_or_v:(ba_or_v:bool->v:bool)),
                                            [false@l:a_or_v:bool,
@@ -964,7 +964,7 @@ ut("summ   false || true", p_e_to_c1(app('||' @l:and_v:(a_or_v:bool->b_or_v:(ba_
                                          [false@l:a_or_v:bool --> ('A_OR_V'=0),
                                           true@l:ba_or_v:bool --> ('BA_OR_V'=1)]
                                         ), l, v:bool, true, ((('A_OR_V'=1 ; 'BA_OR_V'=1) -> 'V'=1 ; 'V'=0), 'BA_OR_V'=1, 'A_OR_V'=0),
-                                     [])).
+                                     empty, [])).
 
 ut("path   (||) false", n_e_to_p_e1(app('||'@l:or_v:(a_or_v:bool->v:(ba_or_v:bool->bb_or_v:bool)),
                                         [false@l:a_or_v:bool]
@@ -1010,7 +1010,7 @@ ut("path     full app (add 1 2):int", n_e_to_p_e1(app(add@l2:add_v:(a_add_v:int-
 ut("summ     full app (add 1 2):int", p_e_to_c1(app(add@l2:add_v:(a_add_v:int->b_add:(ba_add_v:int->v:int)),
                                                     [1@l3:a_add_v:int --> ('A_ADD_V'=1),
                                                      2@l4:ba_add_v:int --> ('BA_ADD_V'=2)]
-                                                   ), l1, v:int, true, 'add_int->int->int'(1, 2, 'V'),
+                                                   ), l1, v:int, true, 'add_int->int->int'(1, 2, 'V'), empty,
                                                 [('ctx_add_int->int->int'('A_ADD_V', 'BA_ADD_V') :- ('BA_ADD_V'=2, 'A_ADD_V'=1))])).
 
 ut("Negative WF   partial app (add 1):(int->int)", \+ wf_t_e(app(add@l2:(int->int->int), [1@l3:int]), l1, int)).
@@ -1030,7 +1030,7 @@ ut("path          partial app (add 1):(int->int)", n_e_to_p_e1(app(add@l2:add_v:
 ut("summ          partial app (add 1):(int->int)", p_e_to_c1(app(add@l2:add_v:(a_add_v:int->v:(ba_add_v:int->bb_add_v:int)),
                                                                    [1@l3:a_add_v:int --> ('A_ADD_V'=1)]
                                                                 ), l1, v:(ba_add_v:int->bb_add_v:int), true, 'add_int->int->int'(1, 'BA_ADD_V', 'BB_ADD_V'),
-                                                             [('ctx_add_int->int->int'('A_ADD_V', 'BA_ADD_V') :- 'A_ADD_V'=1)])).
+                                                             empty, [('ctx_add_int->int->int'('A_ADD_V', 'BA_ADD_V') :- 'A_ADD_V'=1)])).
 
 ut("naming   nested app (incr (incr 1)):int", t_e_to_n_e1(app(incr@l:(int->int),
                                                               [app(incr@l:(int->int),
@@ -1057,7 +1057,7 @@ ut("summ     nested app (incr (incr 1)):int", p_e_to_c1(app(incr@l:incr_r:(a_inc
                                                             [app(incr@l:incr_a_incr_r:(a_incr_a_incr_r:int->a_incr_r:int),
                                                                  [1@l:a_incr_a_incr_r:int --> ('A_INCR_A_INCR_R'=1)]
                                                                 )@l:a_incr_r:int --> 'incr_int->int'(1, 'A_INCR_R')]
-                                                           ), l, r:int, true, ('incr_int->int'('A_INCR_R', 'R'), 'incr_int->int'(1, 'A_INCR_R')),
+                                                           ), l, r:int, true, ('incr_int->int'('A_INCR_R', 'R'), 'incr_int->int'(1, 'A_INCR_R')), empty,
                                                         [('ctx_incr_int->int'('A_INCR_A_INCR_R'):-'A_INCR_A_INCR_R'=1),
                                                          ('ctx_incr_int->int'('A_INCR_R'):-'incr_int->int'(1,'A_INCR_R'))])).
 
@@ -1091,7 +1091,7 @@ ut("summ     nested app (incr (1+2)):int", p_e_to_c1(app(incr@l:incr_r:(a_incr_r
                                                               [1@l:a_plus_a_incr_r:int --> ('A_PLUS_A_INCR_R'=1),
                                                                2@l:ba_plus_a_incr_r:int --> ('BA_PLUS_A_INCR_R'=2)]
                                                              )@l:a_incr_r:int --> ('A_INCR_R'=1+2)]
-                                                        ), l, r:int, true, ('incr_int->int'('A_INCR_R', 'R'), 'A_INCR_R'=1+2),
+                                                        ), l, r:int, true, ('incr_int->int'('A_INCR_R', 'R'), 'A_INCR_R'=1+2), empty,
                                                      [('ctx_incr_int->int'('A_INCR_R') :- 'A_INCR_R'=1+2)])).
 
 ut("path     nested app true && comp 1 2", n_e_to_p_e1(app(&& @l:and_v:(a_and_v:bool->b_and_v:(ba_and_v:bool->v:bool)),
@@ -1124,7 +1124,7 @@ ut("path     if true then 1 else 0", n_e_to_p_e1(ite(true@l2:c_res:bool, 1@l2:re
 ut("summ     if true then 1 else 0", p_e_to_c1(ite(true@l2:c_res:bool --> ('C_RES'=1),
                                                    1@l2:res:int --> ('RES'=1),
                                                    0@l3:res:int --> ('RES'=0)
-                                                  ), l1, res:int, true, (('C_RES'=1 -> 'RES'=1 ; 'RES'=0), 'C_RES'=1), [])).
+                                                  ), l1, res:int, true, (('C_RES'=1 -> 'RES'=1 ; 'RES'=0), 'C_RES'=1), empty, [])).
 
 ut("PP path  if true then 1 else 0", pp(ite(true@l2:c_res:bool --> ('C_RES'=1),
                                                    1@l2:res:int --> ('RES'=1),
@@ -1156,7 +1156,7 @@ ut("Negative path 3 if true then false else true", \+ n_e_to_p_e1(ite(true@l2:c_
 ut("summ            if true then false else true", p_e_to_c1(ite(true@l2:c_res:bool --> ('C_RES'=1),
                                                                  false@l2:res:bool --> ('RES'=0),
                                                                  true@l3:res:bool --> ('RES'=1)
-                                                                ), l1, res:bool, true, (true -> 'RES'=0 ; 'RES'=1), [])).
+                                                                ), l1, res:bool, true, (true -> 'RES'=0 ; 'RES'=1), empty, [])).
 
 ut("PP path         if true then false else true", pp(ite(true@l2:c_res:bool --> ('C_RES'=1),
                                                           false@l2:res:bool --> ('RES'=0),
@@ -1189,13 +1189,13 @@ ut("path            if false then (+) else (-)", n_e_to_p_e1(ite(false@l2:c_f:bo
 ut("summ            if false then (+) else (-)", p_e_to_c1(ite(false@l2:c_f:bool --> ('C_F'=0),
                                                                (+)@l2:f:(a_f:int -> b_f:(ba_f:int -> bb_f:int)) --> ('BB_F'='A_F'+'BA_F'),
                                                                (-)@l3:f:(a_f:int -> b_f:(ba_f:int -> bb_f:int)) --> ('BB_F'='A_F'-'BA_F')
-                                                              ), l1, f:(a_f:int -> b_f:(ba_f:int -> bb_f:int)), true, ( ('C_F'=1 -> 'BB_F'='A_F'+'BA_F' ; 'BB_F'='A_F'-'BA_F'), 'C_F'=0 ),
-                                                          [])).
+                                                              ), l1, f:(a_f:int -> b_f:(ba_f:int -> bb_f:int)), true, ( ('C_F'=1 -> 'BB_F'='A_F'+'BA_F' ; 'BB_F'='A_F'-'BA_F'), 'C_F'=0 ), empty,
+                                                           [])).
 ut("Negative summ 1 if false then (+) else (-)", \+ p_e_to_c1(ite(false@l2:c_f:bool --> ('C_F'=0),
-                                                               (+)@l2:f:(a_f:int -> b_f:(ba_f:int -> bb_f:int)) --> ('BB_F'='A_F'+'BA_F'),
-                                                               (-)@l3:f:(a_f:int -> b_f:(ba_f:int -> bb_f:int)) --> ('BB_F'='A_F'-'BA_F')
-                                                              ), l1, f:(a_f:int -> b_f:(ba_f:int -> bb_f:int)), true, ( ('C_F'=1 -> 'BB_F'='A_F'+'BA_F' ; 'BB_F'='A_F'-'BA_F'), 'C_F'=0 ),
-                                                          [_])).
+                                                                  (+)@l2:f:(a_f:int -> b_f:(ba_f:int -> bb_f:int)) --> ('BB_F'='A_F'+'BA_F'),
+                                                                  (-)@l3:f:(a_f:int -> b_f:(ba_f:int -> bb_f:int)) --> ('BB_F'='A_F'-'BA_F')
+                                                                 ), l1, f:(a_f:int -> b_f:(ba_f:int -> bb_f:int)), true, ( ('C_F'=1 -> 'BB_F'='A_F'+'BA_F' ; 'BB_F'='A_F'-'BA_F'), 'C_F'=0 ), empty,
+                                                              [_])).
 
 ut("PP path         if false then (+) else (-)", pp(ite(false@l2:c_f:bool --> ('C_F'=0),
                                                                  (+)@l2:f:(a_f:int -> b_f:(ba_f:int -> bb_f:int)) --> ('BB_F'='A_F'+'BA_F'),
@@ -1236,7 +1236,7 @@ ut("summ            if 1>2 then false else true", p_e_to_c1(ite(app((>)@l2:gt_c_
                                                                    )@l2:c_v:bool --> (1>2 -> 'C_V'=1 ; 'C_V'=0),
                                                                 false@l3:v:bool --> ('V'=0),
                                                                 true@l4:v:bool --> ('V'=1)
-                                                               ), l1, v:bool, true, (('C_V'=1 -> 'V'=0 ; 'V'=1), (1>2 -> 'C_V'=1 ; 'C_V'=0)),
+                                                               ), l1, v:bool, true, (('C_V'=1 -> 'V'=0 ; 'V'=1), (1>2 -> 'C_V'=1 ; 'C_V'=0)), empty,
                                                            [])).
 ut("Negative summ 1 if 1>2 then false else true", \+ p_e_to_c1(ite(app((>)@l2:gt_c_v:(a_gt_c_v:int->b_gt_c_v:(ba_gt_c_v:int->c_v:bool)),
                                                                     [1@l3:a_gt_c_v:int --> ('A_GT_C_V'=1),
@@ -1244,7 +1244,7 @@ ut("Negative summ 1 if 1>2 then false else true", \+ p_e_to_c1(ite(app((>)@l2:gt
                                                                    )@l2:c_v:bool --> (1>2 -> 'C_V'=1 ; 'C_V'=0),
                                                                 false@l3:v:bool --> ('V'=0),
                                                                 true@l4:v:bool --> ('V'=1)
-                                                               ), l1, v:bool, true, (('C_V'=1 -> 'V'=0 ; 'V'=1), (1>2 -> 'C_V'=1 ; 'C_V'=0)),
+                                                               ), l1, v:bool, true, (('C_V'=1 -> 'V'=0 ; 'V'=1), (1>2 -> 'C_V'=1 ; 'C_V'=0)), empty,
                                                            [_])).
 ut("Negative summ 1 if 1>2 then false else true", \+ p_e_to_c1(ite(app((>)@l2:gt_c_v:(a_gt_c_v:int->b_gt_c_v:(ba_gt_c_v:int->c_v:bool)),
                                                                     [1@l3:a_gt_c_v:int --> ('A_GT_C_V'=1),
@@ -1252,7 +1252,7 @@ ut("Negative summ 1 if 1>2 then false else true", \+ p_e_to_c1(ite(app((>)@l2:gt
                                                                    )@l2:c_v:bool --> (1>2 -> 'C_V'=1 ; 'C_V'=0),
                                                                 false@l3:v:bool --> ('V'=0),
                                                                 true@l4:v:bool --> ('V'=1)
-                                                               ), l1, v:bool, true, (('C_V'=1 -> 'V'=0 ; 'V'=1), (1>2 -> 'C_V'=1 ; 'C_V'=0)),
+                                                               ), l1, v:bool, true, (('C_V'=1 -> 'V'=0 ; 'V'=1), (1>2 -> 'C_V'=1 ; 'C_V'=0)), empty,
                                                            [_|_])).
 
 
@@ -1283,7 +1283,7 @@ ut("path     let x = 1 in ()", n_e_to_p_e1(let(x@l2:x:int, 1@l3:x:int, unit@l4:v
 ut("summ     let x = 1 in ()", p_e_to_c1(let(x@l2:x:int,
                                              1@l3:x:int --> ('X'=1),
                                              unit@l4:v:unit --> ('V'=1)
-                                            ), l1, v:unit, true, ('V'=1, 'X'=1), [])).
+                                            ), l1, v:unit, true, ('V'=1, 'X'=1), empty, [])).
 
 /*
 let
@@ -1322,7 +1322,7 @@ ut("summ     let y = 1+2 in ()", p_e_to_c1(let(y@l2:y:int,
                                                     2@l6:ba_plus_y:int --> ('BA_PLUS_Y'=2)]
                                                   )@l3:y:int --> ('Y'=1+2),
                                                unit@lout:v:unit --> ('V'=1)
-                                              ), l1, v:unit, true, ('V'=1, 'Y'=1+2), [])).
+                                              ), l1, v:unit, true, ('V'=1, 'Y'=1+2), empty, [])).
 
 /*
 let
@@ -1367,17 +1367,17 @@ ut("summ     let z = add 1 2 in ()", p_e_to_c1(let(z@l2:z:int,
                                                       2@l6:ba_add_z:int-->('BA_ADD_Z'=2)]
                                                     )@l3:z:int-->'add_int->int->int'(1,2,'Z'),
                                                  unit@l7:v:unit-->('V'=1)
-                                                ), l1, v:unit, true, ('V'=1,'add_int->int->int'(1,2,'Z')),
+                                                ), l1, v:unit, true, ('V'=1,'add_int->int->int'(1,2,'Z')), empty,
                                              [('ctx_add_int->int->int'('A_ADD_Z', 'BA_ADD_Z') :- ('BA_ADD_Z'=2, 'A_ADD_Z'=1))])).
 
 /*
 let
-  plus:plus:(x:i->y:i->r:i)
+  plus:plus:(x:i->y:i->r:i)       ++> plus:=< true, +:plus:(x:i->y:i->r:i) >
 =
   +:plus:(x:i->y:i->r:i)
 in
-  ():v:unit               --> V=1                ==> {}
-):v:unit                  --> V=1                ==> {}
+  ():v:unit               --> V=1                                            ==> {}
+):v:unit                  --> V=1                                            ==> {}
 */
 ut("path     let plus = (+) in ()", n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
                                                     (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
@@ -1387,11 +1387,17 @@ ut("path     let plus = (+) in ()", n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_p
                                                     (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
                                                     unit@l:v:unit --> ('V'=1)
                                                    )@l:v:unit --> ('V'=1))).
+ut("abs      let plus = (+) in ()", (   n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
+                                                        (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
+                                                        unit@l:v:unit
+                                                   ), l, v:unit, Ep@L:N-->K),
+                                        p_e_to_f_d1(Ep, L, N, true, K, empty, node(plus,('ctx_plus_int->int->int'('A_PLUS', 'BA_PLUS'),(+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int))),0,empty,empty)))).
 ut("summ     let plus = (+) in ()", (   n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
                                                         (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
                                                         unit@l:v:unit
-                                                   ), l, v:unit, E@L:N-->K),
-                                        p_e_to_c1(E, L, N, true, K,
+                                                   ), l, v:unit, Ep@L:N-->K),
+                                        p_e_to_f_d1(Ep, L, N, true, K, empty, A),
+                                        p_e_to_c1(Ep, L, N, true, K, A,
                                                   [('plus_int->int->int'('A_PLUS', 'BA_PLUS', 'BB_PLUS') :- ('BB_PLUS'='A_PLUS'+'BA_PLUS', 'ctx_plus_int->int->int'('A_PLUS','BA_PLUS')))]))).
 
 
@@ -1418,7 +1424,7 @@ ut("summ     let g = add in ()", (   n_e_to_p_e1(let(g@l2:g:(a_g:int->b_add:(ba_
                                                  add@l3:g:(a_g:int->b_add:(ba_g:int->bb_g:int)),
                                                  unit@l4:v:unit
                                                 ), l1, v:unit, E@L:N-->K),
-                                     p_e_to_c1(E, L, N, true, K,
+                                     p_e_to_c1(E, L, N, true, K, empty,
                                                [('ctx_add_int->int->int'('A_G','BA_G'):-'ctx_g_int->int->int'('A_G','BA_G')),
                                                 ('g_int->int->int'('A_G', 'BA_G', 'BB_G') :- ('add_int->int->int'('A_G', 'BA_G', 'BB_G'), 'ctx_g_int->int->int'('A_G', 'BA_G')))]))).
 
@@ -1466,7 +1472,7 @@ ut("summ     let g = add 1 in ()", (   t_e_to_n_e1(let(g@l2:(int-> int -> int),
                                                        unit@l6:unit
                                                       ), l1, unit, v, node(add, add:(a_add:int -> b_add:(ba_add:int -> bb_add:int)), 0, empty, empty), En@L:N),
                                        n_e_to_p_e1(En, L, N, Ep@L:N-->K),
-                                       p_e_to_c1(Ep, L, N, true, K,
+                                       p_e_to_c1(Ep, L, N, true, K, empty,
                                                  [('ctx_add_int->int->int'('A_ADD_G','BA_ADD_G'):- ('A_ADD_G'=1, 'ctx_g_int->int'('BA_ADD_G'))),
                                                   ('g_int->int'('BA_ADD_G', 'BB_ADD_G') :- ('add_int->int->int'(1, 'BA_ADD_G', 'BB_ADD_G'), 'ctx_g_int->int'('BA_ADD_G')))]))).
 
@@ -1512,7 +1518,7 @@ ut("summ     let id1 = fun (x2 : int) -> x2 in id1 3", p_e_to_c1(let(id1@loc('id
                                                                      app(id1@l:id1_v:(a_id1_v:int->v:int),
                                                                          [3@l:a_id1_v:int-->('A_ID1_V'=3)]
                                                                         )@l:v:int-->'id1_int->int'(3,'V')
-                                                                    ), l, v:int, true, 'id1_int->int'(3,'V'),
+                                                                    ), l, v:int, true, 'id1_int->int'(3,'V'), empty,
                                                                  [('ctx_id1_int->int'('A_ID1_V') :- 'A_ID1_V'=3),
                                                                   ('id1_int->int'('X2', 'RET_ID1') :- 'RET_ID1'='X2', 'ctx_id1_int->int'('X2'))])).
 
@@ -1592,7 +1598,7 @@ ut("summ     let max1 = fun (x2 : int) y3 -> ... in max1 3 1", (   n_e_to_p_e1(l
                                                                                         1@l:ba_max1_v:int]
                                                                                       )@l:v:int
                                                                                   ), l, v:int, Ep@L:N-->K),
-                                                                   p_e_to_c1(Ep, L, N, true, K, 
+                                                                   p_e_to_c1(Ep, L, N, true, K, empty,
                                                                              [('ctx_max1_int->int->int'('A_MAX1_V', 'BA_MAX1_V') :- 'BA_MAX1_V'=1, 'A_MAX1_V'=3),
                                                                               ('max1_int->int->int'('X2', 'Y3', 'RET_MAX1') :- (('C_RET_MAX1'=1 -> 'RET_MAX1'='X2' ; 'RET_MAX1'='Y3'), ('X2'>'Y3' -> 'C_RET_MAX1'=1 ; 'C_RET_MAX1'=0), 'ctx_max1_int->int->int'('X2', 'Y3')))]))).
 
@@ -1699,8 +1705,9 @@ ut("summ            let plus = (+) in plus 1 2", (   n_e_to_p_e1(let(plus@l:plus
                                                                       [1@l:a_plus_v:int,
                                                                        2@l:ba_plus_v:int]
                                                                      )@l:v:int
-                                                                 ), l, v:int, E@L:N-->K),
-                                                     p_e_to_c1(E, L, N, true, K,
+                                                                 ), l, v:int, Ep@L:N-->K),
+                                                     p_e_to_f_d1(Ep, L, N, true, K, empty, A),
+                                                     p_e_to_c1(Ep, L, N, true, K, A,
                                                                [('ctx_plus_int->int->int'('A_PLUS_V', 'BA_PLUS_V') :- ('BA_PLUS_V'=2, 'A_PLUS_V'=1)),
                                                                 ('plus_int->int->int'('A_PLUS', 'BA_PLUS', 'BB_PLUS') :- ('BB_PLUS'='A_PLUS'+'BA_PLUS', 'ctx_plus_int->int->int'('A_PLUS', 'BA_PLUS')))]))).
 ut("Negative summ 1 let plus = (+) in plus 1 2", (   n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
@@ -1710,15 +1717,17 @@ ut("Negative summ 1 let plus = (+) in plus 1 2", (   n_e_to_p_e1(let(plus@l:plus
                                                                           2@l:ba_plus_v:int]
                                                                         )@l:v:int
                                                                     ), l, v:int, E@L:N-->K),
-                                                     \+ p_e_to_c1(E, L, N, true, K, [(_)]))).
+                                                     p_e_to_f_d1(E, L, N, true, K, empty, A),
+                                                     \+ p_e_to_c1(E, L, N, true, K, A, [(_)]))).
 ut("Negative summ 2 let plus = (+) in plus 1 2", (   n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
                                                                      (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
                                                                      app(plus@l:plus_v:(a_plus_v:int->b_plus:(ba_plus_v:int->v:int)),
                                                                          [1@l:a_plus_v:int,
                                                                           2@l:ba_plus_v:int]
                                                                         )@l:v:int
-                                                                    ), l, v:int, E@L:N-->K),
-                                                     \+ p_e_to_c1(E, L, N, true, K, []))).
+                                                                    ), l, v:int, Ep@L:N-->K),
+                                                     p_e_to_f_d1(Ep, L, N, true, K, empty, A),
+                                                     \+ p_e_to_c1(Ep, L, N, true, K, A, []))).
 
 ut("path            let neq = (<>) in neq 1 2", n_e_to_p_e1(let(neq@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
                                                                 (<>)@l:neq:(a_neq:int->b_neq:(ba_neq:int->bb_neq:bool)),
@@ -1755,7 +1764,8 @@ ut("summ            let neq = (<>) in neq 1 2", (   n_e_to_p_e1(let(neq@l:neq:(a
                                                                          2@l:ba_neq_v:int]
                                                                        )@l:v:bool
                                                                    ), l, v:bool, Ep@L:N-->K),
-                                                    p_e_to_c1(Ep, L, N, true, K,
+                                                    p_e_to_f_d1(Ep, L, N, true, K, empty, A),
+                                                    p_e_to_c1(Ep, L, N, true, K, A,
                                                               [('ctx_neq_int->int->bool'('A_NEQ_V', 'BA_NEQ_V') :- ('BA_NEQ_V'=2, 'A_NEQ_V'=1)),
                                                                ('neq_int->int->bool'('A_NEQ', 'BA_NEQ', 'BB_NEQ') :- (('A_NEQ'=\='BA_NEQ' -> 'BB_NEQ'=1 ; 'BB_NEQ'=0), 'ctx_neq_int->int->bool'('A_NEQ','BA_NEQ')))]))).
 
@@ -1794,7 +1804,7 @@ ut("summ   let x = false in assert x", p_e_to_c1(let(x@l:x:bool,
                                                      assert(
                                                             x@l:ase_v:bool --> ('ASE_V'='X')
                                                            )@l:v:unit --> ('ASE_V'=1, 'ASE_V'='X')
-                                                    ), l, v:unit, true, ('ASE_V'=1, 'ASE_V'='X', 'X'=0),
+                                                    ), l, v:unit, true, ('ASE_V'=1, 'ASE_V'='X', 'X'=0), empty,
                                                  [('ASE_V'=1 :- 'ASE_V'='X', 'X'=0)])).
 
 ut("naming let x = comp 1 2 in assert(x)", t_e_to_n_e1(let(x@l:bool,
@@ -1811,33 +1821,35 @@ ut("naming let x = comp 1 2 in assert(x)", t_e_to_n_e1(let(x@l:bool,
                                                               )@l:x:bool,
                                                            assert(x@l:ase_v:bool)@l:v:unit
                                                           )@l:v:unit)).
-ut("path   let x = comp 1 2 in assert(x)", n_e_to_p_e1(let(x@l:x:bool,
-                                                           app(comp@l:comp_x:(a_comp_x:int->b_comp:(ba_comp_x:int->x:bool)),
-                                                               [1@l:a_comp_x:int,
-                                                                2@l:ba_comp_x:int]
-                                                              )@l:x:bool,
-                                                           assert(x@l:ase_v:bool)@l:v:unit
-                                                          ), l, v:unit,
-                                                       let(x@l:x:bool,
-                                                           app(comp@l:comp_x:(a_comp_x:int->b_comp:(ba_comp_x:int->x:bool)),
-                                                               [1@l:a_comp_x:int --> ('A_COMP_X'=1),
-                                                                2@l:ba_comp_x:int --> ('BA_COMP_X'=2)]
-                                                              )@l:x:bool --> 'comp_int->int->bool'(1, 2, 'X'),
-                                                           assert(
-                                                                  x@l:ase_v:bool --> ('ASE_V'='X')
-                                                                 )@l:v:unit --> ('ASE_V'=1, 'ASE_V'='X')
-                                                          )@l:v:unit --> ('ASE_V'=1, 'ASE_V'='X', 'comp_int->int->bool'(1, 2, 'X')))).
-ut("summ   let x = comp 1 2 in assert(x)", p_e_to_c1(let(x@l:x:bool,
-                                                         app(comp@l:comp_x:(a_comp_x:int->b_comp:(ba_comp_x:int->x:bool)),
-                                                             [1@l:a_comp_x:int --> ('A_COMP_X'=1),
-                                                              2@l:ba_comp_x:int --> ('BA_COMP_X'=2)]
-                                                            )@l:x:bool --> 'comp_int->int->bool'(1, 2, 'X'),
-                                                         assert(
-                                                                x@l:ase_v:bool --> ('ASE_V'='X')
-                                                               )@l:v:unit --> ('ASE_V'=1, 'ASE_V'='X')
-                                                        ), l, v:unit, true, ('ASE_V'=1, 'ASE_V'='X', 'comp_int->int->bool'(1, 2, 'X')),
-                                                     [('ASE_V'=1 :- 'ASE_V'='X', 'comp_int->int->bool'(1, 2, 'X')),
-                                                      ('ctx_comp_int->int->bool'('A_COMP_X', 'BA_COMP_X') :- 'BA_COMP_X'=2, 'A_COMP_X'=1)])).
+ut("path   let x = comp 1 2 in assert(x)", (   t_e_to_n_e1(let(x@l:bool,
+                                                           app(comp@l:(int->int->bool),
+                                                               [1@l:int,
+                                                                2@l:int]
+                                                              )@l:bool,
+                                                           assert(x@l:bool)@l:unit
+                                                          ), l, unit, v, node(comp, comp:(a_comp:int -> b_comp:(ba_comp:int -> bb_comp:bool)), 0, empty, empty), En@L:N),
+                                               n_e_to_p_e1(En, L, N,
+                                                           let(x@l:x:bool,
+                                                               app(comp@l:comp_x:(a_comp_x:int->b_comp:(ba_comp_x:int->x:bool)),
+                                                                   [1@l:a_comp_x:int --> ('A_COMP_X'=1),
+                                                                    2@l:ba_comp_x:int --> ('BA_COMP_X'=2)]
+                                                                  )@l:x:bool --> 'comp_int->int->bool'(1, 2, 'X'),
+                                                               assert(
+                                                                      x@l:ase_v:bool --> ('ASE_V'='X')
+                                                                     )@l:v:unit --> ('ASE_V'=1, 'ASE_V'='X')
+                                                              )@l:v:unit --> ('ASE_V'=1, 'ASE_V'='X', 'comp_int->int->bool'(1, 2, 'X'))))).
+ut("summ   let x = comp 1 2 in assert(x)", (   t_e_to_n_e1(let(x@l:bool,
+                                                           app(comp@l:(int->int->bool),
+                                                               [1@l:int,
+                                                                2@l:int]
+                                                              )@l:bool,
+                                                           assert(x@l:bool)@l:unit
+                                                          ), l, unit, v, node(comp, comp:(a_comp:int -> b_comp:(ba_comp:int -> bb_comp:bool)), 0, empty, empty), En@L:N),
+                                               n_e_to_p_e1(En, L, N, Ep@L:N-->K),
+                                               p_e_to_f_d1(Ep, L, N, true, K, true, A),
+                                               p_e_to_c1(Ep, L, N, true, K, A,
+                                                         [('ASE_V'=1 :- 'ASE_V'='X', 'comp_int->int->bool'(1, 2, 'X')),
+                                                          ('ctx_comp_int->int->bool'('A_COMP_X', 'BA_COMP_X') :- 'BA_COMP_X'=2, 'A_COMP_X'=1)]))).
 
 ut("naming let y = 1+3 in let x = comp x 2 in assert(x)", t_e_to_n_e1(let(y@l:int,
                                                                           app((+)@l:(int->int->int),
@@ -1865,51 +1877,52 @@ ut("naming let y = 1+3 in let x = comp x 2 in assert(x)", t_e_to_n_e1(let(y@l:in
                                                                               assert(x@l:ase_v:bool)@l:v:unit
                                                                              )@l:v:unit
                                                                          )@l:v:unit)).
-ut("path   let y = 1+3 in let x = comp x 2 in assert(x)", n_e_to_p_e1(let(y@l:y:int,
-                                                                          app((+)@l:plus_y:(a_plus_y:int->b_plus_y:(ba_plus_y:int->y:int)),
-                                                                              [1@l:a_plus_y:int,
-                                                                               3@l:ba_plus_y:int]
-                                                                             )@l:y:int,
-                                                                          let(x@l:x:bool,
-                                                                              app(comp@l:comp_x:(a_comp_x:int->b_comp:(ba_comp_x:int->x:bool)),
-                                                                                  [y@l:a_comp_x:int,
-                                                                                   2@l:ba_comp_x:int]
-                                                                                 )@l:x:bool,
-                                                                              assert(x@l:ase_v:bool)@l:v:unit
-                                                                             )@l:v:unit
-                                                                         ), l, v:unit,
-                                                                      let(y@l:y:int,
-                                                                          app((+)@l:plus_y:(a_plus_y:int->b_plus_y:(ba_plus_y:int->y:int)),
-                                                                              [1@l:a_plus_y:int --> ('A_PLUS_Y'=1),
-                                                                               3@l:ba_plus_y:int --> ('BA_PLUS_Y'=3)]
-                                                                             )@l:y:int --> ('Y'=1+3),
-                                                                          let(x@l:x:bool,
-                                                                              app(comp@l:comp_x:(a_comp_x:int->b_comp:(ba_comp_x:int->x:bool)),
-                                                                                  [y@l:a_comp_x:int --> ('A_COMP_X'='Y'),
-                                                                                   2@l:ba_comp_x:int --> ('BA_COMP_X'=2)]
-                                                                                 )@l:x:bool --> 'comp_int->int->bool'('Y', 2, 'X'),
-                                                                              assert(
-                                                                                     x@l:ase_v:bool --> ('ASE_V'='X')
-                                                                                    )@l:v:unit --> ('ASE_V'=1, 'ASE_V'='X')
-                                                                             )@l:v:unit --> ('ASE_V'=1, 'ASE_V'='X', 'comp_int->int->bool'('Y', 2, 'X'))
-                                                                         )@l:v:unit --> ('ASE_V'=1, 'ASE_V'='X', 'comp_int->int->bool'('Y', 2, 'X'), 'Y'=1+3))).
-ut("summ   let y = 1+3 in let x = comp x 2 in assert(x)", p_e_to_c1(let(y@l:y:int,
-                                                                        app((+)@l:plus_y:(a_plus_y:int->b_plus_y:(ba_plus_y:int->y:int)),
-                                                                            [1@l:a_plus_y:int --> ('A_PLUS_Y'=1),
-                                                                             3@l:ba_plus_y:int --> ('BA_PLUS_Y'=3)]
-                                                                           )@l:y:int --> ('Y'=1+3),
-                                                                        let(x@l:x:bool,
-                                                                            app(comp@l:comp_x:(a_comp_x:int->b_comp:(ba_comp_x:int->x:bool)),
-                                                                                [y@l:a_comp_x:int --> ('A_COMP_X'='Y'),
-                                                                                 2@l:ba_comp_x:int --> ('BA_COMP_X'=2)]
-                                                                               )@l:x:bool --> 'comp_int->int->bool'('Y', 2, 'X'),
-                                                                            assert(
-                                                                                   x@l:ase_v:bool --> ('ASE_V'='X')
-                                                                                  )@l:v:unit --> ('ASE_V'=1, 'ASE_V'='X')
-                                                                           )@l:v:unit --> ('ASE_V'=1, 'ASE_V'='X', 'comp_int->int->bool'('Y', 2, 'X'))
-                                                                       ), l, v:unit, true, ('ASE_V'=1, 'ASE_V'='X', 'comp_int->int->bool'('Y', 2, 'X'), 'Y'=1+3),
-                                                                    [('ASE_V'=1 :- ('ASE_V'='X', 'comp_int->int->bool'('Y', 2, 'X'), 'Y'=1+3)),
-                                                                     ('ctx_comp_int->int->bool'('A_COMP_X', 'BA_COMP_X') :- ('BA_COMP_X'=2, 'A_COMP_X'='Y', 'Y'=1+3))])).
+ut("path   let y = 1+3 in let x = comp x 2 in assert(x)", (   t_e_to_n_e1(let(y@l:int,
+                                                                          app((+)@l:(int->int->int),
+                                                                              [1@l:int,
+                                                                               3@l:int]
+                                                                             )@l:int,
+                                                                          let(x@l:bool,
+                                                                              app(comp@l:(int->int->bool),
+                                                                                  [y@l:int,
+                                                                                   2@l:int]
+                                                                                 )@l:bool,
+                                                                              assert(x@l:bool)@l:unit
+                                                                             )@l:unit
+                                                                         ), l, unit, v, node(comp, comp:(a_comp:int -> b_comp:(ba_comp:int -> bb_comp:bool)), 0, empty, empty), En@L:N),
+                                                              n_e_to_p_e1(En, L, N,
+                                                                          let(y@l:y:int,
+                                                                              app((+)@l:plus_y:(a_plus_y:int->b_plus_y:(ba_plus_y:int->y:int)),
+                                                                                  [1@l:a_plus_y:int --> ('A_PLUS_Y'=1),
+                                                                                   3@l:ba_plus_y:int --> ('BA_PLUS_Y'=3)]
+                                                                                 )@l:y:int --> ('Y'=1+3),
+                                                                              let(x@l:x:bool,
+                                                                                  app(comp@l:comp_x:(a_comp_x:int->b_comp:(ba_comp_x:int->x:bool)),
+                                                                                      [y@l:a_comp_x:int --> ('A_COMP_X'='Y'),
+                                                                                       2@l:ba_comp_x:int --> ('BA_COMP_X'=2)]
+                                                                                     )@l:x:bool --> 'comp_int->int->bool'('Y', 2, 'X'),
+                                                                                  assert(
+                                                                                         x@l:ase_v:bool --> ('ASE_V'='X')
+                                                                                        )@l:v:unit --> ('ASE_V'=1, 'ASE_V'='X')
+                                                                                 )@l:v:unit --> ('ASE_V'=1, 'ASE_V'='X', 'comp_int->int->bool'('Y', 2, 'X'))
+                                                                             )@l:v:unit --> ('ASE_V'=1, 'ASE_V'='X', 'comp_int->int->bool'('Y', 2, 'X'), 'Y'=1+3)))).
+ut("summ   let y = 1+3 in let x = comp x 2 in assert(x)", (   t_e_to_n_e1(let(y@l:int,
+                                                                          app((+)@l:(int->int->int),
+                                                                              [1@l:int,
+                                                                               3@l:int]
+                                                                             )@l:int,
+                                                                          let(x@l:bool,
+                                                                              app(comp@l:(int->int->bool),
+                                                                                  [y@l:int,
+                                                                                   2@l:int]
+                                                                                 )@l:bool,
+                                                                              assert(x@l:bool)@l:unit
+                                                                             )@l:unit
+                                                                         ), l, unit, v, node(comp, comp:(a_comp:int -> b_comp:(ba_comp:int -> bb_comp:bool)), 0, empty, empty), En@L:N),
+                                                              n_e_to_p_e1(En, L, N, Ep@L:N-->K),
+                                                              p_e_to_f_d1(Ep, L, N, true, K, empty, A),
+                                                              p_e_to_c1(Ep, L, N, true, K, A,
+                                                                        [('ctx_comp_int->int->bool'('A_COMP_X', 'BA_COMP_X') :- ('BA_COMP_X'=2, 'A_COMP_X'='Y', 'Y'=1+3))]))).
 
 ut("naming let x = false && true in x", t_e_to_n_e1(let(x@l:bool,
                                                         app('&&'@l:(bool -> bool -> bool),
@@ -1925,28 +1938,31 @@ ut("naming let x = false && true in x", t_e_to_n_e1(let(x@l:bool,
                                                            )@l:x:bool,
                                                         x@l:v:bool
                                                        )@l:v:bool)).
-ut("path   let x = false && true in x", n_e_to_p_e1(let(x@l:x:bool,
-                                                        app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-                                                            [false@l:a_and_x:bool,
-                                                             true@l:ba_and_x:bool]
-                                                           )@l:x:bool,
-                                                        x@l:v:bool
-                                                       ), l, v:bool,
-                                                    let(x@l:x:bool,
-                                                        app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-                                                            [false@l:a_and_x:bool --> ('A_AND_X'=0),
-                                                             true@l:ba_and_x:bool --> ('BA_AND_X'=1)]
-                                                           )@l:x:bool --> (('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0),
-                                                        x@l:v:bool --> ('V'='X')
-                                                       )@l:v:bool --> ('V'='X', ('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0))).
-ut("summ   let x = false && true in x", p_e_to_c1(let(x@l:x:bool,
-                                                      app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-                                                          [false@l:a_and_x:bool --> ('A_AND_X'=0),
-                                                           true@l:ba_and_x:bool --> ('BA_AND_X'=1)]
-                                                         )@l:x:bool --> (('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0),
-                                                      x@l:v:bool --> ('V'='X')
-                                                     ), l, v:bool, true, ('V'='X', ('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0),
-                                                  [])).
+ut("path   let x = false && true in x", (   t_e_to_n_e1(let(x@l:bool,
+                                                        app('&&'@l:(bool -> bool -> bool),
+                                                            [false@l:bool,
+                                                             true@l:bool]
+                                                           )@l:bool,
+                                                        x@l:bool
+                                                       ), l, unit, v, empty, En@L:N),
+                                            n_e_to_p_e1(En, L, N,
+                                                        let(x@l:x:bool,
+                                                            app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
+                                                                [false@l:a_and_x:bool --> ('A_AND_X'=0),
+                                                                 true@l:ba_and_x:bool --> ('BA_AND_X'=1)]
+                                                               )@l:x:bool --> (('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0),
+                                                            x@l:v:bool --> ('V'='X')
+                                                           )@l:v:bool --> ('V'='X', ('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0)))).
+ut("summ   let x = false && true in x", (   t_e_to_n_e1(let(x@l:bool,
+                                                        app('&&'@l:(bool -> bool -> bool),
+                                                            [false@l:bool,
+                                                             true@l:bool]
+                                                           )@l:bool,
+                                                        x@l:bool
+                                                       ), l, unit, v, empty, En@L:N),
+                                            n_e_to_p_e1(En, L, N, Ep@L:N-->K),
+                                            p_e_to_f_d1(Ep, L, N, true, K, empty, A),
+                                            p_e_to_c1(Ep, L, N, true, K, A, []))).
 
 /*
 assert(
@@ -1957,19 +1973,17 @@ ut("path   assert true", n_e_to_p_e1(assert(true@l2:ase_v:bool), l1, v:unit,
                                      assert(
                                             true@l2:ase_v:bool --> ('ASE_V'=1)
                                            )@l1:v:unit --> ('ASE_V'=1, 'ASE_V'=1))).
-ut("summ   assert true", p_e_to_c1(assert(
-                                            true@l2:ase_v:bool --> ('ASE_V'=1)
-                                           ), l1, v:unit, true, ('ASE_V'=1, 'ASE_V'=1),
-                                     [('ASE_V'=1 :- 'ASE_V'=1)])).
+ut("summ   assert true", (   n_e_to_p_e1(assert(true@l2:ase_v:bool), l1, v:unit, Ep:L:N-->K),
+                             p_e_to_f_d1(Ep, L, N, true, K, empty, A),
+                             p_e_to_c1(Ep, L, N, true, K, A, [('ASE_V'=1 :- 'ASE_V'=1)]))).
 
 ut("path   assert false", n_e_to_p_e1(assert(false@l2:ase_v:bool), l1, v:unit,
-                                     assert(
-                                            false@l2:ase_v:bool --> ('ASE_V'=0)
-                                           )@l1:v:unit --> ('ASE_V'=1, 'ASE_V'=0))).
-ut("summ   assert false", p_e_to_c1(assert(
-                                           false@l2:ase_v:bool --> ('ASE_V'=0)
-                                          ), l1, v:unit, true, ('ASE_V'=1, 'ASE_V'=0),
-                                    [('ASE_V'=1 :- 'ASE_V'=0)])).
+                                      assert(
+                                             false@l2:ase_v:bool --> ('ASE_V'=0)
+                                            )@l1:v:unit --> ('ASE_V'=1, 'ASE_V'=0))).
+ut("summ   assert false", (   n_e_to_p_e1(assert(false@l2:ase_v:bool), l1, v:unit, Ep@L:N-->K),
+                              p_e_to_f_d1(Ep, L, N, true, K, empty, A),
+                              p_e_to_c1(Ep, L, N, true, K, A, [('ASE_V'=1 :- 'ASE_V'=0)]))).
 
 ut("naming assert(comp 1 2)", t_e_to_n_e1(assert(app(comp@l:(int->int->bool),
                                                      [1@l:int,
@@ -1981,23 +1995,27 @@ ut("naming assert(comp 1 2)", t_e_to_n_e1(assert(app(comp@l:(int->int->bool),
                                                       2@l:ba_comp_ase_v:int]
                                                     )@l:ase_v:bool
                                                 )@l:v:unit)).
-ut("path   assert(comp 1 2)", n_e_to_p_e1(assert(app(comp@l:comp_ase_v:(a_comp_ase_v:int->b_comp:(ba_comp_ase_v:int->ase_v:bool)),
-                                                     [1@l:a_comp_ase_v:int,
-                                                      2@l:ba_comp_ase_v:int]
-                                                    )@l:ase_v:bool
-                                                ), l, v:unit,
-                                          assert(app(comp@l:comp_ase_v:(a_comp_ase_v:int->b_comp:(ba_comp_ase_v:int->ase_v:bool)),
-                                                     [1@l:a_comp_ase_v:int --> ('A_COMP_ASE_V'=1),
-                                                      2@l:ba_comp_ase_v:int --> ('BA_COMP_ASE_V'=2)]
-                                                    )@l:ase_v:bool --> 'comp_int->int->bool'(1, 2, 'ASE_V')
-                                                )@l:v:unit --> ('ASE_V'=1, 'comp_int->int->bool'(1, 2, 'ASE_V')))).
-ut("summ   assert(comp 1 2)", p_e_to_c1(assert(app(comp@l:comp_ase_v:(a_comp_ase_v:int->b_comp:(ba_comp_ase_v:int->ase_v:bool)),
-                                                   [1@l:a_comp_ase_v:int --> ('A_COMP_ASE_V'=1),
-                                                    2@l:ba_comp_ase_v:int --> ('BA_COMP_ASE_V'=2)]
-                                                  )@l:ase_v:bool --> 'comp_int->int->bool'(1, 2, 'ASE_V')
-                                              ), l, v:unit, true, ('V'=1, 'comp_int->int->bool'(1, 2, 'ASE_V')),
-                                        [('ASE_V'=1 :- 'comp_int->int->bool'(1, 2, 'ASE_V')),
-                                         ('ctx_comp_int->int->bool'('A_COMP_ASE_V', 'BA_COMP_ASE_V') :- ('BA_COMP_ASE_V'=2, 'A_COMP_ASE_V'=1))])).
+ut("path   assert(comp 1 2)", (   t_e_to_n_e1(assert(app(comp@l:(int->int->bool),
+                                                         [1@l:int,
+                                                          2@l:int]
+                                                        )@l:bool
+                                                    ), l, unit, v, node(comp, comp:(a_comp:int -> b_comp:(ba_comp:int -> bb_comp:bool)), 0, empty, empty), En@L:N),
+                                  n_e_to_p_e1(En, L, N,
+                                              assert(app(comp@l:comp_ase_v:(a_comp_ase_v:int->b_comp:(ba_comp_ase_v:int->ase_v:bool)),
+                                                         [1@l:a_comp_ase_v:int --> ('A_COMP_ASE_V'=1),
+                                                          2@l:ba_comp_ase_v:int --> ('BA_COMP_ASE_V'=2)]
+                                                        )@l:ase_v:bool --> 'comp_int->int->bool'(1, 2, 'ASE_V')
+                                                    )@l:v:unit --> ('ASE_V'=1, 'comp_int->int->bool'(1, 2, 'ASE_V'))))).
+ut("summ   assert(comp 1 2)", (   t_e_to_n_e1(assert(app(comp@l:(int->int->bool),
+                                                         [1@l:int,
+                                                          2@l:int]
+                                                        )@l:bool
+                                                    ), l, unit, v, node(comp, comp:(a_comp:int -> b_comp:(ba_comp:int -> bb_comp:bool)), 0, empty, empty), En@L:N),
+                                  n_e_to_p_e1(En, L, N, Ep@L:N-->K),
+                                  p_e_to_f_d1(Ep, L, N, true, K, empty, A),
+                                  p_e_to_c1(Ep, L, N, true, K, A,
+                                            [('ASE_V'=1 :- 'comp_int->int->bool'(1, 2, 'ASE_V')),
+                                             ('ctx_comp_int->int->bool'('A_COMP_ASE_V', 'BA_COMP_ASE_V') :- ('BA_COMP_ASE_V'=2, 'A_COMP_ASE_V'=1))]))).
 
 ut("path   assert(1>2)", n_e_to_p_e1(assert(app((>)@l2:gt_ase_v:(a_gt_ase_v:int -> b_gt_ase_v:(ba_gt_ase_v:int -> v:bool)),
                                                 [1@l3:a_gt_ase_v:int,
@@ -2009,12 +2027,13 @@ ut("path   assert(1>2)", n_e_to_p_e1(assert(app((>)@l2:gt_ase_v:(a_gt_ase_v:int 
                                                  2@l4:ba_gt_ase_v:int --> ('BA_GT_ASE_V'=2)]
                                                )@l1:ase_v:bool --> (1>2 -> 'ASE_V'=1 ; 'ASE_V'=0)
                                            )@l:v:bool --> ('ASE_V'=1, (1>2 -> 'ASE_V'=1 ; 'ASE_V'=0)))).
-ut("summ   assert(1>2)", p_e_to_c1(assert(app((>)@l2:gt_ase_v:(a_gt_ase_v:int -> b_gt_ase_v:(ba_gt_ase_v:int -> v:bool)),
-                                              [1@l3:a_gt_ase_v:int --> ('A_GT_ASE_V'=1),
-                                               2@l4:ba_gt_ase_v:int --> ('BA_GT_ASE_V'=2)]
-                                             )@l1:ase_v:bool --> (1>2 -> 'ASE_V'=1 ; 'ASE_V'=0)
-                                         ), l, v:bool, true, ('ASE_V'=1, (1>2 -> 'ASE_V'=1 ; 'ASE_V'=0)),
-                                   [('ASE_V'=1 :- (1>2 -> 'ASE_V'=1 ; 'ASE_V'=0))])).
+ut("summ   assert(1>2)", (   n_e_to_p_e1(assert(app((>)@l2:gt_ase_v:(a_gt_ase_v:int -> b_gt_ase_v:(ba_gt_ase_v:int -> v:bool)),
+                                                    [1@l3:a_gt_ase_v:int,
+                                                     2@l4:ba_gt_ase_v:int]
+                                                   )@l1:ase_v:bool
+                                               ), l, v:bool, Ep@L:N-->K),
+                             p_e_to_f_d1(Ep, L, N, true, K, empty, A),
+                             p_e_to_c1(Ep, L, N, true, K, A, [('ASE_V'=1 :- (1>2 -> 'ASE_V'=1 ; 'ASE_V'=0))]))).
 
 ut("path   assert(if true then false else true)", n_e_to_p_e1(assume(ite(true@l2:c_ase_res:bool, false@l2:ase_res:bool, true@l3:ase_res:bool)@l1:ase_res:bool), l0, res:unit,
                                                               assume(ite(true@l2:c_ase_res:bool --> ('C_ASE_RES'=1),
@@ -2073,22 +2092,23 @@ ut("naming let x = false in assert(x || true)", t_e_to_n_e1(let(x@l:bool,
                                                                             )@l:ase_v:bool
                                                                         )@l:v:unit
                                                                  )@l:v:unit)).
-ut("path   let x = false in assert(x || true)", n_e_to_p_e1(let(x@l:x:bool,
-                                                                false@l:x:bool,
-                                                                assert(app('||'@l:or_ase_v:(a_or_ase_v:bool->b_or_ase_v:(ba_or_ase_v:bool->ase_v:bool)),
-                                                                           [x@l:a_or_ase_v:bool,
-                                                                            true@l:ba_or_ase_v:bool]
-                                                                          )@l:ase_v:bool
-                                                                      )@l:v:unit
-                                                               ), l, v:unit,
-                                                            let(x@l:x:bool,
-                                                                false@l:x:bool --> ('X'=0),
-                                                                assert(app('||'@l:or_ase_v:(a_or_ase_v:bool->b_or_ase_v:(ba_or_ase_v:bool->ase_v:bool)),
-                                                                           [x@l:a_or_ase_v:bool --> ('A_OR_ASE_V'='X'),
-                                                                            true@l:ba_or_ase_v:bool --> ('BA_OR_ASE_V'=1)]
-                                                                          )@l:ase_v:bool --> ((('A_OR_ASE_V'=1 ; 'BA_OR_ASE_V'=1) -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_OR_ASE_V'=1, 'A_OR_ASE_V'='X')
-                                                                      )@l:v:unit --> ('ASE_V'=1, (('A_OR_ASE_V'=1 ; 'BA_OR_ASE_V'=1) -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_OR_ASE_V'=1, 'A_OR_ASE_V'='X')
-                                                               )@l:v:unit --> ('ASE_V'=1, (('A_OR_ASE_V'=1 ; 'BA_OR_ASE_V'=1) -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_OR_ASE_V'=1, 'A_OR_ASE_V'='X', 'X'=0))).
+ut("path   let x = false in assert(x || true)", (   t_e_to_n_e1(let(x@l:bool,
+                                                                  false@l:bool,
+                                                                  assert(app('||'@l:(bool->bool->bool),
+                                                                             [x@l:bool,
+                                                                              true@l:bool]
+                                                                            )@l:bool
+                                                                        )@l:unit
+                                                                 ), l, unit, v, empty, En@L:N),
+                                                    n_e_to_p_e1(En, L, N,
+                                                                let(x@l:x:bool,
+                                                                    false@l:x:bool --> ('X'=0),
+                                                                    assert(app('||'@l:or_ase_v:(a_or_ase_v:bool->b_or_ase_v:(ba_or_ase_v:bool->ase_v:bool)),
+                                                                               [x@l:a_or_ase_v:bool --> ('A_OR_ASE_V'='X'),
+                                                                                true@l:ba_or_ase_v:bool --> ('BA_OR_ASE_V'=1)]
+                                                                              )@l:ase_v:bool --> ((('A_OR_ASE_V'=1 ; 'BA_OR_ASE_V'=1) -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_OR_ASE_V'=1, 'A_OR_ASE_V'='X')
+                                                                          )@l:v:unit --> ('ASE_V'=1, (('A_OR_ASE_V'=1 ; 'BA_OR_ASE_V'=1) -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_OR_ASE_V'=1, 'A_OR_ASE_V'='X')
+                                                                   )@l:v:unit --> ('ASE_V'=1, (('A_OR_ASE_V'=1 ; 'BA_OR_ASE_V'=1) -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_OR_ASE_V'=1, 'A_OR_ASE_V'='X', 'X'=0)))).
 
 ut("path   let x = false in assert(x && true)", n_e_to_p_e1(let(x@l:x:bool,
                                                                 false@l:x:bool,
@@ -2106,15 +2126,17 @@ ut("path   let x = false in assert(x && true)", n_e_to_p_e1(let(x@l:x:bool,
                                                                           )@l:ase_v:bool --> (('A_AND_ASE_V'=1, 'BA_AND_ASE_V'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_AND_ASE_V'=1, 'A_AND_ASE_V'='X')
                                                                       )@l:v:unit --> ('ASE_V'=1, ('A_AND_ASE_V'=1, 'BA_AND_ASE_V'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_AND_ASE_V'=1, 'A_AND_ASE_V'='X')
                                                                )@l:v:unit --> ('ASE_V'=1, ('A_AND_ASE_V'=1, 'BA_AND_ASE_V'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_AND_ASE_V'=1, 'A_AND_ASE_V'='X', 'X'=0))).
-ut("summ   let x = false in assert(x && true)", p_e_to_c1(let(x@l:x:bool,
-                                                              false@l:x:bool --> ('X'=0),
-                                                              assert(app('&&'@l:and_ase_v:(a_and_ase_v:bool->b_and_ase_v:(ba_and_ase_v:bool->ase_v:bool)),
-                                                                         [x@l:a_and_ase_v:bool --> ('A_AND_ASE_V'='X'),
-                                                                          true@l:ba_and_ase_v:bool --> ('BA_AND_ASE_V'=1)]
-                                                                        )@l:ase_v:bool --> (('A_AND_ASE_V'=1, 'BA_AND_ASE_V'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_AND_ASE_V'=1, 'A_AND_ASE_V'='X')
-                                                                    )@l:v:unit --> ('ASE_V'=1, ('A_AND_ASE_V'=1, 'BA_AND_ASE_V'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_AND_ASE_V'=1, 'A_AND_ASE_V'='X')
-                                                             ), l, v:unit, true, ('ASE_V'=1, ('A_AND_ASE_V'=1, 'BA_AND_ASE_V'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_AND_ASE_V'=1, 'A_AND_ASE_V'='X', 'X'=0),
-                                                          [('ASE_V'=1 :- (('A_AND_ASE_V'=1, 'BA_AND_ASE_V'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_AND_ASE_V'=1, 'A_AND_ASE_V'='X', 'X'=0))])).
+ut("summ   let x = false in assert(x && true)", (   n_e_to_p_e1(let(x@l:x:bool,
+                                                                    false@l:x:bool,
+                                                                    assert(app('&&'@l:and_ase_v:(a_and_ase_v:bool->b_and_ase_v:(ba_and_ase_v:bool->ase_v:bool)),
+                                                                               [x@l:a_and_ase_v:bool,
+                                                                                true@l:ba_and_ase_v:bool]
+                                                                              )@l:ase_v:bool
+                                                                          )@l:v:unit
+                                                                   ), l, v:unit, Ep@L:N-->K),
+                                                    p_e_to_f_d1(Ep, L, N, true, K, empty, A),
+                                                    p_e_to_c1(Ep, L, N, true, K, A,
+                                                              [('ASE_V'=1 :- (('A_AND_ASE_V'=1, 'BA_AND_ASE_V'=1 -> 'ASE_V'=1 ; 'ASE_V'=0), 'BA_AND_ASE_V'=1, 'A_AND_ASE_V'='X', 'X'=0))]))).
 
 ut("path   let x = false in assume x", n_e_to_p_e1(let(x@l:x:bool,
                                                         false@l:x:bool,
@@ -2128,12 +2150,14 @@ ut("path   let x = false in assume x", n_e_to_p_e1(let(x@l:x:bool,
                                                               x@l:asu_v:bool --> ('ASU_V'='X')
                                                              )@l:v:unit --> ('ASU_V'=1, 'ASU_V'='X')
                                                       )@l:v:unit --> ('ASU_V'=1, 'ASU_V'='X', 'X'=0))).
-ut("summ   let x = false in assume x", p_e_to_c1(let(x@l:x:bool,
-                                                       false@l:x:bool --> ('X'=0),
-                                                       assume(
-                                                              x@l:asu_v:bool --> ('ASU_V'='X')
-                                                              )@l:v:unit --> ('ASU_V'=1, 'ASU_V'='X')
-                                                       ), l, v:unit, true, ('ASU_V'=1, 'ASU_V'='X', 'X'=0), [])).
+ut("summ   let x = false in assume x", (   n_e_to_p_e1(let(x@l:x:bool,
+                                                        false@l:x:bool,
+                                                        assume(
+                                                               x@l:asu_v:bool
+                                                              )@l:v:unit
+                                                       ), l, v:unit, Ep@L:N-->K),
+                                           p_e_to_f_d1(Ep, L, N, true, K, empty, A),
+                                           p_e_to_c1(Ep, L, N, true, K, A, []))).
 
 ut("path   let x = false in assume(x=true)", n_e_to_p_e1(let(x@l:x:bool,
                                                              false@l:x:bool,
@@ -2185,22 +2209,23 @@ ut("naming let x = false in assume(x || true)", t_e_to_n_e1(let(x@l:bool,
                                                                             )@l:asu_v:bool
                                                                         )@l:v:unit
                                                                  )@l:v:unit)).
-ut("path   let x = false in assume(x || true)", n_e_to_p_e1(let(x@l:x:bool,
-                                                                  false@l:x:bool,
-                                                                  assume(app('||'@l:or_asu_v:(a_or_asu_v:bool->b_or_asu_v:(ba_or_asu_v:bool->asu_v:bool)),
-                                                                             [x@l:a_or_asu_v:bool,
-                                                                              true@l:ba_or_asu_v:bool]
-                                                                            )@l:asu_v:bool
-                                                                        )@l:v:unit
-                                                                 ), l, v:unit,
-                                                              let(x@l:x:bool,
-                                                                  false@l:x:bool --> ('X'=0),
-                                                                  assume(app('||'@l:or_asu_v:(a_or_asu_v:bool->b_or_asu_v:(ba_or_asu_v:bool->asu_v:bool)),
-                                                                             [x@l:a_or_asu_v:bool --> ('A_OR_ASU_V'='X'),
-                                                                              true@l:ba_or_asu_v:bool --> ('BA_OR_ASU_V'=1)]
-                                                                            )@l:asu_v:bool --> ((('A_OR_ASU_V'=1 ; 'BA_OR_ASU_V'=1) -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_OR_ASU_V'=1, 'A_OR_ASU_V'='X')
-                                                                        )@l:v:unit --> ('ASU_V'=1, (('A_OR_ASU_V'=1 ; 'BA_OR_ASU_V'=1) -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_OR_ASU_V'=1, 'A_OR_ASU_V'='X')
-                                                                 )@l:v:unit --> ('ASU_V'=1, (('A_OR_ASU_V'=1 ; 'BA_OR_ASU_V'=1) -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_OR_ASU_V'=1, 'A_OR_ASU_V'='X', 'X'=0))).
+ut("path   let x = false in assume(x || true)", (   t_e_to_n_e1(let(x@l:bool,
+                                                                    false@l:bool,
+                                                                    assume(app('||'@l:(bool->bool->bool),
+                                                                               [x@l:bool,
+                                                                                true@l:bool]
+                                                                              )@l:bool
+                                                                          )@l:unit
+                                                                   ), l, unit, v, empty, En@L:N),
+                                                    n_e_to_p_e1(En, L, N,
+                                                                let(x@l:x:bool,
+                                                                    false@l:x:bool --> ('X'=0),
+                                                                    assume(app('||'@l:or_asu_v:(a_or_asu_v:bool->b_or_asu_v:(ba_or_asu_v:bool->asu_v:bool)),
+                                                                               [x@l:a_or_asu_v:bool --> ('A_OR_ASU_V'='X'),
+                                                                                true@l:ba_or_asu_v:bool --> ('BA_OR_ASU_V'=1)]
+                                                                              )@l:asu_v:bool --> ((('A_OR_ASU_V'=1 ; 'BA_OR_ASU_V'=1) -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_OR_ASU_V'=1, 'A_OR_ASU_V'='X')
+                                                                          )@l:v:unit --> ('ASU_V'=1, (('A_OR_ASU_V'=1 ; 'BA_OR_ASU_V'=1) -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_OR_ASU_V'=1, 'A_OR_ASU_V'='X')
+                                                                   )@l:v:unit --> ('ASU_V'=1, (('A_OR_ASU_V'=1 ; 'BA_OR_ASU_V'=1) -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_OR_ASU_V'=1, 'A_OR_ASU_V'='X', 'X'=0)))).
 
 ut("path   let x = false in assume(x && true)", n_e_to_p_e1(let(x@l:x:bool,
                                                                   false@l:x:bool,
@@ -2219,14 +2244,16 @@ ut("path   let x = false in assume(x && true)", n_e_to_p_e1(let(x@l:x:bool,
                                                                       )@l:v:unit --> ('ASU_V'=1, ('A_AND_ASU_V'=1, 'BA_AND_ASU_V'=1 -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_AND_ASU_V'=1, 'A_AND_ASU_V'='X')
                                                                )@l:v:unit --> ('ASU_V'=1, ('A_AND_ASU_V'=1, 'BA_AND_ASU_V'=1 -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_AND_ASU_V'=1, 'A_AND_ASU_V'='X', 'X'=0))).
 
-ut("summ   let x = false in assume(x && true)", p_e_to_c1(let(x@l:x:bool,
-                                                              false@l:x:bool --> ('X'=0),
-                                                              assume(app('&&'@l:and_asu_v:(a_and_asu_v:bool->b_and_asu_v:(ba_and_asu_v:bool->asu_v:bool)),
-                                                                         [x@l:a_and_asu_v:bool --> ('A_AND_ASU_V'='X'),
-                                                                          true@l:ba_and_asu_v:bool --> ('BA_AND_ASU_V'=1)]
-                                                                        )@l:asu_v:bool --> (('A_AND_ASU_V'=1, 'BA_AND_ASU_V'=1 -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_AND_ASU_V'=1, 'A_AND_ASU_V'='X')
-                                                                    )@l:v:unit --> ('ASU_V'=1, ('A_AND_ASU_V'=1, 'BA_AND_ASU_V'=1 -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_AND_ASU_V'=1, 'A_AND_ASU_V'='X')
-                                                             ), l, v:unit, true, ('ASU_V'=1, ('A_AND_ASU_V'=1, 'BA_AND_ASU_V'=1 -> 'ASU_V'=1 ; 'ASU_V'=0), 'BA_AND_ASU_V'=1, 'A_AND_ASU_V'='X', 'X'=0), [])).
+ut("summ   let x = false in assume(x && true)", (   n_e_to_p_e1(let(x@l:x:bool,
+                                                                  false@l:x:bool,
+                                                                  assume(app('&&'@l:and_asu_v:(a_and_asu_v:bool->b_and_asu_v:(ba_and_asu_v:bool->asu_v:bool)),
+                                                                             [x@l:a_and_asu_v:bool,
+                                                                              true@l:ba_and_asu_v:bool]
+                                                                            )@l:asu_v:bool
+                                                                        )@l:v:unit
+                                                                 ), l, v:unit, Ep@L:N-->K),
+                                                    p_e_to_f_d1(Ep, L, N, true, K, empty, A),
+                                                    p_e_to_c1(Ep, L, N, true, K, A, []))).
 
 ut("naming let x = false && true in assume x", t_e_to_n_e1(let(x@l:bool,
                                                         app('&&'@l:(bool -> bool -> bool),
@@ -2246,33 +2273,37 @@ ut("naming let x = false && true in assume x", t_e_to_n_e1(let(x@l:bool,
                                                                x@l:asu_v:bool
                                                               )@l:v:unit
                                                        )@l:v:unit)).
-ut("path   let x = false && true in assume x", n_e_to_p_e1(let(x@l:x:bool,
-                                                               app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-                                                                   [false@l:a_and_x:bool,
-                                                                    true@l:ba_and_x:bool]
-                                                                  )@l:x:bool,
-                                                               assume(
-                                                                      x@l:asu_v:bool
-                                                                     )@l:v:unit
-                                                              ), l, v:unit,
-                                                           let(x@l:x:bool,
-                                                               app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-                                                                   [false@l:a_and_x:bool --> ('A_AND_X'=0),
-                                                                    true@l:ba_and_x:bool --> ('BA_AND_X'=1)]
-                                                                  )@l:x:bool --> (('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0),
-                                                               assume(
-                                                                      x@l:asu_v:bool --> ('ASU_V'='X')
-                                                                     )@l:v:unit --> ('ASU_V'=1, 'ASU_V'='X')
-                                                              )@l:v:unit --> ('ASU_V'=1, 'ASU_V'='X', (('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0)))).
-ut("summ   let x = false && true in assume x", p_e_to_c1(let(x@l:x:bool,
-                                                        app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
-                                                            [false@l:a_and_x:bool --> ('A_AND_X'=0),
-                                                             true@l:ba_and_x:bool --> ('BA_AND_X'=1)]
-                                                           )@l:x:bool --> (('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0),
+ut("path   let x = false && true in assume x", (   t_e_to_n_e1(let(x@l:bool,
+                                                        app('&&'@l:(bool -> bool -> bool),
+                                                            [false@l:bool,
+                                                             true@l:bool]
+                                                           )@l:bool,
                                                         assume(
-                                                               x@l:asu_v:bool --> ('ASU_V'='X')
-                                                              )@l:v:unit --> ('ASU_V'=1, 'ASU_V'='X')
-                                                       ), l, v:unit, true, ('ASU_V'=1, 'ASU_V'='X', (('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0)), [])).
+                                                               x@l:bool
+                                                              )@l:unit
+                                                       ), l, unit, v, empty, En@L:N),
+                                                   n_e_to_p_e1(En, L, N,
+                                                               let(x@l:x:bool,
+                                                                   app(&& @l:and_x:(a_and_x:bool->b_and_x:(ba_and_x:bool->x:bool)),
+                                                                       [false@l:a_and_x:bool --> ('A_AND_X'=0),
+                                                                        true@l:ba_and_x:bool --> ('BA_AND_X'=1)]
+                                                                      )@l:x:bool --> (('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0),
+                                                                   assume(
+                                                                          x@l:asu_v:bool --> ('ASU_V'='X')
+                                                                         )@l:v:unit --> ('ASU_V'=1, 'ASU_V'='X')
+                                                                  )@l:v:unit --> ('ASU_V'=1, 'ASU_V'='X', (('A_AND_X'=1, 'BA_AND_X'=1 -> 'X'=1 ; 'X'=0), 'BA_AND_X'=1, 'A_AND_X'=0))))).
+ut("summ   let x = false && true in assume x", (   t_e_to_n_e1(let(x@l:bool,
+                                                        app('&&'@l:(bool -> bool -> bool),
+                                                            [false@l:bool,
+                                                             true@l:bool]
+                                                           )@l:bool,
+                                                        assume(
+                                                               x@l:bool
+                                                              )@l:unit
+                                                       ), l, unit, v, empty, En@L:N),
+                                                   n_e_to_p_e1(En, L, N, Ep@L:N-->K),
+                                                   p_e_to_f_d1(Ep, L, N, true, K, empty, A),
+                                                   p_e_to_c1(Ep, L, N, true, K, A, []))).
 
 
 
@@ -2309,7 +2340,7 @@ ut("summ     if nondet () then 1 else 0", p_e_to_c1(ite(app(nondet@l:nondet_c_re
                                                              )@l:c_res:bool-->('C_RES'='_'),
                                                           1@l:res:int-->('RES'=1),
                                                           0@l:res:int-->('RES'=0)
-                                                         ), l, res:int, true, (('C_RES'=1->'RES'=1;'RES'=0), 'C_RES'='_'), [])).
+                                                         ), l, res:int, true, (('C_RES'=1->'RES'=1;'RES'=0), 'C_RES'='_'), empty, [])).
 ut("PP path  if nondet () then 1 else 0", pp(ite(app(nondet@l:nondet_c_res:(a_nondet_c_res:unit->c_res:bool),
                                                               [unit@l:a_nondet_c_res:unit]
                                                              )@l:c_res:bool-->('C_RES'='_'),
@@ -2439,7 +2470,8 @@ ut("summ  assume-assert", (   t_e_to_n_e1(let('f1'@l:(int -> unit),
                                                  )@l:unit
                                              ), l, unit, v, empty, En@L:N),
                               n_e_to_p_e1(En, L, N, Ep@L:N-->K),
-                              p_e_to_c1(Ep, L, N, true, K,
+                              p_e_to_f_d1(Ep, L, N, true, K, empty, A),
+                              p_e_to_c1(Ep, L, N, true, K, A,
                                         [('ctx_f1_int->unit'('A_F1_V') :- 'A_F1_V'='_'),
                                          ('ASE_RET_F1'=1 :- (('X2'>0 -> 'ASE_RET_F1'=1 ; 'ASE_RET_F1'=0), 'ASU__3'=1, ('X2'>1 -> 'ASU__3'=1 ; 'ASU__3'=0), 'ctx_f1_int->unit'('X2'))),
                                          ('f1_int->unit'('X2', 'RET_F1') :- ('ASE_RET_F1'=1, ('X2'>0 -> 'ASE_RET_F1'=1 ; 'ASE_RET_F1'=0), 'ASU__3'=1, ('X2'>1 -> 'ASU__3'=1 ; 'ASU__3'=0), 'ctx_f1_int->unit'('X2')))]))).
@@ -2451,7 +2483,7 @@ ut("summ  assume-assert", (   t_e_to_n_e1(let('f1'@l:(int -> unit),
 ut("naming polymorphic (>)", t_e_to_n_e1((>), l, (A->A->bool), v, empty, (>)@l:v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)))).
 ut("path   polymorphic (>)", n_e_to_p_e1((>), l, v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)),
                                          (>)@l:v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)) --> ('A_V'>'BA_V' -> 'BB_V'=1 ; 'BB_V'=0))).
-ut("summ   polymorphic (>)", p_e_to_c1((>), l, v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)), true, ('A_V'>'BA_V'), [])).
+ut("summ   polymorphic (>)", p_e_to_c1((>), l, v:(a_v:A -> b_v:(ba_v:A -> bb_v:bool)), true, ('A_V'>'BA_V'), empty, [])).
 
 % ut("naming polymorphic let gt = (>) in gt 2 1", t_e_to_n_e1(let(gt@l:(A->A->bool),
 %                                                                 (>)@l:(A->A->bool),
