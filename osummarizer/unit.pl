@@ -1388,8 +1388,8 @@ ut("path     let plus = (+) in ()", n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_p
                                                     unit@l:v:unit --> ('V'=1)
                                                    )@l:v:unit --> ('V'=1))).
 ut("summ     let plus = (+) in ()", (   n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
-                                                    (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
-                                                    unit@l:v:unit
+                                                        (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
+                                                        unit@l:v:unit
                                                    ), l, v:unit, E@L:N-->K),
                                         p_e_to_c1(E, L, N, true, K,
                                                   [('plus_int->int->int'('A_PLUS', 'BA_PLUS', 'BB_PLUS') :- ('BB_PLUS'='A_PLUS'+'BA_PLUS', 'ctx_plus_int->int->int'('A_PLUS','BA_PLUS')))]))).
