@@ -1,5 +1,7 @@
 :- use_module('terms.pl').
-:- use_module('log.pl', [start_log/0,
+:- use_module('log.pl', [start_log/0, if_log/1,
+                         lpush/0, lpop/0, lindent/0,
+                         lportray_clause/1,
                          lprint/1, lformat/2]).
 :- use_module('debug.pl', [start_debug/0,
                            dpush_portray_clause/1, dpop_portray_clause/1,
@@ -11,7 +13,7 @@
                              avl_store/4]).
 :- use_module(library(lists), [rev/2,
                                maplist/3]).
-:- use_module(library(ordsets), [ord_union/2]).
+:- use_module(library(ordsets), [ord_add_element/3, ord_union/2]).
 
 :- multifile user:portray/1.
 :- dynamic user:portray/1.
@@ -406,7 +408,7 @@ pp_e(E, I) :- !,
 % Naming of typed expressions
 
 /*
-t_e_to_n_e(+ELT, -ELN)
+typed_exp_to_named_exp(+ELT, -ELN)
 */
 typed_exp_to_named_exp(E@L:T, ELN) :-
         t_e_to_n_e1(E, L, T, v, empty, ELN).
@@ -591,13 +593,6 @@ ml_const_to_name(nondet, nondet).
 % Path of named expressions
 
 /*
-named_exp_to_path_exp(+ELN, -ELNK)
-*/
-named_exp_to_path_exp(E@L:N, ELN-->K) :-
-        n_e_to_p_e1(E, L, N, ELN-->K),
-        lformat('\n* Main path conjunct:\n~p\n', [K]).
-
-/*
 n_e_to_p_e1(+E, +L, +N, -ELNK)
 */
 n_e_to_p_e1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, app(nondet@Lf:Nf, [unit@Lu:Nu])@L:X:T-->(Xu='_')) :- !,
@@ -779,12 +774,16 @@ return(X:T, R) :-
 % **********************************************************************
 % Function definitions of expressions
 
-path_exp_to_fun_defs(E@L:N-->K, D) :-
-        p_e_to_f_d1(E, L, N, true, K, empty, D).
+path_exp_to_fun_defs(E@L:N-->K, D, Dd) :-
+        p_e_to_f_d1(E, L, N, true, K, D, Dd).
 
+p_e_to_f_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, true, (Xu='_'), D, D) :- !,
+        dpush_portray_clause(p_e_to_f_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, true, (Xu='_'), D, D)-in),
+        dpop_portray_clause(p_e_to_f_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, true, (Xu='_'), D, D)-out).
 p_e_to_f_d1(app(ELNKf, ELNKs), L, N, K, Kd, D, Dd) :- !,
         dpush_portray_clause(p_e_to_f_d1(app(ELNKf, ELNKs), L, N, K, Kd, D, Dd)-in),
         (   (Ef@Lf:Nf-->Kf) = ELNKf ->
+            throw('head of application is compound?'),
             p_e_to_f_d1(Ef, Lf, Nf, K, Kf, D, Ddf)
         ;   Ef@Lf:Nf = ELNKf,
             p_e_to_f_d1(Ef, Lf, Nf, K, true, D, Ddf)
@@ -808,8 +807,7 @@ p_e_to_f_d1(ite(E1@L1:N1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, N, K, Kd, D, Dd
 p_e_to_f_d1(let(Y@Ly:N1, E1L1N1K1, E2@L2:N2-->K2), L, N, K, Kd, D, Dd) :- !,
         dpush_portray_clause(p_e_to_f_d1(let(Y@Ly:N1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N, K, Kd, D, Dd)-in),
         (   (_@_:N1) = E1L1N1K1 ->
-            mk_ctx_pred(N1, Ctx),
-            avl_store(Y, D, (Ctx, E1L1N1K1), D1),
+            avl_store(Y, D, (K, E1L1N1K1), D1),
             p_e_to_f_d1(E2, L2, N2, K, K2, D1, Dd)
         ;   (E1@L1:X1:T1-->K1) = E1L1N1K1,
             p_e_to_f_d1(E1, L1, X1, K, K1, D, D1),
@@ -834,19 +832,28 @@ p_e_to_f_d1(E, L, N, K, Kd, D, D) :- !,
 % Summarization of path expressions
 
 /*
-path_exp_to_constraints(+ELNK, -S)
-*/
-path_exp_to_constraints(E@L:N-->K, A, S) :-
-        p_e_to_c1(E, L, N, true, K, A, S).
-
-/*
 p_e_to_c1(+E, +L, +N, +K, +Kd, +A, -S)
 */
-p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, X:T, K, Kd, A, S) :- !,
-        dpush_portray_clause(p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, X:T, K, Kd, A, S)-in),
+p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, A, S) :- !,
+        dpush_portray_clause(p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, A, S)-in),
         (   ml_const(Ef) ->
             S = []
         ;   ml_id(Ef) ->
+            % fetch definition of Ef
+            avl_fetch(Ef, A, (K0, E0@L0:N0)),
+            % instantiate type of Ef
+            unname_type(Xf:Tf, T0),
+            unname_type(N0, T0),
+            % TODO: HO parameter passing here
+            % analyze definition of Ef under appropriate context
+            mk_ctx_pred(N0, Ctx0),
+            mk_conj((Ctx0, K0), CtxK0),
+            n_e_to_c1(E0, L0, N0, CtxK0, A, Kd0, S0),
+            % construct summary constraint for Ef
+            mk_summ_pred(N0, Summ),
+            mk_conj((Kd0, Ctx0, K0), Summary),
+            ord_add_element(S0, (Summ :- Summary), S1),
+            % construct parameter passing summary for call to Ef
             mk_ctx_pred(Ef:Tf, CtxEf),
             (   foreach(Ei@Li:Ni-->Ki, ELNKs),
                 fromto(true, InKs, (Ki,InKs), Ks),
@@ -854,10 +861,11 @@ p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, X:T, K, Kd, A, S) :- !,
                 param(K, A)
             do  p_e_to_c1(Ei, Li, Ni, K, Ki, A, Si)
             ),
-            mk_conj((Ks, K), Body),
-            ord_union([[(CtxEf :- Body)]|Ss], S)
+            mk_conj((Ks, K), Actuals),
+            ord_add_element(S1, (CtxEf :- Actuals), S2),
+            ord_union([S2|Ss], S)
         ),
-        dpop_portray_clause(p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, X:T, K, Kd, A, S)-out).
+        dpop_portray_clause(p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, A, S)-out).
 p_e_to_c1(abs(XLTs, Eb@Lb:Nb-->Kb), L, X:T, K, Kb, A, S) :- !,
         dpush_portray_clause(p_e_to_c1(abs(XLTs, Eb@Lb:Nb-->Kb), L, X:T, K, Kb, A, S)-in),
         p_e_to_c1(Eb, Lb, Nb, K, Kb, A, S),
@@ -869,31 +877,27 @@ p_e_to_c1(ite(E1@L1:X1:T1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, A,
         p_e_to_c1(E3, L3, N3, (X1=0, K1, K), K3, A, S3),
         ord_union([S1, S2, S3], S),
         dpop_portray_clause(p_e_to_c1(ite(E1@L1:X1:T1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, A, S)-out).
-p_e_to_c1(let(X1Lx1Nx1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N2, K, Kd, A, S) :- !,
-        dpush_portray_clause(p_e_to_c1(let(X1Lx1Nx1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N2, K, Kd, A, S)-in),
-        (   function_type(T1) ->
-            mk_ctx_pred(X1:T1, Ctx),
-            p_e_to_c1(E1, L1, X1:T1, (Ctx, K), K1, A, S1),
-            p_e_to_c1(E2, L2, N2, K, K2, A, S2),
-            mk_summ_pred(X1:T1, Summ),
-            mk_conj((K1, Ctx, K), Body),
-            ord_union([[(Summ :- Body)], S1, S2], S)
-        ;   p_e_to_c1(E1, L1, X1:T1, K, K1, A, S1),
+p_e_to_c1(let(X1Lx1Nx1, ELNK1, E2@L2:N2-->K2), L, N2, K, Kd, A, S) :- !,
+        dpush_portray_clause(p_e_to_c1(let(X1Lx1Nx1, ELNK1, E2@L2:N2-->K2), L, N2, K, Kd, A, S)-in),
+        (   _@_:_ = ELNK1 ->
+            p_e_to_c1(E2, L2, N2, K, K2, A, S)
+        ;   (E1@L1:N1-->K1) = ELNK1,
+            p_e_to_c1(E1, L1, N1, K, K1, A, S1),
             p_e_to_c1(E2, L2, N2, (K1, K), K2, A, S2),
             ord_union([S1, S2], S)
         ),
-        dpop_portray_clause(p_e_to_c1(let(X1Lx1Nx1, E1@L1:X1:T1-->K1, E2@L2:N2-->K2), L, N2, K, Kd, A, S)-out).
-p_e_to_c1(assert(Ec@Lc:Xc:Tc-->Kc), L, X:T, K, Kd, A, S) :- !,
-        dpush_portray_clause(p_e_to_c1(assert(Ec@Lc:Xc:Tc-->Kc), L, X:T, K, Kd, A, S)-in),
+        dpop_portray_clause(p_e_to_c1(let(X1Lx1Nx1, ELNK1, E2@L2:N2-->K2), L, N2, K, Kd, A, S)-out).
+p_e_to_c1(assert(Ec@Lc:Xc:Tc-->Kc), L, N, K, Kd, A, S) :- !,
+        dpush_portray_clause(p_e_to_c1(assert(Ec@Lc:Xc:Tc-->Kc), L, N, K, Kd, A, S)-in),
         p_e_to_c1(Ec, Lc, Xc:Tc, K, Kc, A, Sc),
         mk_conj((Kc, K), Body),
         uppercase_atom(Xc, Xcu),
         ord_union([[(Xcu=1 :- Body)], Sc], S),
-        dpop_portray_clause(p_e_to_c1(assert(Ec@Lc:Xc:Tc-->Kc), L, X:T, K, Kd, A, S)-out).
-p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, X:T, K, Kd, A, S) :- !,
-        dpush_portray_clause(p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, X:T, K, Kd, A, S)-in),
+        dpop_portray_clause(p_e_to_c1(assert(Ec@Lc:Xc:Tc-->Kc), L, N, K, Kd, A, S)-out).
+p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, A, S) :- !,
+        dpush_portray_clause(p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, A, S)-in),
         p_e_to_c1(Ec, Lc, Nc, K, Kc, A, S),
-        dpop_portray_clause(p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, X:T, K, Kd, A, S)-out).
+        dpop_portray_clause(p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, A, S)-out).
 p_e_to_c1(E, L, X:T, K, Kd, A, S) :- !,
         dpush_portray_clause(p_e_to_c1(E, L, X:T, K, Kd, A, S)-id-cst-in),
         (   ml_const(E) ->
@@ -1012,6 +1016,39 @@ name_of_type(X:_, X).
 
 
 % **********************************************************************
+% Summarization procedure
+
+named_exp_to_constraints(E@L:N, S) :-
+        n_e_to_c1(E, L, N, true, empty, _Kd, S).
+
+/*
+n_e_to_c1(+E, +L, +N, +K, +D, -Kd, -S)
+*/
+n_e_to_c1(E, L, N, K, D, Kd, S) :-
+        dpush_portray_clause(n_e_to_c1(E, L, N, K, D, Kd, S)-in),
+        n_e_to_p_e1(E, L, N, Ep@L:N-->Kd),
+        lpush,
+        lindent, lprint('\n'),
+        lindent, lprint('* Path expression:\n'),
+        lindent, lprint(Ep@L:N-->Kd),
+        lindent, lprint('\n'),
+        p_e_to_f_d1(Ep, L, N, K, Kd, D, Dd),
+        lindent, lprint('\n'),
+        lindent, lprint('* Function definitions:\n'),
+        lindent, lportray_clause(Dd),
+        lindent, lprint('\n'),
+        p_e_to_c1(Ep, L, N, K, Kd, Dd, S),
+        lindent, lprint('\n'),
+        lindent, lprint('* Summary constraints:\n'),
+        if_log((   foreach(C, S)
+               do  lindent, print(C), nl
+               )),
+        lpop,
+        dpop_portray_clause(n_e_to_c1(E, L, N, K, D, Kd, S)-out).
+
+
+
+% **********************************************************************
 % Main
 
 summarize(FileIn, FileOut) :-
@@ -1045,28 +1082,22 @@ summarize(FileIn, FileOut) :-
         lprint('* Named expression:\n'),
         lprint(ELN),
         lprint('\n'),
-% Path conjuncts for expression
-        named_exp_to_path_exp(ELN, ELNK),
-% Log the path expression
-        lprint('\n'),
-        lprint('* Path expression:\n'),
-        lprint(ELNK),
-        lprint('\n'),
-% Summarize the expression
-        path_exp_to_constraints(ELNK, Ss),
-% Output the summarized program
+% Sumarize the named expression
+        named_exp_to_constraints(ELN, S),
+% Output the summary
         lprint('\n'),
         lprint('* Summary constraints:\n'),
         (   FileOut == no_file ->
             Out = user_output
         ;   open(FileOut, write, Out)
         ),
-        (   foreach(S, Ss),
+        (   foreach(C, S),
             param(Out)
-        do  print(Out, S),
+        do  print(Out, C),
             print(Out, '\n')
         ),
         close(Out).
+
 
 
 % **********************************************************************

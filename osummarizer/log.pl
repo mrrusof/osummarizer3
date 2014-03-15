@@ -1,5 +1,6 @@
 :- module(log, [start_log/0, stop_log/0,
                 if_log/1, if_log_nn/1,
+                lpush/0, lpop/0, lindent/0,
                 lnl/0,
                 lwrite/1, lwrite/2,
                 lpush_write/1, lpush_write/2,
@@ -41,25 +42,53 @@ if_log_nn(C) :-
 	;   true
 	).
 
-push_indention(Out) :-
-        bb_get(log_indention, Iold),
-        increment(log_counter, C),
-        last(Iold, C, I),
-        bb_put(log_indention, I),
-        (   foreach(N, I),
-            param(Out)
-        do  format(Out, '~d  ', [N])
+lpush_indent(Out) :-
+        (   bb_get(log, 1) ->
+            lpush,
+            bb_get(log_indention, I),
+            (   foreach(N, I),
+                param(Out)
+            do  format(Out, '~d  ', [N])
+            )
+        ;   true
         ).
-pop_indention(Out) :-
-        bb_get(log_indention, Iold),
-        (   last(I, _, Iold) ->
-            true
-        ;   I = []
-        ),
-        bb_put(log_indention, I),
-        (   foreach(N, Iold),
-            param(Out)
-        do  lformat(Out, '~d  ', [N])
+lpop_indent(Out) :-
+        (   bb_get(log, 1) ->
+            bb_get(log_indention, Iold),
+            lpop,
+            (   foreach(N, Iold),
+                param(Out)
+            do  lformat(Out, '~d  ', [N])
+            )
+        ;   true
+        ).
+
+lpush :-
+        (   bb_get(log, 1) ->
+            bb_get(log_indention, Iold),
+            increment(log_counter, C),
+            last(Iold, C, I),
+            bb_put(log_indention, I)
+        ;   true
+        ).
+lpop :-
+        (   bb_get(log, 1) ->
+            bb_get(log_indention, Iold),
+            (   last(I, _, Iold) ->
+                true
+            ;   I = []
+            ),
+            bb_put(log_indention, I)
+        ;   true
+        ).
+lindent :-
+        (   bb_get(log, 1) ->
+            bb_get(log_indention, I),
+            (   foreach(N, I),
+                param(Out)
+            do  lformat(Out, '~d  ', [N])
+            )
+        ;   true
         ).
 
 lnl :-  (   bb_get(log, 1) ->
@@ -77,14 +106,14 @@ lwrite(Out, A) :-
 lpush_write(A) :- lpush_write(user_output, A).
 lpush_write(Out, A) :-
 	(   bb_get(log, 1) ->
-            push_indention(Out),
+            lpush_indent(Out),
             write(Out, A)
         ;   true
         ).
 lpop_write(A) :- lpop_write(user_output, A).
 lpop_write(Out, A) :-
         (   bb_get(log, 1) ->
-            pop_indention(Out),
+            lpop_indent(Out),
             write(Out, A)
         ;   true
         ).
@@ -99,14 +128,14 @@ lportray_clause(Out, A) :-
 lpush_portray_clause(A) :- lpush_portray_clause(user_output, A).
 lpush_portray_clause(Out, A) :-
 	(   bb_get(debug, 1) ->
-            push_indention(Out),
+            lpush_indent(Out),
             portray_clause(Out, A)
         ;   true
         ).
 lpop_portray_clause(A) :- lpop_portray_clause(user_output, A).
 lpop_portray_clause(Out, A) :-
         (   bb_get(debug, 1) ->
-            pop_indention(Out),
+            lpop_indent(Out),
             potray_clause(Out, A)
         ;   true
         ).
@@ -121,14 +150,14 @@ lprint(Out, A) :-
 lpush_print(A) :- lpush_print(user_output, A).
 lpush_print(Out, A) :-
 	(   bb_get(log, 1) ->
-            push_indention(Out),
+            lpush_indent(Out),
             print(Out, A)
         ;   true
         ).
 lpop_print(A) :- lpop_print(user_output, A).
 lpop_print(Out, A) :-
         (   bb_get(log, 1) ->
-            pop_indention(Out),
+            lpop_indent(Out),
             print(Out, A)
         ;   true
         ).
@@ -143,7 +172,7 @@ lformat(Out, A, B) :-
 lpush_format(A, B) :- lpush_format(user_output, A, B).
 lpush_format(Out, A, B) :-
         (   bb_get(log, 1) ->
-            push_indention(Out),
+            lpush_indent(Out),
             format(Out, A, B)
         ;   true
         ).
@@ -151,7 +180,7 @@ lpush_format(Out, A, B) :-
 lpop_format(A, B) :- lpop_format(user_output, A, B).
 lpop_format(Out, A, B) :-
         (   bb_get(log, 1) ->
-            pop_indention(Out),
+            lpop_indent(Out),
             format(Out, A, B)
         ;   true
         ).
