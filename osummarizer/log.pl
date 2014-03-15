@@ -1,6 +1,6 @@
 :- module(log, [start_log/0, stop_log/0,
                 if_log/1, if_log_nn/1,
-                lpush/0, lpop/0, lindent/0,
+                lpush/0, lpop/0, lindent/0, lindent/1,
                 lnl/0,
                 lwrite/1, lwrite/2,
                 lpush_write/1, lpush_write/2,
@@ -81,7 +81,8 @@ lpop :-
             bb_put(log_indention, I)
         ;   true
         ).
-lindent :-
+lindent :- lindent(user_output).
+lindent(Out) :-
         (   bb_get(log, 1) ->
             bb_get(log_indention, I),
             (   foreach(N, I),

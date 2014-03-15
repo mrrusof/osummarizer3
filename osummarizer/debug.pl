@@ -1,6 +1,6 @@
 :- module(debug, [start_debug/0, stop_debug/0,
                   if_debug/1, if_debug_nn/1,
-                  dpush/0, dpop/0, dindent/0,
+                  dpush/0, dpop/0, dindent/0, dindent/1,
                   dnl/0,
                   dwrite/1, dwrite/2,
                   dpush_write/1, dpush_write/2,
@@ -42,8 +42,9 @@ if_debug_nn(C) :-
 	;   true
 	).
 
-lpush_indent(Out) :-
-        (   bb_get(log, 1) ->
+dpush_indent :- dpush_indent(user_output).
+dpush_indent(Out) :-
+        (   bb_get(debug, 1) ->
             dpush,
             bb_get(debug_indention, I),
             (   foreach(N, I),
@@ -52,8 +53,9 @@ lpush_indent(Out) :-
             )
         ;   true
         ).
-lpop_indent(Out) :-
-        (   bb_get(log, 1) ->
+dpop_indent :- dpop_indent(user_output).
+dpop_indent(Out) :-
+        (   bb_get(debug, 1) ->
             bb_get(debug_indention, Iold),
             dpop,
             (   foreach(N, Iold),
@@ -81,7 +83,8 @@ dpop :-
             bb_put(debug_indention, I)
         ;   true
         ).
-dindent :-
+dindent :- dindent(user_output).
+dindent(Out) :-
         (   bb_get(debug, 1) ->
             bb_get(debug_indention, I),
             (   foreach(N, I),
@@ -106,14 +109,14 @@ dwrite(Out, A) :-
 dpush_write(A) :- dpush_write(user_output, A).
 dpush_write(Out, A) :-
 	(   bb_get(debug, 1) ->
-            lpush_indent(Out),
+            dpush_indent(Out),
             write(Out, A)
         ;   true
         ).
 dpop_write(A) :- dpop_write(user_output, A).
 dpop_write(Out, A) :-
         (   bb_get(debug, 1) ->
-            lpop_indent(Out),
+            dpop_indent(Out),
             write(Out, A)
         ;   true
         ).
@@ -128,14 +131,14 @@ dportray_clause(Out, A) :-
 dpush_portray_clause(A) :- dpush_portray_clause(user_output, A).
 dpush_portray_clause(Out, A) :-
 	(   bb_get(debug, 1) ->
-            lpush_indent(Out),
+            dpush_indent(Out),
             portray_clause(Out, A)
         ;   true
         ).
 dpop_portray_clause(A) :- dpop_portray_clause(user_output, A).
 dpop_portray_clause(Out, A) :-
         (   bb_get(debug, 1) ->
-            lpop_indent(Out),
+            dpop_indent(Out),
             portray_clause(Out, A)
         ;   true
         ).
@@ -150,14 +153,14 @@ dprint(Out, A) :-
 dpush_print(A) :- dpush_print(user_output, A).
 dpush_print(Out, A) :-
 	(   bb_get(debug, 1) ->
-            lpush_indent(Out),
+            dpush_indent(Out),
             print(Out, A)
         ;   true
         ).
 dpop_print(A) :- dpop_print(user_output, A).
 dpop_print(Out, A) :-
         (   bb_get(debug, 1) ->
-            lpop_indent(Out),
+            dpop_indent(Out),
             print(Out, A)
         ;   true
         ).
@@ -172,7 +175,7 @@ dformat(Out, A, B) :-
 dpush_format(A, B) :- dpush_format(user_output, A, B).
 dpush_format(Out, A, B) :-
         (   bb_get(debug, 1) ->
-            lpush_indent(Out),
+            dpush_indent(Out),
             format(Out, A, B)
         ;   true
         ).
@@ -180,7 +183,7 @@ dpush_format(Out, A, B) :-
 dpop_format(A, B) :- dpop_format(user_output, A, B).
 dpop_format(Out, A, B) :-
         (   bb_get(debug, 1) ->
-            lpop_indent(Out),
+            dpop_indent(Out),
             format(Out, A, B)
         ;   true
         ).

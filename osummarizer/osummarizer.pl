@@ -777,9 +777,9 @@ return(X:T, R) :-
 path_exp_to_fun_defs(E@L:N-->K, D, Dd) :-
         p_e_to_f_d1(E, L, N, true, K, D, Dd).
 
-p_e_to_f_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, true, (Xu='_'), D, D) :- !,
-        dpush_portray_clause(p_e_to_f_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, true, (Xu='_'), D, D)-in),
-        dpop_portray_clause(p_e_to_f_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, true, (Xu='_'), D, D)-out).
+p_e_to_f_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, K, (Xu='_'), D, D) :- !,
+        dpush_portray_clause(p_e_to_f_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, K, (Xu='_'), D, D)-nondet-in),
+        dpop_portray_clause(p_e_to_f_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, K, (Xu='_'), D, D)-nondet-out).
 p_e_to_f_d1(app(ELNKf, ELNKs), L, N, K, Kd, D, Dd) :- !,
         dpush_portray_clause(p_e_to_f_d1(app(ELNKf, ELNKs), L, N, K, Kd, D, Dd)-in),
         (   (Ef@Lf:Nf-->Kf) = ELNKf ->
@@ -1029,20 +1029,20 @@ n_e_to_c1(E, L, N, K, D, Kd, S) :-
         dpush_portray_clause(n_e_to_c1(E, L, N, K, D, Kd, S)-in),
         n_e_to_p_e1(E, L, N, Ep@L:N-->Kd),
         lpush,
-        lindent, lprint('\n'),
+        lprint('\n'),
         lindent, lprint('* Path expression:\n'),
-        lindent, lprint(Ep@L:N-->Kd),
-        lindent, lprint('\n'),
+        lprint(Ep@L:N-->Kd),
+        lprint('\n'),
         p_e_to_f_d1(Ep, L, N, K, Kd, D, Dd),
-        lindent, lprint('\n'),
+        lprint('\n'),
         lindent, lprint('* Function definitions:\n'),
-        lindent, lportray_clause(Dd),
-        lindent, lprint('\n'),
+        lportray_clause(Dd),
+        lprint('\n'),
         p_e_to_c1(Ep, L, N, K, Kd, Dd, S),
-        lindent, lprint('\n'),
+        lprint('\n'),
         lindent, lprint('* Summary constraints:\n'),
         if_log((   foreach(C, S)
-               do  lindent, print(C), nl
+               do  print(C), nl
                )),
         lpop,
         dpop_portray_clause(n_e_to_c1(E, L, N, K, D, Kd, S)-out).
