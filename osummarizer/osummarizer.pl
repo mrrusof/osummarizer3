@@ -176,7 +176,7 @@ wf_t_e(assume(Ec@Lc:Tc), L, T) :- !,
         wf_t_e(Ec, Lc, Tc),
         wf_l(L),
         dpop_portray_clause(wf_t_e(assume(Ec@Lc:Tc), L, T)-assume-out).
-wf_t_e(E, L, T) :- !,
+wf_t_e(E, L, T) :-
         dpush_portray_clause(wf_t_e(E, L, T)-in),
         wf_l(L),
         wf_t(T),
@@ -390,7 +390,7 @@ pp_e(assume(Ec), I) :- !,
             pp_e(Ec, J),
             format('\n~s)', [I])
         ).
-pp_e(E, I) :- !,
+pp_e(E, I) :-
         format('~s', [I]),
         (   pp_const_parenthesis(E) ->
             write('('),
@@ -483,7 +483,7 @@ t_e_to_n_e1(assume(Ec@Lc:Tc), L, T, X, Env, assume(Rc)@L:N) :- !,
         t_e_to_n_e1(Ec, Lc, Tc, Xc, Env, Rc),
         name_type(X, T, N),
         dpop_portray_clause(t_e_to_n_e1(assume(Ec@Lc:Tc), L, T, X, Env, assume(Rc)@L:N)-assume-out).
-t_e_to_n_e1(E, L, T, X, Env, E@L:N) :- !,
+t_e_to_n_e1(E, L, T, X, Env, E@L:N) :-
         dpush_portray_clause(t_e_to_n_e1(E, L, T, X, Env, E@L:N)-id-cst-in),
         (   ml_const(E) ->
             (   function_type(T) ->
@@ -703,7 +703,7 @@ n_e_to_p_e1(assume(Ec@Lc:Xc:Tc), L, N, assume(ELNc-->Kc)@L:N-->(Xcu=1, Kc)) :- !
         n_e_to_p_e1(Ec, Lc, Xc:Tc, ELNc-->Kc),
         uppercase_atom(Xc, Xcu),
         dpop_portray_clause(n_e_to_p_e1(assume(Ec@Lc:Xc:Tc), L, N, assume(ELNc-->Kc)@L:N-->(Xcu=1, Kc))-out).
-n_e_to_p_e1(E, L, X:T, E@L:X:T-->Kd) :- !,
+n_e_to_p_e1(E, L, X:T, E@L:X:T-->Kd) :-
         dpush_portray_clause(n_e_to_p_e1(E, L, X:T, ELNK)-id-cst-in),
         (   E == not ->
             (V:bool -> R:bool) = T,
@@ -822,7 +822,7 @@ p_e_to_f_d1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, D, Dd) :- !,
         dpush_portray_clause(p_e_to_f_d1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, D, Dd)-in),
         p_e_to_f_d1(Ec, Lc, Nc, K, Kc, D, Dd),
         dpop_portray_clause(p_e_to_f_d1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, D, Dd)-out).
-p_e_to_f_d1(E, L, N, K, Kd, D, D) :- !,
+p_e_to_f_d1(E, L, N, K, Kd, D, D) :-
         dpush_portray_clause(p_e_to_f_d1(E, L, N, K, Kd, D, D)-in),
         dpop_portray_clause(p_e_to_f_d1(E, L, N, K, Kd, D, D)-out).
 
@@ -840,9 +840,10 @@ p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, A, S) :- !,
             S = []
         ;   ml_id(Ef) ->
             % fetch definition of Ef
-            avl_fetch(Ef, A, (K0, E0@L0:N0)),
+            avl_fetch(Ef, A, (K0, PreELN0)),
             % instantiate type of Ef
             unname_type(Xf:Tf, T0),
+            copy_term(PreELN0, E0@L0:N0),
             unname_type(N0, T0),
             % TODO: HO parameter passing here
             % analyze definition of Ef under appropriate context
@@ -898,7 +899,7 @@ p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, A, S) :- !,
         dpush_portray_clause(p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, A, S)-in),
         p_e_to_c1(Ec, Lc, Nc, K, Kc, A, S),
         dpop_portray_clause(p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, A, S)-out).
-p_e_to_c1(E, L, X:T, K, Kd, A, S) :- !,
+p_e_to_c1(E, L, X:T, K, Kd, A, S) :-
         dpush_portray_clause(p_e_to_c1(E, L, X:T, K, Kd, A, S)-id-cst-in),
         (   ml_const(E) ->
             S = []
