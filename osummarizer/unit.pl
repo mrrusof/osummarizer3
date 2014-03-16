@@ -305,6 +305,11 @@ ut("simplify_formula 3", simplify_formula((true,'X2'>1,'ctx_f1_int->unit'('X2'))
 ut("simplify_formula 4", simplify_formula(('BA_ADD_V'=2,'A_ADD_V'=1,true,true), ('BA_ADD_V'=2,'A_ADD_V'=1))).
 ut("simplify_formula 5", simplify_formula(('BA_ADD_V'=2,'A_ADD_V'=1 ; false), ('BA_ADD_V'=2,'A_ADD_V'=1))).
 ut("simplify_formula 6", simplify_formula(((false, true) ; 'BA_ADD_V'=2,'A_ADD_V'=1), ('BA_ADD_V'=2,'A_ADD_V'=1))).
+ut("instantiate_named_type 1", (   instantiate_named_type(app  :(g:(a_g     :A  ->b_g:B                             )->f1_app:(x       :A  ->ret_app:B                             )),
+                                                          app_v:(g:(aa_app_v:int->b_g:(aba_app_v:int->abb_app_v:int))->f1_app:(ba_app_v:int->v      :(bba_app_v:int->bbb_app_v:int)))),
+                                   app  :(g:(a_g:A  ->b_g:B                             )->f1_app:(x:A  ->ret_app:B                             )) ==
+                                   app  :(g:(a_g:int->b_g:(aba_app_v:int->abb_app_v:int))->f1_app:(x:int->ret_app:(aba_app_v:int->abb_app_v:int)))
+                               )).
 ut("return 1", return(f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)), bb_f:i) ).
 ut("return 2", return(f:(g:(x:int -> y:bool) -> h:(z:int -> u:bool)), u:bool) ).
 ut("formals_return 1", formals_return(f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)),
@@ -2629,26 +2634,39 @@ ut("summ   polymorphic let gt = (>) in gt (gt 2 1) true", (   t_e_to_n_e1(let(gt
                                                                          ('gt_int->int->bool'('A_GT','BA_GT','BB_GT'):-('A_GT'>'BA_GT'->'BB_GT'=1;'BB_GT'=0),'ctx_gt_int->int->bool'('A_GT','BA_GT'))]))).
 
 ut("summ   polymorphic let max1 = fun x2 y3 -> ... in max1 3 1", (   MAX1 = abs([x2@l:x2:A,y3@l:y3:A],
-                                                                               ite(
-                                                                                   app(> @l:gt_c_ret_max1:(a_gt_c_ret_max1:A->b_gt_c_ret_max1:(ba_gt_c_ret_max1:A->c_ret_max1:bool)),
-                                                                                       [x2@l:a_gt_c_ret_max1:A,
-                                                                                        y3@l:ba_gt_c_ret_max1:A]
-                                                                                      )@l:c_ret_max1:bool,
-                                                                                   x2@l:ret_max1:A,
-                                                                                   y3@l:ret_max1:A
-                                                                                  )@l:ret_max1:A
-                                                                              )@l:max1:(x2:A->f1_max1:(y3:A->ret_max1:A)),
-                                                                   n_e_to_p_e1(let(max1@l:max1:(x2:A->f1_max1:(y3:A->ret_max1:A)),
-                                                                                   MAX1,
-                                                                                   app(max1@l:max1_v:(a_max1_v:int->f1_max1:(ba_max1_v:int->v:int)),
-                                                                                       [3@l:a_max1_v:int,
-                                                                                        1@l:ba_max1_v:int]
-                                                                                      )@l:v:int
-                                                                                  ), l, v:int, Ep@L:N-->K),
-                                                                   p_e_to_c1(Ep, L, N, true, K, node(max1,(true, MAX1),0,empty,empty),
-                                                                             [('ctx_max1_int->int->int'('A_MAX1_V', 'BA_MAX1_V') :- 'BA_MAX1_V'=1, 'A_MAX1_V'=3),
-                                                                              ('max1_int->int->int'('X2', 'Y3', 'RET_MAX1') :- (('C_RET_MAX1'=1 -> 'RET_MAX1'='X2' ; 'RET_MAX1'='Y3'), ('X2'>'Y3' -> 'C_RET_MAX1'=1 ; 'C_RET_MAX1'=0), 'ctx_max1_int->int->int'('X2', 'Y3')))]))).
+                                                                                ite(
+                                                                                    app(> @l:gt_c_ret_max1:(a_gt_c_ret_max1:A->b_gt_c_ret_max1:(ba_gt_c_ret_max1:A->c_ret_max1:bool)),
+                                                                                        [x2@l:a_gt_c_ret_max1:A,
+                                                                                         y3@l:ba_gt_c_ret_max1:A]
+                                                                                       )@l:c_ret_max1:bool,
+                                                                                    x2@l:ret_max1:A,
+                                                                                    y3@l:ret_max1:A
+                                                                                   )@l:ret_max1:A
+                                                                               )@l:max1:(x2:A->f1_max1:(y3:A->ret_max1:A)),
+                                                                     n_e_to_p_e1(let(max1@l:max1:(x2:A->f1_max1:(y3:A->ret_max1:A)),
+                                                                                     MAX1,
+                                                                                     app(max1@l:max1_v:(a_max1_v:int->f1_max1:(ba_max1_v:int->v:int)),
+                                                                                         [3@l:a_max1_v:int,
+                                                                                          1@l:ba_max1_v:int]
+                                                                                        )@l:v:int
+                                                                                    ), l, v:int, Ep@L:N-->K),
+                                                                     p_e_to_c1(Ep, L, N, true, K, node(max1,(true, MAX1),0,empty,empty),
+                                                                               [('ctx_max1_int->int->int'('A_MAX1_V', 'BA_MAX1_V') :- 'BA_MAX1_V'=1, 'A_MAX1_V'=3),
+                                                                                ('max1_int->int->int'('X2', 'Y3', 'RET_MAX1') :- (('C_RET_MAX1'=1 -> 'RET_MAX1'='X2' ; 'RET_MAX1'='Y3'), ('X2'>'Y3' -> 'C_RET_MAX1'=1 ; 'C_RET_MAX1'=0), 'ctx_max1_int->int->int'('X2', 'Y3')))]))).
 
+ut("summ   HO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
+                                                                                        abs([g@l:(A->B), x@l:A],
+                                                                                            app(g@l:(A->B),
+                                                                                                [x@l:A]
+                                                                                               )@l:B
+                                                                                            )@l:((A->B)->A->B),
+                                                                                        app(app@l:((int->int->int)->int->int->int),
+                                                                                            [(+)@l:(int->int->int),
+                                                                                             1@l:int]
+                                                                                           )@l:(int->int)
+                                                                                       ), l, (int->int), v, empty, En@L:N),
+                                                                        n_e_to_p_e1(En, L, N, _Ep@L:N-->_K),
+                                                                        false )).
 
 
 % **********************************************************************

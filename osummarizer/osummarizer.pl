@@ -531,7 +531,10 @@ choose_names(X:S, Y:T, R) :-
             choose_names(S1, T1, R1),
             choose_names(S2, T2, R2),
             R = X:(R1->R2)
-        ;   R = Y:T
+        ;   (   compound(T) ->
+                R = X:T
+            ;   R = Y:T
+            )
         ).
 
 /*
@@ -842,9 +845,8 @@ p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, A, S) :- !,
             % fetch definition of Ef
             avl_fetch(Ef, A, (K0, PreELN0)),
             % instantiate type of Ef
-            unname_type(Xf:Tf, T0),
             copy_term(PreELN0, E0@L0:N0),
-            unname_type(N0, T0),
+            instantiate_named_type(N0, Xf:Tf),
             % TODO: HO parameter passing here
             % analyze definition of Ef under appropriate context
             mk_ctx_pred(N0, Ctx0),
@@ -986,6 +988,18 @@ simplify_formula(K, R) :-
             ;   R = (Ar ; Br)
             )
         ;   R = K
+        ).
+
+/*
+instantiate_named_type(+Nenv, +Nloc)
+*/
+instantiate_named_type(_:S, _:T) :-
+        (   compound(S) ->
+            S = (S1->S2),
+            T = (T1->T2),
+            instantiate_named_type(S1, T1),
+            instantiate_named_type(S2, T2)
+        ;   S = T
         ).
 
 /*
