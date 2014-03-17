@@ -11,6 +11,7 @@
 :- use_module(library(avl), [avl_fetch/3, avl_store/4, avl_to_list/2]).
 :- use_module(library(lists), [rev/2, maplist/3, include/3]).
 :- use_module(library(ordsets), [ord_add_element/3, ord_union/2]).
+:- use_module(library(terms), [term_variables/2]).
 
 :- multifile user:portray/1.
 :- dynamic user:portray/1.
@@ -225,6 +226,15 @@ remove_formals_ty(Count, T, R) :-
 % **********************************************************************
 % Pretty printing
 
+pretty_ground_term(T1, T2) :-
+        copy_term(T1, T2),
+        term_variables(T2, Vars),
+        (   foreach(V, Vars),
+            count(N, 65, _)
+        do  atom_codes(A, [N]),
+            V = A
+        ).
+
 put_indent_pp(I) :-
         bb_put(pp_e_indent, I).
 get_indent_pp(I) :-
@@ -274,7 +284,8 @@ portray(Term) :-
             ;   (   Term = _@_:_:_-->_
                 ;   Term = _@_:_:_
                 ;   Term = _@_:_ ) ->
-                pp_e(Term)
+                pretty_ground_term(Term, Ground),
+                pp_e(Ground)
             ;   Term = X:(T1->T2) ->
                 format('~p:(', [X]),
                 print(T1),
