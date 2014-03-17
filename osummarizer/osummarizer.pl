@@ -302,7 +302,7 @@ portray(Term) :-
                 append(I, "          ", J),
                 put_indent_pp(J),
                 (   foreach(X-(K,E), List)
-                do  format("~s~p |->\n~s       K: ~p\n~s  ^E@L:N:\n~p\n", [I, X, I, K, I, E])
+                do  format("~s~p |->\n~s       K: ~p\n~s  ^E@L:N:\n~p", [I, X, I, K, I, E])
                 ),
                 put_indent_pp(I)
             ;   Term =.. [F|Args], F \== '.',
