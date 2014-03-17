@@ -207,7 +207,7 @@ wf_t(T) :-
             %     do  wf_t(Ti)
             %     )
             )
-        ;   ( base_type(T) ; type_var(T) )
+        ;   ( type_var(T) ; base_type(T) )
         ).
 
 /*
@@ -321,11 +321,11 @@ portray(Term) :-
 paren_t(+T)
 */
 paren_t(T) :-
-        (   ( nullary_type(T) ; type_var(T) ) ->
-            print(T)
-        ;   write('('),
+        (   compound(T), T = (_->_) ->
+            write('('),
             print(T),
             write(')')
+        ;   write(T)
         ).
 
 pp_const_parenthesis(+).
