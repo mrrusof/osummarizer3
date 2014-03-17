@@ -842,7 +842,6 @@ p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, D, S) :- !,
         (   ml_const(Ef) ->
             S = []
         ;   ml_id(Ef) ->
-            portray_clause(p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, D, S)),
             (   avl_fetch(Ef, D, (K0, PreELN0)) -> % Ef is let bound identifier
                 % instantiate type of Ef
                 copy_term(PreELN0, E0@L0:N0),
