@@ -2665,8 +2665,22 @@ ut("summ   HO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to_n
                                                                                              1@l:int]
                                                                                            )@l:(int->int)
                                                                                        ), l, (int->int), v, empty, En@L:N),
-                                                                        n_e_to_p_e1(En, L, N, _Ep@L:N-->_K),
+                                                                        n_e_to_p_e1(En, L, N, Ep@L:N-->K),
+                                                                        p_e_to_f_d1(Ep, L, N, true, K, empty, D),
+                                                                        p_e_to_c1(Ep, L, N, true, K, D, _S),
                                                                         false )).
+
+/*
+[('ctx_app_(int->int->int)->int->int->int'('BA_APP_V','BBA_APP_V'):-'BA_APP_V'=1),
+ ('ctx_g_int->int->int'('A_G_RET_APP','ABA_APP_V'):-'A_G_RET_APP'='X','ctx_app_(int->int->int)->int->int->int'('X','ABA_APP_V')),
+ ('app_(int->int->int)->int->int->int'('X','ABA_APP_V','ABB_APP_V'):-'g_int->int->int'('X','ABA_APP_V','ABB_APP_V'),'ctx_app_(int->int->int)->int->int->int'('X','ABA_APP_V'))]
+
+
+[('ctx_app_(int->int->int)->int->int->int'('BA_APP_V','BBA_APP_V'):-'BA_APP_V'=1,'ctx_v_int->int'('BBA_APP_V')),
+ ('ctx_g_int->int->int'('A_G_RET_APP','ABA_APP_V'):-'A_G_RET_APP'='X','ctx_app_(int->int->int)->int->int->int'('X','ABA_APP_V'),'ctx_v_int->int'('BBA_APP_V')),
+ ('app_(int->int->int)->int->int->int'('X','ABA_APP_V','ABB_APP_V'):-'g_int->int->int'('X','ABA_APP_V','ABB_APP_V'),'ctx_app_(int->int->int)->int->int->int'('X','ABA_APP_V'),'ctx_v_int->int'('BBA_APP_V'))]
+*/
+
 
 
 % **********************************************************************

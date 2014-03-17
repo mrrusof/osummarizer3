@@ -11,8 +11,7 @@
                                           tuple2flatlist/2]).
 :- use_module(library(avl), [avl_fetch/3,
                              avl_store/4]).
-:- use_module(library(lists), [rev/2,
-                               maplist/3]).
+:- use_module(library(lists), [rev/2, maplist/3, include/3]).
 :- use_module(library(ordsets), [ord_add_element/3, ord_union/2]).
 
 :- multifile user:portray/1.
@@ -106,6 +105,7 @@ base_type(string).
 function_type(T) :- compound(T), T = (_->_).
 nullary_type(T) :- base_type(T). % ( base_type(T) -> true ; T =..['*'|_] ).
 type_var(T) :- var(T).
+nullary_named_type(_:T) :- nullary_type(T).
 
 
 /*
@@ -837,72 +837,79 @@ p_e_to_f_d1(E, L, N, K, Kd, D, D) :-
 /*
 p_e_to_c1(+E, +L, +N, +K, +Kd, +A, -S)
 */
-p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, A, S) :- !,
-        dpush_portray_clause(p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, A, S)-in),
+p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, D, S) :- !,
+        dpush_portray_clause(p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, D, S)-in),
         (   ml_const(Ef) ->
             S = []
         ;   ml_id(Ef) ->
-            % fetch definition of Ef
-            avl_fetch(Ef, A, (K0, PreELN0)),
-            % instantiate type of Ef
-            copy_term(PreELN0, E0@L0:N0),
-            instantiate_named_type(N0, Xf:Tf),
-            % TODO: HO parameter passing here
-            % analyze definition of Ef under appropriate context
-            mk_ctx_pred(N0, Ctx0),
-            mk_conj((Ctx0, K0), CtxK0),
-            n_e_to_c1(E0, L0, N0, CtxK0, A, Kd0, S0),
-            % construct summary constraint for Ef
-            mk_summ_pred(N0, Summ),
-            mk_conj((Kd0, Ctx0, K0), Summary),
-            ord_add_element(S0, (Summ :- Summary), S1),
+            portray_clause(p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, D, S)),
+            (   avl_fetch(Ef, D, (K0, PreELN0)) -> % Ef is let bound identifier
+                % instantiate type of Ef
+                copy_term(PreELN0, E0@L0:N0),
+                instantiate_named_type(N0, Xf:Tf),
+                % TODO: HO parameter passing here
+                % analyze definition of Ef under appropriate context
+                mk_ctx_pred(N0, Ctx0),
+                mk_conj((Ctx0, K0), CtxK0),
+                n_e_to_c1(E0, L0, N0, CtxK0, D, Kd0, S0),
+                % construct summary constraint for Ef
+                mk_summ_pred(N0, Summ),
+                mk_conj((Kd0, Ctx0, K0), Summary),
+                ord_add_element(S0, (Summ :- Summary), S1)
+            ;   S1=[]                              % Ef is formal parameter
+            ),
             % construct parameter passing summary for call to Ef
             mk_ctx_pred(Ef:Tf, CtxEf),
-            (   foreach(Ei@Li:Ni-->Ki, ELNKs),
-                fromto(true, InKs, (Ki,InKs), Ks),
+            (   foreach(Ei@Li:Xi:Ti-->Ki, ELNKs),
+                fromto(true, InKs, OutKs, Ks),
                 foreach(Si, Ss),
-                param(K, A)
-            do  p_e_to_c1(Ei, Li, Ni, K, Ki, A, Si)
+                param(K, D)
+            do  (   compound(Ti) ->
+                    OutKs = InKs,
+                    Si = []
+                ;   OutKs = (Ki, InKs),
+                    p_e_to_c1(Ei, Li, Xi:Ti, K, Ki, D, Si)
+                )
             ),
             mk_conj((Ks, K), Actuals),
             ord_add_element(S1, (CtxEf :- Actuals), S2),
             ord_union([S2|Ss], S)
         ),
-        dpop_portray_clause(p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, A, S)-out).
-p_e_to_c1(abs(XLTs, Eb@Lb:Nb-->Kb), L, X:T, K, Kb, A, S) :- !,
-        dpush_portray_clause(p_e_to_c1(abs(XLTs, Eb@Lb:Nb-->Kb), L, X:T, K, Kb, A, S)-in),
-        p_e_to_c1(Eb, Lb, Nb, K, Kb, A, S),
-        dpop_portray_clause(p_e_to_c1(abs(XLTs, Eb@Lb:Nb-->Kb), L, X:T, K, Kb, A, S)-out).
-p_e_to_c1(ite(E1@L1:X1:T1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, A, S) :- !,
-        dpush_portray_clause(p_e_to_c1(ite(E1@L1:X1:T1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, A, S)-in),
-        p_e_to_c1(E1, L1, X1:T1, K, K1, A, S1),
-        p_e_to_c1(E2, L2, N2, (X1=1, K1, K), K2, A, S2),
-        p_e_to_c1(E3, L3, N3, (X1=0, K1, K), K3, A, S3),
+        dpop_portray_clause(p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, D, S)-out).
+p_e_to_c1(abs(XLTs, Eb@Lb:Nb-->Kb), L, X:T, K, Kb, D, S) :- !,
+        dpush_portray_clause(p_e_to_c1(abs(XLTs, Eb@Lb:Nb-->Kb), L, X:T, K, Kb, D, S)-in),
+        p_e_to_c1(Eb, Lb, Nb, K, Kb, D, S),
+        dpop_portray_clause(p_e_to_c1(abs(XLTs, Eb@Lb:Nb-->Kb), L, X:T, K, Kb, D, S)-out).
+p_e_to_c1(ite(E1@L1:X1:T1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, D, S) :- !,
+        dpush_portray_clause(p_e_to_c1(ite(E1@L1:X1:T1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, D, S)-in),
+        p_e_to_c1(E1, L1, X1:T1, K, K1, D, S1),
+        p_e_to_c1(E2, L2, N2, (X1=1, K1, K), K2, D, S2),
+        p_e_to_c1(E3, L3, N3, (X1=0, K1, K), K3, D, S3),
         ord_union([S1, S2, S3], S),
-        dpop_portray_clause(p_e_to_c1(ite(E1@L1:X1:T1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, A, S)-out).
-p_e_to_c1(let(X1Lx1Nx1, ELNK1, E2@L2:N2-->K2), L, N2, K, Kd, A, S) :- !,
-        dpush_portray_clause(p_e_to_c1(let(X1Lx1Nx1, ELNK1, E2@L2:N2-->K2), L, N2, K, Kd, A, S)-in),
+        dpop_portray_clause(p_e_to_c1(ite(E1@L1:X1:T1-->K1, E2@L2:N2-->K2, E3@L3:N3-->K3), L, X:T, K, Kd, D, S)-out).
+p_e_to_c1(let(X1Lx1Nx1, ELNK1, E2@L2:N2-->K2), L, N2, K, Kd, D, S) :- !,
+        dpush_portray_clause(p_e_to_c1(let(X1Lx1Nx1, ELNK1, E2@L2:N2-->K2), L, N2, K, Kd, D, S)-in),
         (   _@_:_ = ELNK1 ->
-            p_e_to_c1(E2, L2, N2, K, K2, A, S)
+            p_e_to_c1(E2, L2, N2, K, K2, D, S)
         ;   (E1@L1:N1-->K1) = ELNK1,
-            p_e_to_c1(E1, L1, N1, K, K1, A, S1),
-            p_e_to_c1(E2, L2, N2, (K1, K), K2, A, S2),
+            p_e_to_c1(E1, L1, N1, K, K1, D, S1),
+            p_e_to_c1(E2, L2, N2, (K1, K), K2, D, S2),
             ord_union([S1, S2], S)
         ),
-        dpop_portray_clause(p_e_to_c1(let(X1Lx1Nx1, ELNK1, E2@L2:N2-->K2), L, N2, K, Kd, A, S)-out).
-p_e_to_c1(assert(Ec@Lc:Xc:Tc-->Kc), L, N, K, Kd, A, S) :- !,
-        dpush_portray_clause(p_e_to_c1(assert(Ec@Lc:Xc:Tc-->Kc), L, N, K, Kd, A, S)-in),
-        p_e_to_c1(Ec, Lc, Xc:Tc, K, Kc, A, Sc),
+        dpop_portray_clause(p_e_to_c1(let(X1Lx1Nx1, ELNK1, E2@L2:N2-->K2), L, N2, K, Kd, D, S)-out).
+p_e_to_c1(assert(Ec@Lc:Xc:Tc-->Kc), L, N, K, Kd, D, S) :- !,
+        dpush_portray_clause(p_e_to_c1(assert(Ec@Lc:Xc:Tc-->Kc), L, N, K, Kd, D, S)-in),
+        p_e_to_c1(Ec, Lc, Xc:Tc, K, Kc, D, Sc),
         mk_conj((Kc, K), Body),
         uppercase_atom(Xc, Xcu),
         ord_union([[(Xcu=1 :- Body)], Sc], S),
-        dpop_portray_clause(p_e_to_c1(assert(Ec@Lc:Xc:Tc-->Kc), L, N, K, Kd, A, S)-out).
-p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, A, S) :- !,
-        dpush_portray_clause(p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, A, S)-in),
-        p_e_to_c1(Ec, Lc, Nc, K, Kc, A, S),
-        dpop_portray_clause(p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, A, S)-out).
-p_e_to_c1(E, L, X:T, K, Kd, A, S) :-
-        dpush_portray_clause(p_e_to_c1(E, L, X:T, K, Kd, A, S)-id-cst-in),
+        dpop_portray_clause(p_e_to_c1(assert(Ec@Lc:Xc:Tc-->Kc), L, N, K, Kd, D, S)-out).
+p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, D, S) :- !,
+        dpush_portray_clause(p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, D, S)-in),
+        p_e_to_c1(Ec, Lc, Nc, K, Kc, D, S),
+        dpop_portray_clause(p_e_to_c1(assume(Ec@Lc:Nc-->Kc), L, N, K, Kd, D, S)-out).
+p_e_to_c1(E, L, X:T, K, Kd, D, S) :-
+        dpush_portray_clause(p_e_to_c1(E, L, X:T, K, Kd, D, S)-id-cst-in),
         (   ml_const(E) ->
             S = []
         ;   ml_id(E) ->
@@ -913,7 +920,7 @@ p_e_to_c1(E, L, X:T, K, Kd, A, S) :-
             ;   S = []
             )
         ),
-        dpop_portray_clause(p_e_to_c1(E, L, X:T, K, Kd, A, S)-id-cst-out).
+        dpop_portray_clause(p_e_to_c1(E, L, X:T, K, Kd, D, S)-id-cst-out).
 
 /*
 mk_summ_pred(+N, -Summ)
@@ -921,9 +928,10 @@ mk_summ_pred(+N, -Summ)
 mk_summ_pred(N, Summ) :-
         summ_sy(N, Sy),
         formals_return(N, NFormalsRet),
-        maplist(name_of_type, NFormalsRet, FormalsRet),
-        maplist(uppercase_atom, FormalsRet, UFormalsRet),
-        Summ =.. [Sy|UFormalsRet].
+        include(nullary_named_type, NFormalsRet, NullNFormalsRet),
+        maplist(name_of_type, NullNFormalsRet, NullFormalsRet),
+        maplist(uppercase_atom, NullFormalsRet, NullUFormalsRet),
+        Summ =.. [Sy|NullUFormalsRet].
 
 /*
 summ_sy(+N, -Sy)
@@ -939,9 +947,10 @@ mk_ctx_pred(+N, -Ctx)
 mk_ctx_pred(N, Ctx) :-
         ctx_sy(N, Sy),
         formals(N, NFormals),
-        maplist(name_of_type, NFormals, Formals),
-        maplist(uppercase_atom, Formals, UFormals),
-        Ctx =.. [Sy|UFormals].
+        include(nullary_named_type, NFormals, NullNFormals),
+        maplist(name_of_type, NullNFormals, NullFormals),
+        maplist(uppercase_atom, NullFormals, NullUFormals),
+        Ctx =.. [Sy|NullUFormals].
 
 /*
 ctx_sy(+N, -Sy)
@@ -1034,25 +1043,40 @@ name_of_type(X:_, X).
 % Summarization procedure
 
 named_exp_to_constraints(E@L:N, S) :-
-        n_e_to_c1(E, L, N, true, empty, _Kd, S).
+        formals(N, Fs),
+        (   ( Fs = [_] ; Fs = [_|_] ) ->
+            mk_ctx_pred(N, Ctx),
+            n_e_to_c1(E, L, N, Ctx, empty, _Kd, S)
+        ;   n_e_to_c1(E, L, N, true, empty, _Kd, S)
+        ).
 
 /*
 n_e_to_c1(+E, +L, +N, +K, +D, -Kd, -S)
 */
 n_e_to_c1(E, L, N, K, D, Kd, S) :-
         dpush_portray_clause(n_e_to_c1(E, L, N, K, D, Kd, S)-in),
-        n_e_to_p_e1(E, L, N, Ep@L:N-->Kd),
         lpush,
+        lprint('\n'),
+        lindent, lprint('* Named expression:\n'),
+        lprint(E@L:N),
+        lprint('\n'),
+
+        n_e_to_p_e1(E, L, N, Ep@L:N-->Kd),
+
         lprint('\n'),
         lindent, lprint('* Path expression:\n'),
         lprint(Ep@L:N-->Kd),
         lprint('\n'),
+
         p_e_to_f_d1(Ep, L, N, K, Kd, D, Dd),
+
         lprint('\n'),
         lindent, lprint('* Function definitions:\n'),
         lportray_clause(Dd),
         lprint('\n'),
+
         p_e_to_c1(Ep, L, N, K, Kd, Dd, S),
+
         lprint('\n'),
         lindent, lprint('* Summary constraints:\n'),
         if_log((   foreach(C, S)
@@ -1092,11 +1116,6 @@ summarize(FileIn, FileOut) :-
         lprint('\n'),
 % Name the expression
         typed_exp_to_named_exp(ELT, ELN),
-% Log the named expression
-        lprint('\n'),
-        lprint('* Named expression:\n'),
-        lprint(ELN),
-        lprint('\n'),
 % Sumarize the named expression
         named_exp_to_constraints(ELN, S),
 % Output the summary
