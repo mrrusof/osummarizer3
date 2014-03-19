@@ -278,18 +278,13 @@ ut("choose_names 1", choose_names(inc  :(x      :int -> r     :int),
 ut("choose_names 2", choose_names(max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int)),
                                   max1_v:(a_max1_v:int -> f1_max1:(ba_max1_v:int -> bb_max1_v:int)),
                                   max1:(a_max1_v:int -> f1_max1:(ba_max1_v:int -> bb_max1_v:int))   )).
+ut("choose_names 3", choose_names(app  :(g      :(a_g     :A  ->b_g     :B                             )->f1_app :(x       :A  ->ret_app :B                             )),
+                                  app_v:(a_app_v:(aa_app_v:int->ab_app_v:(aba_app_v:int->abb_app_v:int))->b_app_v:(ba_app_v:int->bb_app_v:(bba_app_v:int->bbb_app_v:int))),
+                                  app  :(g      :(aa_app_v:int->b_g     :(aba_app_v:int->abb_app_v:int))->f1_app :(ba_app_v:int->ret_app :(bba_app_v:int->bbb_app_v:int))))).
 ut("formals 1", formals(f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)),
                           [a_f:(aa_f:i -> ab_f:i),        ba_f:(baa_f:i -> bab_f:i)])).
 ut("formals 2", formals(f:(g:(x:int -> y:bool) -> h:(z:int -> u:bool)),
                           [g:(x:int -> y:bool),      z:int] )).
-ut("rename_return 1", rename_return(1, w, f:(g:(x:int -> y:bool) -> w:(z:int -> u:bool)),
-                                          f:(g:(x:int -> y:bool) -> w:(z:int -> u:bool)) )).
-ut("rename_return 2", rename_return(2, w, f:(g:(x:int -> y:bool) -> h:(z:int -> u:bool)),
-                                          f:(g:(x:int -> y:bool) -> h:(z:int -> w:bool)) )).
-ut("rename_return 3", rename_return(2, w, f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)),
-                                          f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> w   :i)) )).
-ut("rename_return 4", rename_return(1, w, f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)),
-                                          f:(a_f:(aa_f:i -> ab_f:i) -> w  :(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)) )).
 ut("remove_formals 1", remove_formals(1, f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)),
                                                                       b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)  )).
 ut("remove_formals 2", remove_formals(2, f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)),
@@ -2694,6 +2689,30 @@ ut("summ     HO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to
                                                                                      ('app_(int->int->int)->int->int->int'('X','BA_G','BB_G'):-'g_int->int->int'('X','BA_G','BB_G'),'ctx_app_(int->int->int)->int->int->int'('X','BA_G'),'ctx_v_int->int'('BBA_APP_V')),
                                                                                      ('g_int->int->int'('A_G','BA_G','BB_G') :- 'BB_G'='A_G'+'BA_G', 'ctx_g_int->int->int'('A_G','BA_G'),'ctx_v_int->int'('BBA_APP_V'))]
                                                                                    ) )).
+
+ut("naming   HO param passing let app = fun g x -> g x in app app (+)", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
+                                                                                            abs([g@l:(A->B), x@l:A],
+                                                                                                app(g@l:(A->B),
+                                                                                                    [x@l:A]
+                                                                                                   )@l:B
+                                                                                               )@l:((A->B)->A->B),
+                                                                                            app(app@l:(((int->int->int)->int->int->int)->(int->int->int)->int->int->int),
+                                                                                                [app@l:((int->int->int)->int->int->int),
+                                                                                                 (+)@l:(int->int->int)]
+                                                                                               )@l:(int->int->int)
+                                                                                           ), l, (int->int->int), v, empty,
+                                                                                        let(app@l:app:(g:(a_g:A->b_g:B)->f1_app:(x:A->ret_app:B)),
+                                                                                            abs([g@l:g:(a_g:A->b_g:B),x@l:x:A],
+                                                                                                app(g@l:g_ret_app:(a_g_ret_app:A->ret_app:B),
+                                                                                                    [x@l:a_g_ret_app:A]
+                                                                                                   )@l:ret_app:B
+                                                                                               )@l:app:(g:(a_g:A->b_g:B)->f1_app:(x:A->ret_app:B)),
+                                                                                            app(app@l:ret_app:(g:(g:(aa_g:int->b_g:(aba_g:int->abb_g:int))->f1_app:(ba_g:int->ret_app:(bba_g:int->bbb_g:int)))->bbb_app_v:(x:(a_x:int->b_x:(ba_x:int->bb_x:int))->v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int)))),
+                                                                                                [app@l:g:(g:(aa_g:int->b_g:(aba_g:int->abb_g:int))->f1_app:(ba_g:int->ret_app:(bba_g:int->bbb_g:int))),      (+)@l:x:(a_x:int->b_x:(ba_x:int->bb_x:int))]
+                                                                                               )@l:v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int))
+                                                                                           )@l:v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int)) ),
+                                                                            false
+                                                                        )).
 
 
 

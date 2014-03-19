@@ -456,8 +456,8 @@ typed_exp_to_named_exp(E@L:T, ELN) :-
 /*
 t_e_to_n_e1(+E, +L, +T, +X, +Env, -ELN)
 */
-t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N) :- !,
-        dpush_portray_clause(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N)-app-in),
+t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efn@Lf:Nf, ELNs)@L:X:Npre) :- !,
+        dpush_portray_clause(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efn@Lf:Nf, ELNs)@L:X:Npre)-app-in),
         (   ml_const(Ef) ->
             ml_const_to_name(Ef, C),
             format_atom('~p_~p', [C, X], Xf)
@@ -465,18 +465,25 @@ t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N) :- !,
             format_atom('~p_~p', [Ef, X], Xf)
         ;   format_atom('f_~p', [X], Xf)
         ),
-        t_e_to_n_e1(Ef, Lf, Tf, Xf, Env, Efr@Lfr:Nfr),
-        formals(Nfr, Formals),
+        t_e_to_n_e1(Ef, Lf, Tf, Xf, Env, Efn@Lf:PreNf),
+        formals(PreNf, Fs),
         (   foreach(Ei@Li:Ti, ELTs),
-            fromto(Formals, [Xi:_|Rest], Rest, _),
-            foreach(Ri, Rs),
+            fromto(Fs, [Xi:_|OutFs], OutFs, _),
+            foreach(ELNi, ELNs),
+            count(_, 1, Count),
             param(Env)
-        do  t_e_to_n_e1(Ei, Li, Ti, Xi, Env, Ri)
+        do  t_e_to_n_e1(Ei, Li, Ti, Xi, Env, ELNi)
         ),
-        length(ELTs, Count),
-        rename_return(Count, X, Nfr, Nfrr),
-        remove_formals(Count, Nfrr, N),
-        dpop_portray_clause(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efr@Lfr:Nfrr, Rs)@L:N)-app-out).
+        rev(ELNs, RevELNs),
+        roots(Count, PreNf, Rs),
+        rev(Rs, RevRs),
+        remove_formals(Count, PreNf, _:Npre),
+        (   foreach(_@_:Nj, RevELNs),
+            fromto(RevRs, [Rj|OutRs], OutRs, _),
+            fromto(X:Npre, InNf, Rj:(Nj->InNf), Nf)
+        do  true
+        ),
+        dpop_portray_clause(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efn@Lf:Nf, ELNs)@L:X:Npre)-app-out).
 t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre) :- !,
         dpush_portray_clause(t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre)-abs-in),
         (   foreach(Xi@Li:Ti, XLTs),
@@ -566,16 +573,15 @@ choose_names(+Nenv, +Nloc, -Nres)
 */
 choose_names(X:S, Y:T, R) :-
         (   compound(S) ->
-            S = (X1:S1->X2:S2),
-            T = (Y1:T1->Y2:T2),
-            (   compound(S1) ->
-                unname_type(Y1:T1, T1u),
-                name_type(X1, T1u, R1)
-            ;   R1 = Y1:T1
-            ),
-            choose_names(X2:S2, Y2:T2, R2),
+            S = (S1->S2),
+            T = (T1->T2),
+            choose_names(S1, T1, R1),
+            choose_names(S2, T2, R2),
             R = X:(R1->R2)
-        ;   R = Y:T
+        ;   (   compound(T) ->
+                R = X:T
+            ;   R = Y:T
+            )
         ).
 
 /*
@@ -589,17 +595,14 @@ formals(_:T, Formals) :-
         ).
 
 /*
-rename_return(+Pos, +X, +N, -NewN)
+roots(+Count, +N, -Roots)
 */
-rename_return(Pos, X, Y:T, NewN) :-
-        (   Pos > 0 ->
-            (   compound(T),
-                T = (N1->N2) ->
-                Posp is Pos - 1,
-                rename_return(Posp, X, N2, NewN2),
-                NewN = Y:(N1->NewN2)
-            )
-        ;   NewN = X:T
+roots(Count, X:T, Roots) :-
+        (   Count > 0, compound(T), T = (_->T2) ->
+            Count1 is Count - 1,
+            roots(Count1, T2, Rs),
+            Roots = [X|Rs]
+        ;   Roots = []
         ).
 
 /*
