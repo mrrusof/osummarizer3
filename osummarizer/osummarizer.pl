@@ -913,7 +913,12 @@ p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, D, S) :- !,
                 param(K, D)
             do  (   compound(Ti) ->
                     OutKs = InKs,
-                    Si = []
+                    mk_ctx_pred(Xi:Ti, Ctxi),
+                    mk_conj((Ctxi, K), CtxiK),
+                    p_e_to_c1(Ei, Li, Xi:Ti, CtxiK, Ki, D, Sprei),
+                    mk_summ_pred(Xi:Ti, Summi),
+                    mk_conj((Ki, Ctxi, K), SummReli),
+                    ord_add_element(Sprei, (Summi :- SummReli), Si)
                 ;   OutKs = (Ki, InKs),
                     p_e_to_c1(Ei, Li, Xi:Ti, K, Ki, D, Si)
                 )

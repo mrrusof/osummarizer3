@@ -2677,34 +2677,23 @@ ut("naming   HO param passing let app = fun g x -> g x in app (+) 1", t_e_to_n_e
                                                                                          )@l:v:(bba_app_v:int->bbb_app_v:int)
                                                                                      )@l:v:(bba_app_v:int->bbb_app_v:int))).
 ut("summ     HO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
-                                                                                        abs([g@l:(A->B), x@l:A],
-                                                                                            app(g@l:(A->B),
-                                                                                                [x@l:A]
-                                                                                               )@l:B
-                                                                                            )@l:((A->B)->A->B),
-                                                                                        app(app@l:((int->int->int)->int->int->int),
-                                                                                            [(+)@l:(int->int->int),
-                                                                                             1@l:int]
-                                                                                           )@l:(int->int)
-                                                                                       ), l, (int->int), v, empty, En@L:N),
-                                                                        mk_ctx_pred(N, Ctx),
-                                                                        n_e_to_c1(En, L, N, Ctx, empty, _Kd,
-                                                                                  [('ctx_app_(int->int->int)->int->int->int'('BA_APP_V','BBA_APP_V'):-'BA_APP_V'=1,'ctx_v_int->int'('BBA_APP_V')),
-                                                                                   ('g_int->int->int'('A_G','BA_G','BB_G') :- 'BB_G'='A_G'+'BA_G', 'ctx_g_int->int->int'('A_G','BA_G')),
-                                                                                   ('ctx_g_int->int->int'('A_G_RET_APP','ABA_APP_V'):-'A_G_RET_APP'='X','ctx_app_(int->int->int)->int->int->int'('X','ABA_APP_V'),'ctx_v_int->int'('BBA_APP_V')),
-                                                                                   ('app_(int->int->int)->int->int->int'('X','ABA_APP_V','ABB_APP_V'):-'g_int->int->int'('X','ABA_APP_V','ABB_APP_V'),'ctx_app_(int->int->int)->int->int->int'('X','ABA_APP_V'),'ctx_v_int->int'('BBA_APP_V'))]
-                                                                                 ) )).
-
-/*
-[('ctx_app_(int->int->int)->int->int->int'('BA_APP_V','BBA_APP_V'):-'BA_APP_V'=1),
- ('ctx_g_int->int->int'('A_G_RET_APP','ABA_APP_V'):-'A_G_RET_APP'='X','ctx_app_(int->int->int)->int->int->int'('X','ABA_APP_V')),
- ('app_(int->int->int)->int->int->int'('X','ABA_APP_V','ABB_APP_V'):-'g_int->int->int'('X','ABA_APP_V','ABB_APP_V'),'ctx_app_(int->int->int)->int->int->int'('X','ABA_APP_V'))]
-
-
-[('ctx_app_(int->int->int)->int->int->int'('BA_APP_V','BBA_APP_V'):-'BA_APP_V'=1,'ctx_v_int->int'('BBA_APP_V')),
- ('ctx_g_int->int->int'('A_G_RET_APP','ABA_APP_V'):-'A_G_RET_APP'='X','ctx_app_(int->int->int)->int->int->int'('X','ABA_APP_V'),'ctx_v_int->int'('BBA_APP_V')),
- ('app_(int->int->int)->int->int->int'('X','ABA_APP_V','ABB_APP_V'):-'g_int->int->int'('X','ABA_APP_V','ABB_APP_V'),'ctx_app_(int->int->int)->int->int->int'('X','ABA_APP_V'),'ctx_v_int->int'('BBA_APP_V'))]
-*/
+                                                                                          abs([g@l:(A->B), x@l:A],
+                                                                                              app(g@l:(A->B),
+                                                                                                  [x@l:A]
+                                                                                                 )@l:B
+                                                                                             )@l:((A->B)->A->B),
+                                                                                          app(app@l:((int->int->int)->int->int->int),
+                                                                                              [(+)@l:(int->int->int),
+                                                                                               1@l:int]
+                                                                                             )@l:(int->int)
+                                                                                         ), l, (int->int), v, empty, En@L:N),
+                                                                          mk_ctx_pred(N, Ctx),
+                                                                          n_e_to_c1(En, L, N, Ctx, empty, _Kd,
+                                                                                    [('ctx_app_(int->int->int)->int->int->int'('BA_APP_V','BBA_APP_V'):-'BA_APP_V'=1,'ctx_v_int->int'('BBA_APP_V')),
+                                                                                     ('ctx_g_int->int->int'('A_G_RET_APP','BA_G'):-'A_G_RET_APP'='X','ctx_app_(int->int->int)->int->int->int'('X','BA_G'),'ctx_v_int->int'('BBA_APP_V')),
+                                                                                     ('app_(int->int->int)->int->int->int'('X','BA_G','BB_G'):-'g_int->int->int'('X','BA_G','BB_G'),'ctx_app_(int->int->int)->int->int->int'('X','BA_G'),'ctx_v_int->int'('BBA_APP_V')),
+                                                                                     ('g_int->int->int'('A_G','BA_G','BB_G') :- 'BB_G'='A_G'+'BA_G', 'ctx_g_int->int->int'('A_G','BA_G'),'ctx_v_int->int'('BBA_APP_V'))]
+                                                                                   ) )).
 
 
 
