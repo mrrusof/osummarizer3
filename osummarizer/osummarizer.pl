@@ -679,23 +679,30 @@ n_e_to_p_e1(app(Ef@Lf:Xf:Tf, ELNs), L, X:T, app(Ekf@Lf:Xf:Tf, ELNKs)@L:X:T-->Kd)
             Ekf = Ef,
             (   foreach(Ei@Li:Xi:Ti, ELNs),
                 foreach(ELNKi, ELNKs),
-                foreach(Ai, Actuals),
+                fromto([], InAs, OutAs, RevActuals),
                 fromto([], InKs, OutKs, Ks)
             do  n_e_to_p_e1(Ei, Li, Xi:Ti, ELNKi),
-                (   ml_const(Ei) ->
+                (   compound(Ti) ->
+                    OutAs = InAs,
+                    OutKs = InKs
+                ;   ml_const(Ei) ->
                     (_-->(_=Ai)) = ELNKi,
+                    OutAs = [Ai|InAs],
                     OutKs = InKs
                 ;   ml_id(Ei) ->
                     uppercase_atom(Ei, Ai),
+                    OutAs = [Ai|InAs],
                     OutKs = InKs
                 ;   uppercase_atom(Xi, Ai),
                     (_-->Ki) = ELNKi,
+                    OutAs = [Ai|InAs],
                     OutKs = [Ki|InKs]
                 )
             ),
             formals(X:T, NFormals),
             maplist(name_of_type, NFormals, Formals),
             maplist(uppercase_atom, Formals, UFormals),
+            rev(RevActuals, Actuals),
             append(Actuals, UFormals, AsFs),
             return(X:T, R:B),
             uppercase_atom(R, Ru),
