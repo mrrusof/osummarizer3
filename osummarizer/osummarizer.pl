@@ -566,15 +566,16 @@ choose_names(+Nenv, +Nloc, -Nres)
 */
 choose_names(X:S, Y:T, R) :-
         (   compound(S) ->
-            S = (S1->S2),
-            T = (T1->T2),
-            choose_names(S1, T1, R1),
-            choose_names(S2, T2, R2),
+            S = (X1:S1->X2:S2),
+            T = (Y1:T1->Y2:T2),
+            (   compound(S1) ->
+                unname_type(Y1:T1, T1u),
+                name_type(X1, T1u, R1)
+            ;   R1 = Y1:T1
+            ),
+            choose_names(X2:S2, Y2:T2, R2),
             R = X:(R1->R2)
-        ;   (   compound(T) ->
-                R = X:T
-            ;   R = Y:T
-            )
+        ;   R = Y:T
         ).
 
 /*
@@ -815,7 +816,7 @@ return(X:T, R) :-
 
 
 % **********************************************************************
-% Function definitions of expressions
+% Procedure definitions of expressions
 
 path_exp_to_fun_defs(E@L:N-->K, D, Dd) :-
         p_e_to_f_d1(E, L, N, true, K, D, Dd).

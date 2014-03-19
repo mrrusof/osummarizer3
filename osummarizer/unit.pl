@@ -10,7 +10,7 @@
 
 ut("PP typed const 10", pp(10@loc('max.ml', 0, 0, 0, 0, 0, 0):int, "10:int")).
 ut("PP typed const \"hola\"", pp("hola"@loc('max.ml', 0, 0, 0, 0, 0, 0):string, "\"hola\":string")).
-ut("PP typed const +", pp((+)@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int), "(+):(int -> int -> int)")).
+ut("PP typed const (+):(int->int->int)", pp((+)@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int), "(+):(int -> int -> int)")).
 ut("PP typed const (>):(int->int->int)", pp((>)@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool), "(>):(int -> int -> bool)")).
 ut("PP typed id x", pp(x@loc('max.ml', 0, 0, 0, 0, 0, 0):int, "x:int")).
 ut("PP typed id inc", pp(inc@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int), "inc:(int -> int)")).
@@ -2654,7 +2654,29 @@ ut("summ   polymorphic let max1 = fun x2 y3 -> ... in max1 3 1", (   MAX1 = abs(
                                                                                [('ctx_max1_int->int->int'('A_MAX1_V', 'BA_MAX1_V') :- 'BA_MAX1_V'=1, 'A_MAX1_V'=3),
                                                                                 ('max1_int->int->int'('X2', 'Y3', 'RET_MAX1') :- (('C_RET_MAX1'=1 -> 'RET_MAX1'='X2' ; 'RET_MAX1'='Y3'), ('X2'>'Y3' -> 'C_RET_MAX1'=1 ; 'C_RET_MAX1'=0), 'ctx_max1_int->int->int'('X2', 'Y3')))]))).
 
-ut("summ   HO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
+ut("naming   HO param passing let app = fun g x -> g x in app (+) 1", t_e_to_n_e1(let(app@l:((A->B)->A->B),
+                                                                                      abs([g@l:(A->B), x@l:A],
+                                                                                          app(g@l:(A->B),
+                                                                                              [x@l:A]
+                                                                                             )@l:B
+                                                                                         )@l:((A->B)->A->B),
+                                                                                      app(app@l:((int->int->int)->int->int->int),
+                                                                                          [(+)@l:(int->int->int),
+                                                                                           1@l:int]
+                                                                                         )@l:(int->int)
+                                                                                     ), l, (int->int), v, empty,
+                                                                                  let(app@l:app:(g:(a_g:A->b_g:B)->f1_app:(x:A->ret_app:B)),
+                                                                                      abs([g@l:g:(a_g:A->b_g:B),x@l:x:A],
+                                                                                          app(g@l:g_ret_app:(a_g_ret_app:A->ret_app:B),
+                                                                                              [x@l:a_g_ret_app:A]
+                                                                                             )@l:ret_app:B
+                                                                                         )@l:app:(g:(a_g:A->b_g:B)->f1_app:(x:A->ret_app:B)),
+                                                                                      app(app@l:app_v:(g:(a_g:int->b_g:(ba_g:int->bb_g:int))->f1_app:(ba_app_v:int->v:(bba_app_v:int->bbb_app_v:int))),
+                                                                                          [(+)@l:g:(a_g:int->b_g:(ba_g:int->bb_g:int)),
+                                                                                           1@l:ba_app_v:int]
+                                                                                         )@l:v:(bba_app_v:int->bbb_app_v:int)
+                                                                                     )@l:v:(bba_app_v:int->bbb_app_v:int))).
+ut("summ     HO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
                                                                                         abs([g@l:(A->B), x@l:A],
                                                                                             app(g@l:(A->B),
                                                                                                 [x@l:A]
@@ -2665,10 +2687,13 @@ ut("summ   HO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to_n
                                                                                              1@l:int]
                                                                                            )@l:(int->int)
                                                                                        ), l, (int->int), v, empty, En@L:N),
-                                                                        n_e_to_p_e1(En, L, N, Ep@L:N-->K),
-                                                                        p_e_to_f_d1(Ep, L, N, true, K, empty, D),
-                                                                        p_e_to_c1(Ep, L, N, true, K, D, _S),
-                                                                        false )).
+                                                                        mk_ctx_pred(N, Ctx),
+                                                                        n_e_to_c1(En, L, N, Ctx, empty, _Kd,
+                                                                                  [('ctx_app_(int->int->int)->int->int->int'('BA_APP_V','BBA_APP_V'):-'BA_APP_V'=1,'ctx_v_int->int'('BBA_APP_V')),
+                                                                                   ('g_int->int->int'('A_G','BA_G','BB_G') :- 'BB_G'='A_G'+'BA_G', 'ctx_g_int->int->int'('A_G','BA_G')),
+                                                                                   ('ctx_g_int->int->int'('A_G_RET_APP','ABA_APP_V'):-'A_G_RET_APP'='X','ctx_app_(int->int->int)->int->int->int'('X','ABA_APP_V'),'ctx_v_int->int'('BBA_APP_V')),
+                                                                                   ('app_(int->int->int)->int->int->int'('X','ABA_APP_V','ABB_APP_V'):-'g_int->int->int'('X','ABA_APP_V','ABB_APP_V'),'ctx_app_(int->int->int)->int->int->int'('X','ABA_APP_V'),'ctx_v_int->int'('BBA_APP_V'))]
+                                                                                 ) )).
 
 /*
 [('ctx_app_(int->int->int)->int->int->int'('BA_APP_V','BBA_APP_V'):-'BA_APP_V'=1),
