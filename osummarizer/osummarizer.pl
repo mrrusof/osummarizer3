@@ -897,12 +897,12 @@ p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, D, S) :- !,
                 % TODO: HO parameter passing here
                 % analyze definition of Ef under appropriate context
                 mk_ctx_pred(N0, Ctx0),
-                mk_conj((Ctx0, K0), CtxK0),
-                n_e_to_c1(E0, L0, N0, CtxK0, D, Kd0, S0),
+                mk_conj((Ctx0, K0), Ctx0K0),
+                n_e_to_c1(E0, L0, N0, Ctx0K0, D, Kd0, S0),
                 % construct summary constraint for Ef
                 mk_summ_pred(N0, Summ),
-                mk_conj((Kd0, Ctx0, K0), Summary),
-                ord_add_element(S0, (Summ :- Summary), S1)
+                mk_conj((Kd0, Ctx0, K0), SummRel),
+                ord_add_element(S0, (Summ :- SummRel), S1)
             ;   S1=[]                              % Ef is formal parameter
             ),
             % construct parameter passing summary for call to Ef
