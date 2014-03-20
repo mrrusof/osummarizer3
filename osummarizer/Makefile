@@ -28,7 +28,7 @@ unit:
 	(while read -r l; do echo "$$l"; done) | \
         tee /tmp/osum-unit
 
-check: unit tests
+check: osummarizer unit tests
 	@grep FAILED /tmp/osum-tests /tmp/osum-unit 2>/dev/null | sed 's/[^:]*://' >/tmp/osum-failed
 	@test -s /tmp/osum-failed && echo '\nFAILED TESTS:\n' && cat /tmp/osum-failed
 
