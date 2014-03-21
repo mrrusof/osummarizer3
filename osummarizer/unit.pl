@@ -1422,7 +1422,7 @@ ut("summ     let plus = (+) in ()", (   n_e_to_p_e1(let(plus@l:plus:(a_plus:int-
                                                         (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
                                                         unit@l:v:unit
                                                        ), l, v:unit, Ep@L:N-->K),
-                                        p_e_to_p_d1(Ep, L, N, true, K, empty, A),
+                                        p_e_to_p_d1(Ep, L, N, empty, true, K, empty, A),
                                         p_e_to_c1(Ep, L, N, true, K, A, []))).
 
 
@@ -1706,29 +1706,45 @@ in
                                                                              { plus_i->i->i(X,Y,R)       :- R=X+Y, ctx_plus_i->i->i(X,Y).
                                                                                ctx_plus_i->i->i(X_V,Y_V) :- X_V=1, Y_V=1.                 }
 */
-ut("path            let plus = (+) in plus 1 2", n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
-                                                                 (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
-                                                                 app(plus@l:plus_v:(a_plus_v:int->b_plus:(ba_plus_v:int->v:int)),
-                                                                     [1@l:a_plus_v:int,
-                                                                      2@l:ba_plus_v:int]
-                                                                    )@l:v:int
-                                                                ), l, v:int,
-                                                             let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
-                                                                 (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
-                                                                 app(plus@l:plus_v:(a_plus_v:int->b_plus:(ba_plus_v:int->v:int)),
-                                                                     [1@l:a_plus_v:int --> ('A_PLUS_V'=1),
-                                                                      2@l:ba_plus_v:int --> ('BA_PLUS_V'=2)]
-                                                                    )@l:v:int --> 'plus_int->int->int'(1,2,'V')
-                                                                )@l:v:int --> 'plus_int->int->int'(1,2,'V'))).
-ut("summ            let plus = (+) in plus 1 2", (   n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
-                                                                     (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
+ut("naming         let plus = (+) in plus 1 2", t_e_to_n_e1(let(plus@l:(int->int->int),
+                                                                (+)@l:(int->int->int),
+                                                                app(plus@l:(int->int->int),
+                                                                    [1@l:int,
+                                                                     2@l:int]
+                                                                   )@l:int
+                                                               ), l, int, v, empty,
+                                                            let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
+                                                                (+)@l:(int->(int->int)),
+                                                                app(plus@l:plus_v:(a_plus_v:int->b_plus:(ba_plus_v:int->v:int)),
+                                                                    [1@l:a_plus_v:int,
+                                                                     2@l:ba_plus_v:int]
+                                                                   )@l:v:int
+                                                               )@l:v:int)).
+ut("path            let plus = (+) in plus 1 2", (   t_e_to_n_e1(let(plus@l:(int->int->int),
+                                                                (+)@l:(int->int->int),
+                                                                app(plus@l:(int->int->int),
+                                                                    [1@l:int,
+                                                                     2@l:int]
+                                                                   )@l:int
+                                                               ), l, int, v, empty, En@L:N),
+                                                     n_e_to_p_e1(En, L, N,
+                                                                 let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
+                                                                     (+)@l:(int->int->int),
                                                                      app(plus@l:plus_v:(a_plus_v:int->b_plus:(ba_plus_v:int->v:int)),
-                                                                         [1@l:a_plus_v:int,
-                                                                          2@l:ba_plus_v:int]
-                                                                        )@l:v:int
-                                                                    ), l, v:int, Ep@L:N-->K),
-                                                     p_e_to_p_d1(Ep, L, N, true, K, empty, A),
-                                                     p_e_to_c1(Ep, L, N, true, K, A,
+                                                                         [1@l:a_plus_v:int --> ('A_PLUS_V'=1),
+                                                                          2@l:ba_plus_v:int --> ('BA_PLUS_V'=2)]
+                                                                        )@l:v:int --> 'plus_int->int->int'(1,2,'V')
+                                                                    )@l:v:int --> 'plus_int->int->int'(1,2,'V')))).
+ut("summ            let plus = (+) in plus 1 2", (   t_e_to_n_e1(let(plus@l:(int->int->int),
+                                                                (+)@l:(int->int->int),
+                                                                app(plus@l:(int->int->int),
+                                                                    [1@l:int,
+                                                                     2@l:int]
+                                                                   )@l:int
+                                                               ), l, int, v, empty, En@L:N),
+                                                     n_e_to_p_e1(En, L, N, Ep@L:N-->K),
+                                                     p_e_to_p_d1(Ep, L, N, empty, true, K, empty, D),
+                                                     p_e_to_c1(Ep, L, N, true, K, D,
                                                                [('ctx_plus_int->int->int'('A_PLUS_V', 'BA_PLUS_V') :- 'BA_PLUS_V'=2, 'A_PLUS_V'=1),
                                                                 ('plus_int->int->int'('A_PLUS', 'BA_PLUS', 'BB_PLUS') :- 'BB_PLUS'='A_PLUS'+'BA_PLUS', 'ctx_plus_int->int->int'('A_PLUS', 'BA_PLUS'))]))).
 ut("Negative summ 1 let plus = (+) in plus 1 2", (   n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
