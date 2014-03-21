@@ -457,7 +457,7 @@ typed_exp_to_named_exp(E@L:T, ELN) :-
 t_e_to_n_e1(+E, +L, +T, +X, +Env, -ELN)
 */
 t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efn@Lf:Nf, ELNs)@L:X:Npre) :- !,
-        dpush_portray_clause(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efn@Lf:Nf, ELNs)@L:X:Npre)-app-in),
+        dpush_portray_clause(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efn@Lf:Nf, ELNs)@L:X:Npre)-in),
         (   ml_const(Ef) ->
             ml_const_to_name(Ef, C),
             format_atom('~p_~p', [C, X], Xf)
@@ -483,9 +483,9 @@ t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efn@Lf:Nf, ELNs)@L:X:Npre) :-
             fromto(X:Npre, InNf, Rj:(Nj->InNf), Nf)
         do  true
         ),
-        dpop_portray_clause(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efn@Lf:Nf, ELNs)@L:X:Npre)-app-out).
+        dpop_portray_clause(t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efn@Lf:Nf, ELNs)@L:X:Npre)-out).
 t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre) :- !,
-        dpush_portray_clause(t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre)-abs-in),
+        dpush_portray_clause(t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre)-in),
         (   foreach(Xi@Li:Ti, XLTs),
             foreach(Xi@Li:Ni, XLNs),
             fromto(Env, InEnv, OutEnv, Envb)
@@ -503,17 +503,17 @@ t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre) 
         do  OutCount is InCount - 1,
             format_atom('f~d_~p', [OutCount, X], Fj)
         ),
-        dpop_portray_clause(t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre)-abs-out).
+        dpop_portray_clause(t_e_to_n_e1(abs(XLTs, Eb@Lb:Tb), L, T, X, Env, abs(XLNs, Ebr@Lbr:Nbr)@L:X:Npre)-out).
 t_e_to_n_e1(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T, X, Env, ite(R1, R2, R3)@L:N) :- !,
-        dpush_portray_clause(t_e_to_n_e1(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T, X, Env, ite(R1, R2, R3)@L:N)-ite-in),
+        dpush_portray_clause(t_e_to_n_e1(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T, X, Env, ite(R1, R2, R3)@L:N)-in),
         format_atom('c_~p', [X], X1),
         t_e_to_n_e1(E1, L1, T1, X1, Env, R1),
         t_e_to_n_e1(E2, L2, T2, X,  Env, R2),
         t_e_to_n_e1(E3, L3, T3, X,  Env, R3),
         name_type(X, T, N),
-        dpop_portray_clause(t_e_to_n_e1(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T, X, Env, ite(R1, R2, R3)@L:N)-ite-out).
+        dpop_portray_clause(t_e_to_n_e1(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T, X, Env, ite(R1, R2, R3)@L:N)-out).
 t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, R1, E2rL2r:N2)@L:N2) :- !,
-        dpush_portray_clause(t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, R1, E2rL2r:N2)@L:N2)-let-in),
+        dpush_portray_clause(t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, R1, E2rL2r:N2)@L:N2)-in),
         (   function_type(T1) ->
             R1 = E1@L1:T1,
             t_e_to_n_e1(E1, L1, T1, Y, Env, _:N1)
@@ -522,19 +522,19 @@ t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, R1, E2r
         ),
         avl_store(Y, Env, N1, Env1),
         t_e_to_n_e1(E2, L2, T2, X, Env1, E2rL2r:N2),
-        dpop_portray_clause(t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, R1, E2rL2r:N2)@L:N2)-let-out).
+        dpop_portray_clause(t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, R1, E2rL2r:N2)@L:N2)-out).
 t_e_to_n_e1(assert(Ec@Lc:Tc), L, T, X, Env, assert(Rc)@L:N) :- !,
-        dpush_portray_clause(t_e_to_n_e1(assert(Ec@Lc:Tc), L, T, X, Env, assert(Rc)@L:N)-assert-in),
+        dpush_portray_clause(t_e_to_n_e1(assert(Ec@Lc:Tc), L, T, X, Env, assert(Rc)@L:N)-in),
         format_atom('ase_~p', [X], Xc),
         t_e_to_n_e1(Ec, Lc, Tc, Xc, Env, Rc),
         name_type(X, T, N),
-        dpop_portray_clause(t_e_to_n_e1(assert(Ec@Lc:Tc), L, T, X, Env, assert(Rc)@L:N)-assert-out).
+        dpop_portray_clause(t_e_to_n_e1(assert(Ec@Lc:Tc), L, T, X, Env, assert(Rc)@L:N)-out).
 t_e_to_n_e1(assume(Ec@Lc:Tc), L, T, X, Env, assume(Rc)@L:N) :- !,
-        dpush_portray_clause(t_e_to_n_e1(assume(Ec@Lc:Tc), L, T, X, Env, assume(Rc)@L:N)-assume-in),
+        dpush_portray_clause(t_e_to_n_e1(assume(Ec@Lc:Tc), L, T, X, Env, assume(Rc)@L:N)-in),
         format_atom('asu_~p', [X], Xc),
         t_e_to_n_e1(Ec, Lc, Tc, Xc, Env, Rc),
         name_type(X, T, N),
-        dpop_portray_clause(t_e_to_n_e1(assume(Ec@Lc:Tc), L, T, X, Env, assume(Rc)@L:N)-assume-out).
+        dpop_portray_clause(t_e_to_n_e1(assume(Ec@Lc:Tc), L, T, X, Env, assume(Rc)@L:N)-out).
 t_e_to_n_e1(E, L, T, X, Env, E@L:N) :-
         dpush_portray_clause(t_e_to_n_e1(E, L, T, X, Env, E@L:N)-id-cst-in),
         (   ml_const(E) ->
