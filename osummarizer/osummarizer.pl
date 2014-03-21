@@ -735,17 +735,17 @@ n_e_to_p_e1(ite(E1@L1:X1:T1, E2@L2:N2, E3@L3:N3), L, N, ite(E1L1N1-->K1, E2L2N2-
         n_e_to_p_e1(E2, L2, N2, E2L2N2-->K2),
         n_e_to_p_e1(E3, L3, N3, E3L3N3-->K3),
         dpop_portray_clause(n_e_to_p_e1(ite(E1@L1:X1:T1, E2@L2:N2, E3@L3:N3), L, N, ite(E1L1N1-->K1, E2L2N2-->K2, E3L3N3-->K3)@L:N-->((X1u=1 -> K2 ; K3), K1))-out).
-n_e_to_p_e1(let(YLyN1, E1@L1:X1:T1, E2@L2:N2), L, N2, let(YLyN1, E1L1N1K1, E2L2N2-->K2)@L:N2-->Kd) :- !,
-        dpush_portray_clause(n_e_to_p_e1(let(YLyN1, E1@L1:X1:T1, E2@L2:N2), L, N2, let(YLyN1, E1L1N1K1, E2L2N2-->K2)@L:N2-->Kd)-in),
+n_e_to_p_e1(let(YLyNy, E1L1TorN1, E2@L2:N2), L, N2, let(YLyNy, R1, E2L2N2-->K2)@L:N2-->Kd) :- !,
+        dpush_portray_clause(n_e_to_p_e1(let(YLyNy, E1L1TorN1, E2@L2:N2), L, N2, let(YLyNy, R1, E2L2N2-->K2)@L:N2-->Kd)-in),
         n_e_to_p_e1(E2, L2, N2, E2L2N2-->K2),
-        (   function_type(T1) ->
-            E1L1N1K1 = E1@L1:X1:T1,
-            Kd = K2
-        ;   n_e_to_p_e1(E1, L1, X1:T1, E1L1N1K1),
-            (_-->K1) = (E1L1N1K1),
+        (   E1@L1:X1:T1 = E1L1TorN1 ->
+            n_e_to_p_e1(E1, L1, X1:T1, R1),
+            _-->K1 = R1,
             mk_conj((K2, K1), Kd)
+        ;   R1 = E1L1TorN1,
+            Kd = K2
         ),
-        dpop_portray_clause(n_e_to_p_e1(let(YLyN1, E1@L1:X1:T1, E2@L2:N2), L, N2, let(YLyN1, E1L1N1K1, E2L2N2-->K2)@L:N2-->Kd)-out).
+        dpop_portray_clause(n_e_to_p_e1(let(YLyNy, E1L1TorN1, E2@L2:N2), L, N2, let(YLyNy, R1, E2L2N2-->K2)@L:N2-->Kd)-out).
 n_e_to_p_e1(assert(Ec@Lc:Xc:Tc), L, N, assert(ELNc-->Kc)@L:N-->(Xcu=1, Kc)) :- !,
         dpush_portray_clause(n_e_to_p_e1(assert(Ec@Lc:Xc:Tc), L, N, assert(ELNc-->Kc)@L:N-->(Xcu=1, Kc))-in),
         n_e_to_p_e1(Ec, Lc, Xc:Tc, ELNc-->Kc),
