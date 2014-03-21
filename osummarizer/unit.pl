@@ -435,16 +435,18 @@ ut("naming max int", (   E@L:T = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int
                                     )@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
                          t_e_to_n_e1(E, L, T, v, empty,
                                      let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int)),
-                                         abs(['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):x2:int,
-                                              'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):y3:int],
-                                             ite(app('>'@loc('max.ml', 0, 0, 0, 0, 0, 0):gt_c_ret_max1:(a_gt_c_ret_max1:int -> b_gt_c_ret_max1:(ba_gt_c_ret_max1:int -> c_ret_max1:bool)),
-                                                     ['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):a_gt_c_ret_max1:int,
-                                                      'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):ba_gt_c_ret_max1:int]
-                                                     )@loc('max.ml', 0, 0, 0, 0, 0, 0):c_ret_max1:bool,
-                                                 'x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):ret_max1:int,
-                                                 'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):ret_max1:int
-                                                 )@loc('max.ml', 0, 0, 0, 0, 0, 0):ret_max1:int
-                                            )@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int)),
+                                         abs(['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
+                                              'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):int
+                                              ],
+                                             ite(app('>'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
+                                                     ['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
+                                                      'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):int
+                                                      ]
+                                                    )@loc('max.ml', 0, 0, 0, 0, 0, 0):bool,
+                                                 'x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
+                                                 'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):int
+                                                 )@loc('max.ml', 0, 0, 0, 0, 0, 0):int
+                                            )@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
                                          app('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1_v:(a_max1_v:int -> f1_max1:(ba_max1_v:int -> v:int)),
                                              [3@loc('max.ml', 0, 0, 0, 0, 0, 0):a_max1_v:int,
                                               1@loc('max.ml', 0, 0, 0, 0, 0, 0):ba_max1_v:int]
@@ -1468,9 +1470,9 @@ ut("naming   let g = add 1 in ()", t_e_to_n_e1(let(g@l2:(int-> int -> int),
                                                    unit@l6:unit
                                                    ), l1, unit, v, node(add, add:(a_add:int -> b_add:(ba_add:int -> bb_add:int)), 0, empty, empty),
                                                let(g@l2:g:(ba_add_g:int->bb_add_g:int),
-                                                   app(add@l4:add_g:(a_add_g:int->g:(ba_add_g:int->bb_add_g:int)),
-                                                       [1@l5:a_add_g:int]
-                                                      )@l3:g:(ba_add_g:int->bb_add_g:int),
+                                                   app(add@l4:(int -> int -> int),
+                                                       [1@l5:int]
+                                                      )@l3:(int -> int),
                                                    unit@l6:v:unit
                                                   )@l1:v:unit)).
 ut("path     let g = add 1 in ()", (   t_e_to_n_e1(let(g@l2:(int-> int -> int),
@@ -2407,22 +2409,22 @@ ut("naming  assume-assert", t_e_to_n_e1(let('f1'@l:(int -> unit),
                                                )@l:unit
                                            ), l, unit, v, empty,
                                         let(f1@l:f1:(x2:int->ret_f1:unit),
-                                            abs([x2@l:x2:int],
-                                                let('_3'@l:'_3':unit,
-                                                    assume(
-                                                           app(> @l:gt_asu__3:(a_gt_asu__3:int->b_gt_asu__3:(ba_gt_asu__3:int->asu__3:bool)),
-                                                               [x2@l:a_gt_asu__3:int,
-                                                                1@l:ba_gt_asu__3:int]
-                                                              )@l:asu__3:bool
-                                                          )@l:'_3':unit,
-                                                    assert(
-                                                           app(> @l:gt_ase_ret_f1:(a_gt_ase_ret_f1:int->b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int->ase_ret_f1:bool)),
-                                                               [x2@l:a_gt_ase_ret_f1:int,
-                                                                0@l:ba_gt_ase_ret_f1:int]
-                                                              )@l:ase_ret_f1:bool
-                                                          )@l:ret_f1:unit
-                                                   )@l:ret_f1:unit
-                                               )@l:f1:(x2:int->ret_f1:unit),
+                                            abs(['x2'@l:int],
+                                                let('_3'@l:unit,
+                                                    assume(app('>'@l:(int -> int -> bool),
+                                                               ['x2'@l:int,
+                                                                1@l:int
+                                                               ]
+                                                              )@l:bool
+                                                          )@l:unit,
+                                                    assert(app('>'@l:(int -> int -> bool),
+                                                               ['x2'@l:int,
+                                                                0@l:int
+                                                               ]
+                                                              )@l:bool
+                                                          )@l:unit
+                                                   )@l:unit
+                                               )@l:(int -> unit),
                                             app(f1@l:f1_v:(a_f1_v:int->v:unit),
                                                 [app(nondet@l:nondet_a_f1_v:(a_nondet_a_f1_v:unit->a_f1_v:int),
                                                      [unit@l:a_nondet_a_f1_v:unit]
@@ -2568,7 +2570,7 @@ ut("naming polymorphic let gt = (>) in gt 2 1", t_e_to_n_e1(let(gt@l:(A->A->bool
                                                                    )@l:bool
                                                                ), l, bool, v, empty,
                                                             let(gt@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)),
-                                                                (>)@l:gt:(a_gt:A->b_gt:(ba_gt:A->bb_gt:bool)),
+                                                                (>)@l:(A->A->bool),
                                                                 app(gt@l:gt_v:(a_gt_v:int->b_gt:(ba_gt_v:int->v:bool)),
                                                                     [2@l:a_gt_v:int,
                                                                      1@l:ba_gt_v:int]
@@ -2661,11 +2663,11 @@ ut("naming   HO param passing let app = fun g x -> g x in app (+) 1", t_e_to_n_e
                                                                                          )@l:(int->int)
                                                                                      ), l, (int->int), v, empty,
                                                                                   let(app@l:app:(g:(a_g:A->b_g:B)->f1_app:(x:A->ret_app:B)),
-                                                                                      abs([g@l:g:(a_g:A->b_g:B),x@l:x:A],
-                                                                                          app(g@l:g_ret_app:(a_g_ret_app:A->ret_app:B),
-                                                                                              [x@l:a_g_ret_app:A]
-                                                                                             )@l:ret_app:B
-                                                                                         )@l:app:(g:(a_g:A->b_g:B)->f1_app:(x:A->ret_app:B)),
+                                                                                      abs([g@l:(A->B), x@l:A],
+                                                                                          app(g@l:(A->B),
+                                                                                              [x@l:A]
+                                                                                             )@l:B
+                                                                                         )@l:((A->B)->A->B),
                                                                                       app(app@l:app_v:(g:(a_g:int->b_g:(ba_g:int->bb_g:int))->f1_app:(ba_app_v:int->v:(bba_app_v:int->bbb_app_v:int))),
                                                                                           [(+)@l:g:(a_g:int->b_g:(ba_g:int->bb_g:int)),
                                                                                            1@l:ba_app_v:int]
@@ -2702,17 +2704,19 @@ ut("naming   HO param passing let app = fun g x -> g x in app app (+)", (   t_e_
                                                                                                )@l:(int->int->int)
                                                                                            ), l, (int->int->int), v, empty,
                                                                                         let(app@l:app:(g:(a_g:A->b_g:B)->f1_app:(x:A->ret_app:B)),
-                                                                                            abs([g@l:g:(a_g:A->b_g:B),x@l:x:A],
-                                                                                                app(g@l:g_ret_app:(a_g_ret_app:A->ret_app:B),
-                                                                                                    [x@l:a_g_ret_app:A]
-                                                                                                   )@l:ret_app:B
-                                                                                               )@l:app:(g:(a_g:A->b_g:B)->f1_app:(x:A->ret_app:B)),
-                                                                                            app(app@l:ret_app:(g:(g:(aa_g:int->b_g:(aba_g:int->abb_g:int))->f1_app:(ba_g:int->ret_app:(bba_g:int->bbb_g:int)))->bbb_app_v:(x:(a_x:int->b_x:(ba_x:int->bb_x:int))->v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int)))),
-                                                                                                [app@l:g:(g:(aa_g:int->b_g:(aba_g:int->abb_g:int))->f1_app:(ba_g:int->ret_app:(bba_g:int->bbb_g:int))),      (+)@l:x:(a_x:int->b_x:(ba_x:int->bb_x:int))]
+                                                                                            abs([g@l:(A->B),x@l:A],
+                                                                                                app(g@l:(A->B),
+                                                                                                    [x@l:A]
+                                                                                                   )@l:B
+                                                                                               )@l:((A->B)->A->B),
+                                                                                            app(app@l:app_v:(g:(g:(aa_g:int->b_g:(aba_g:int->abb_g:int))->f1_app:(ba_g:int->ret_app:(bba_g:int->bbb_g:int)))->f1_app:(x:(a_x:int->b_x:(ba_x:int->bb_x:int))->v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int)))),
+                                                                                                [app@l:g:(g:(aa_g:int->b_g:(aba_g:int->abb_g:int))->f1_app:(ba_g:int->ret_app:(bba_g:int->bbb_g:int))),
+                                                                                                 (+)@l:x:(a_x:int->b_x:(ba_x:int->bb_x:int))]
                                                                                                )@l:v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int))
-                                                                                           )@l:v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int)) ),
-                                                                            false
-                                                                        )).
+                                                                                           )@l:v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int)) ))).
+
+
+
 
 
 

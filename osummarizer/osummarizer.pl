@@ -512,12 +512,17 @@ t_e_to_n_e1(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T, X, Env, ite(R1, R2, R3)@L:N
         t_e_to_n_e1(E3, L3, T3, X,  Env, R3),
         name_type(X, T, N),
         dpop_portray_clause(t_e_to_n_e1(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T, X, Env, ite(R1, R2, R3)@L:N)-ite-out).
-t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, E1rL1r:N1, E2rL2r:N2)@L:N2) :- !,
-        dpush_portray_clause(t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, E1rL1r:N1, E2rL2r:N2)@L:N2)-let-in),
-        t_e_to_n_e1(E1, L1, T1, Y, Env, E1rL1r:N1),
-        avl_store(Y, Env, N1, InEnv),
-        t_e_to_n_e1(E2, L2, T2, X, InEnv, E2rL2r:N2),
-        dpop_portray_clause(t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, E1rL1r:N1, E2rL2r:N2)@L:N2)-let-out).
+t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, R1, E2rL2r:N2)@L:N2) :- !,
+        dpush_portray_clause(t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, R1, E2rL2r:N2)@L:N2)-let-in),
+        (   function_type(T1) ->
+            R1 = E1@L1:T1,
+            t_e_to_n_e1(E1, L1, T1, Y, Env, _:N1)
+        ;   t_e_to_n_e1(E1, L1, T1, Y, Env, R1),
+            _:N1 = R1
+        ),
+        avl_store(Y, Env, N1, Env1),
+        t_e_to_n_e1(E2, L2, T2, X, Env1, E2rL2r:N2),
+        dpop_portray_clause(t_e_to_n_e1(let(Y@Ly:Ty, E1@L1:T1, E2@L2:T2), L, T, X, Env, let(Y@Ly:N1, R1, E2rL2r:N2)@L:N2)-let-out).
 t_e_to_n_e1(assert(Ec@Lc:Tc), L, T, X, Env, assert(Rc)@L:N) :- !,
         dpush_portray_clause(t_e_to_n_e1(assert(Ec@Lc:Tc), L, T, X, Env, assert(Rc)@L:N)-assert-in),
         format_atom('ase_~p', [X], Xc),
