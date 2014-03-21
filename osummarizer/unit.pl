@@ -1413,7 +1413,7 @@ ut("path     let plus = (+) in ()", n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_p
                                                     (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
                                                     unit@l:v:unit --> ('V'=1)
                                                    )@l:v:unit --> ('V'=1))).
-ut("abs      let plus = (+) in ()", (   n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
+ut("procs    let plus = (+) in ()", (   n_e_to_p_e1(let(plus@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
                                                         (+)@l:plus:(a_plus:int->b_plus:(ba_plus:int->bb_plus:int)),
                                                         unit@l:v:unit
                                                    ), l, v:unit, Ep@L:N-->K),
@@ -1996,7 +1996,7 @@ ut("path   assert true", n_e_to_p_e1(assert(true@l2:ase_v:bool), l1, v:unit,
                                      assert(
                                             true@l2:ase_v:bool --> ('ASE_V'=1)
                                            )@l1:v:unit --> ('ASE_V'=1, 'ASE_V'=1))).
-ut("abs    assert true", (   n_e_to_p_e1(assert(true@l2:ase_v:bool), l1, v:unit, Ep@L:N-->K),
+ut("procs  assert true", (   n_e_to_p_e1(assert(true@l2:ase_v:bool), l1, v:unit, Ep@L:N-->K),
                              p_e_to_p_d1(Ep, L, N, true, K, empty, empty))).
 ut("summ   assert true", (   n_e_to_p_e1(assert(true@l2:ase_v:bool), l1, v:unit, Ep@L:N-->K),
                              p_e_to_p_d1(Ep, L, N, true, K, empty, A),
@@ -2031,7 +2031,7 @@ ut("path   assert(comp 1 2)", (   t_e_to_n_e1(assert(app(comp@l:(int->int->bool)
                                                           2@l:ba_comp_ase_v:int --> ('BA_COMP_ASE_V'=2)]
                                                         )@l:ase_v:bool --> 'comp_int->int->bool'(1, 2, 'ASE_V')
                                                     )@l:v:unit --> ('ASE_V'=1, 'comp_int->int->bool'(1, 2, 'ASE_V'))))).
-ut("abs    assert(comp 1 2)", (   t_e_to_n_e1(assert(app(comp@l:(int->int->bool),
+ut("procs  assert(comp 1 2)", (   t_e_to_n_e1(assert(app(comp@l:(int->int->bool),
                                                          [1@l:int,
                                                           2@l:int]
                                                         )@l:bool
@@ -2478,7 +2478,7 @@ ut("path  assume-assert", (   t_e_to_n_e1(let('f1'@l:(int -> unit),
                                                       )@l:a_f1_v:int-->('A_F1_V'='_')]
                                                  )@l:v:unit-->('f1_int->unit'('A_F1_V', 'V'),'A_F1_V'='_')
                                              )@l:v:unit-->('f1_int->unit'('A_F1_V', 'V'),'A_F1_V'='_')))).
-ut("abs   assume-assert", (   t_e_to_n_e1(let('f1'@l:(int -> unit),
+ut("procs assume-assert", (   t_e_to_n_e1(let('f1'@l:(int -> unit),
                                               abs(['x2'@l:int],
                                                   let('_3'@l:unit,
                                                       assume(app('>'@l:(int -> int -> bool),
@@ -2591,7 +2591,7 @@ ut("path   polymorphic let gt = (>) in gt 2 1", (   t_e_to_n_e1(let(gt@l:(A->A->
                                                                          1@l:ba_gt_v:int --> ('BA_GT_V'=1)]
                                                                        )@l:v:bool --> 'gt_int->int->bool'(2, 1, 'V')
                                                                    )@l:v:bool --> 'gt_int->int->bool'(2, 1, 'V')))).
-ut("abs    polymorphic let gt = (>) in gt 2 1", (   t_e_to_n_e1(let(gt@l:(A->A->bool),
+ut("procs  polymorphic let gt = (>) in gt 2 1", (   t_e_to_n_e1(let(gt@l:(A->A->bool),
                                                                     (>)@l:(A->A->bool),
                                                                     app(gt@l:(int->int->bool),
                                                                         [2@l:int,
