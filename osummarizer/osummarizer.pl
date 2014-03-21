@@ -448,12 +448,6 @@ pp_e(E) :-
 % Naming of typed expressions
 
 /*
-typed_exp_to_named_exp(+ELT, -ELN)
-*/
-typed_exp_to_named_exp(E@L:T, ELN) :-
-        t_e_to_n_e1(E, L, T, v, empty, ELN).
-
-/*
 t_e_to_n_e1(+E, +L, +T, +X, +Env, -ELN)
 */
 t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efn@Lf:Nf, ELNs)@L:X:Npre) :- !,
@@ -900,19 +894,22 @@ p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, K, Kd, D, S) :- !,
         (   ml_const(Ef) ->
             S = []
         ;   ml_id(Ef) ->
-            (   avl_fetch(Ef, D, (K0, PreELN0)) -> % Ef is let bound identifier
-                % instantiate type of Ef
-                copy_term(PreELN0, E0@L0:N0),
-                instantiate_named_type(N0, Xf:Tf),
-                % TODO: HO parameter passing here
-                % analyze definition of Ef under appropriate context
-                mk_ctx_pred(N0, Ctx0),
-                mk_conj((Ctx0, K0), Ctx0K0),
-                n_e_to_c1(E0, L0, N0, Ctx0K0, D, Kd0, S0),
-                % construct summary constraint for Ef
-                mk_summ_pred(N0, Summ),
-                mk_conj((Kd0, Ctx0, K0), SummRel),
-                ord_add_element(S0, (Summ :- SummRel), S1)
+            (   avl_fetch(Ef, D, (_Env, _K0, _PreELN0)) -> % Ef is let bound identifier
+
+                throw('application of let bound identifier')
+
+                % % instantiate type of Ef
+                % copy_term(PreELN0, E0@L0:N0),
+                % instantiate_named_type(N0, Xf:Tf),
+                % % TODO: HO parameter passing here
+                % % analyze definition of Ef under appropriate context
+                % mk_ctx_pred(N0, Ctx0),
+                % mk_conj((Ctx0, K0), Ctx0K0),
+                % n_e_to_c1(E0, L0, N0, Ctx0K0, D, Kd0, S0),
+                % % construct summary constraint for Ef
+                % mk_summ_pred(N0, Summ),
+                % mk_conj((Kd0, Ctx0, K0), SummRel),
+                % ord_add_element(S0, (Summ :- SummRel), S1)
             ;   S1=[]                              % Ef is formal parameter
             ),
             % construct parameter passing summary for call to Ef
@@ -1104,29 +1101,25 @@ name_of_type(X:_, X).
 % **********************************************************************
 % Summarization procedure
 
-named_exp_to_constraints(E@L:N, S) :-
-        formals(N, Fs),
-        (   ( Fs = [_] ; Fs = [_|_] ) ->
-            mk_ctx_pred(N, Ctx),
-            n_e_to_c1(E, L, N, Ctx, empty, _Kd, S)
-        ;   n_e_to_c1(E, L, N, true, empty, _Kd, S)
-        ).
+typed_exp_to_constraints(E@L:N, S) :-
+        t_e_to_c1(E, L, N, v, empty, true, empty, _Kd, S).
 
 /*
-n_e_to_c1(+E, +L, +N, +K, +D, -Kd, -S)
+t_e_to_c1(+E, +L, +N, +X, +Env, +K, +D, -Kd, -S)
 */
-n_e_to_c1(E, L, N, K, D, Kd, S) :-
-        dpush_portray_clause(n_e_to_c1(E, L, N, K, D, Kd, S)-in),
+t_e_to_c1(E, L, N, X, Env, K, D, Kd, S) :-
+        dpush_portray_clause(t_e_to_c1(E, L, N, X, Env, K, D, Kd, S)-in),
+        t_e_to_n_e1(E, L, N, X, Env, En@L:N),
         lprint('\n'),
         lindent, lprint('* Named expression:\n'),
-        lprint(E@L:N),
+        lprint(En@L:N),
         lprint('\n'),
-        n_e_to_p_e1(E, L, N, Ep@L:N-->Kd),
+        n_e_to_p_e1(En, L, N, Ep@L:N-->Kd),
         lprint('\n'),
         lindent, lprint('* Path expression:\n'),
         lprint(Ep@L:N-->Kd),
         lprint('\n'),
-        p_e_to_p_d1(Ep, L, N, K, Kd, D, Dd),
+        p_e_to_p_d1(Ep, L, N, Env, K, Kd, D, Dd),
         lprint('\n'),
         lindent, lprint('* Function definitions:\n'),
         lprint(Dd),
@@ -1139,7 +1132,7 @@ n_e_to_c1(E, L, N, K, D, Kd, S) :-
         if_log((   foreach(C, S)
                do  print(C), nl
                )),
-        dpop_portray_clause(n_e_to_c1(E, L, N, K, D, Kd, S)-out).
+        dpop_portray_clause(t_e_to_c1(E, L, N, X, Env, K, D, Kd, S)-out).
 
 
 
@@ -1170,10 +1163,8 @@ summarize(FileIn, FileOut) :-
         lprint('* Typed expression:\n'),
         lprint(ELT),
         lprint('\n'),
-% Name the expression
-        typed_exp_to_named_exp(ELT, ELN),
-% Sumarize the named expression
-        named_exp_to_constraints(ELN, S),
+% Sumarize the typed expression
+        typed_exp_to_constraints(ELT, S),
 % Output the summary
         lprint('\n'),
         lprint('* Summary constraints:\n'),
