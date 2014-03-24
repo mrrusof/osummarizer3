@@ -23,14 +23,15 @@ tests: osummarizer
 	@./run-tests.sh | tee /tmp/osum-tests
 
 unit:
-	sicstus -l unit.pl --goal 'halt.' >/tmp/unit.pl.log 2>&1
+	@sicstus -l unit.pl --goal 'halt.' 2>&1 | \
+	sed -e 's/PASSED/\\033[0;32mPASSED\\033[0m/' -e 's/FAILED/\\033[0;31mFAILED\\033[0m/' | \
+	(while read -r l; do echo "$$l"; done) | \
+	tee /tmp/unit.pl.log
 	@(! sed -e '/\[Choices\] treated as local in do-loop but also used outside/D' \
 	       -e '/suggest renaming or adding param(\[Choices\])/D' \
                -e '/Approximate lines: 274-286, file: .*ext\/utils\/misc.pl/D' </tmp/unit.pl.log | \
 	   grep -n -e '^\!' -e '^\*')
 	@grep -e PASSED -e FAILED </tmp/unit.pl.log | \
-	sed -e 's/PASSED/\\033[0;32mPASSED\\033[0m/' -e 's/FAILED/\\033[0;31mFAILED\\033[0m/' | \
-	(while read -r l; do echo "$$l"; done) | \
         tee /tmp/osum-unit
 
 check: osummarizer unit tests
