@@ -2929,16 +2929,16 @@ ut("procs  polymorphic assert(comp 1 2)", (   t_e_to_n_e1(assert(app(comp@l:(int
                                               D = node(comp,(true,> @l:(A->A->bool)),0,empty,empty),
                                               p_e_to_p_d1(Ep, L, N, true, K, D, D))).
 ut("summ   polymorphic assert(comp 1 2)", (   t_e_to_n_e1(assert(app(comp@l:(int->int->bool),
-                                                         [1@l:int,
-                                                          2@l:int]
-                                                        )@l:bool
-                                                    ), l, unit, v, node(comp, comp:(a_comp:A->b_comp:(ba_comp:A->bb_comp:bool)), 0, empty, empty), En@L:N),
-                                  n_e_to_p_e1(En, L, N, Ep@L:N-->K),
-                                  p_e_to_p_d1(Ep, L, N, true, K, node(comp,(true,> @l:(A->A->bool)),0,empty,empty), D),
-                                  p_e_to_c1(Ep, L, N, empty, true, K, D,
-                                            [('ASE_V'=1 :- 'comp_int->int->bool'(1, 2, 'ASE_V')),
-                                             ('ctx_comp_int->int->bool'('A_COMP_ASE_V', 'BA_COMP_ASE_V') :- 'BA_COMP_ASE_V'=2, 'A_COMP_ASE_V'=1),
-                                             ('comp_int->int->bool'('A_COMP', 'BA_COMP', 'BB_COMP') :- ('A_COMP'>'BA_COMP'->'BB_COMP'=1;'BB_COMP'=0), 'ctx_comp_int->int->bool'('A_COMP', 'BA_COMP'))]))).
+                                                                     [1@l:int,
+                                                                      2@l:int]
+                                                                    )@l:bool
+                                                                ), l, unit, v, node(comp, comp:(a_comp:A->b_comp:(ba_comp:A->bb_comp:bool)), 0, empty, empty), En@L:N),
+                                              n_e_to_p_e1(En, L, N, Ep@L:N-->K),
+                                              p_e_to_p_d1(Ep, L, N, true, K, node(comp,(true,> @l:(A->A->bool)),0,empty,empty), D),
+                                              p_e_to_c1(Ep, L, N, empty, true, K, D,
+                                                        [('ASE_V'=1 :- 'comp_int->int->bool'(1, 2, 'ASE_V')),
+                                                         ('ctx_comp_int->int->bool'('A_COMP_ASE_V', 'BA_COMP_ASE_V') :- 'BA_COMP_ASE_V'=2, 'A_COMP_ASE_V'=1),
+                                                         ('comp_int->int->bool'('A_COMP', 'BA_COMP', 'BB_COMP') :- ('A_COMP'>'BA_COMP'->'BB_COMP'=1;'BB_COMP'=0), 'ctx_comp_int->int->bool'('A_COMP', 'BA_COMP'))]))).
 
 
 ut("summ   polymorphic let max1 = fun x2 y3 -> ... in max1 3 1", (   t_e_to_n_e1(let(max1@l:(A->A->A),
@@ -3004,11 +3004,11 @@ ut("path     HO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to
                                                                                                  )@l:B
                                                                                              )@l:((A->B)->A->B),
                                                                                           app(app@l:app_v:(g:(a_g:int->b_g:(ba_g:int->bb_g:int))->f1_app:(ba_app_v:int->v:(bba_app_v:int->bbb_app_v:int))),
-                                                                                              [(+)@l:g:(a_g:int->b_g:(ba_g:int->bb_g:int)),
+                                                                                              [(+)@l:g:(a_g:int->b_g:(ba_g:int->bb_g:int)) --> ('BB_G'='A_G'+'BA_G'),
                                                                                                1@l:ba_app_v:int --> ('BA_APP_V'=1)]
-                                                                                             )@l:v:(bba_app_v:int->bbb_app_v:int) --> 'app_int->int'(1, 'BBA_APP_V', 'BBB_APP_V')
-                                                                                         )@l:v:(bba_app_v:int->bbb_app_v:int) --> 'app_int->int'(1, 'BBA_APP_V', 'BBB_APP_V')))).
-ut("summ     HO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to_c1(let(app@l:((A->B)->A->B),
+                                                                                             )@l:v:(bba_app_v:int->bbb_app_v:int) --> 'app_(int->int->int)->int->int->int'(1, 'BBA_APP_V', 'BBB_APP_V')
+                                                                                         )@l:v:(bba_app_v:int->bbb_app_v:int) --> 'app_(int->int->int)->int->int->int'(1, 'BBA_APP_V', 'BBB_APP_V')))).
+ut("end-to-e HO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to_c1(let(app@l:((A->B)->A->B),
                                                                                         abs([g@l:(A->B), x@l:A],
                                                                                             app(g@l:(A->B),
                                                                                                 [x@l:A]
@@ -3020,8 +3020,8 @@ ut("summ     HO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to
                                                                                            )@l:(int->int)
                                                                                        ), l, (int->int), v, empty, true, empty, _N, _Kd,
                                                                                     [('ctx_app_(int->int->int)->int->int->int'('BA_APP_V','BBA_APP_V'):-'BA_APP_V'=1,'ctx_v_int->int'('BBA_APP_V')),
-                                                                                     ('ctx_g_int->int->int'('A_G_RET_APP','BA_G'):-'A_G_RET_APP'='X','ctx_app_(int->int->int)->int->int->int'('X','BA_G'),'ctx_v_int->int'('BBA_APP_V')),
-                                                                                     ('app_(int->int->int)->int->int->int'('X','BA_G','BB_G'):-'g_int->int->int'('X','BA_G','BB_G'),'ctx_app_(int->int->int)->int->int->int'('X','BA_G'),'ctx_v_int->int'('BBA_APP_V')),
+                                                                                     ('ctx_g_int->int->int'('A_G_RET_APP','BA_G_RET_APP'):-'A_G_RET_APP'='X','ctx_app_(int->int->int)->int->int->int'('X','BA_G_RET_APP'),'ctx_v_int->int'('BBA_APP_V')),
+                                                                                     ('app_(int->int->int)->int->int->int'('X','BA_G_RET_APP','BB_G_RET_APP'):-'g_int->int->int'('X','BA_G_RET_APP','BB_G_RET_APP'),'ctx_app_(int->int->int)->int->int->int'('X','BA_G_RET_APP'),'ctx_v_int->int'('BBA_APP_V')),
                                                                                      ('g_int->int->int'('A_G','BA_G','BB_G') :- 'BB_G'='A_G'+'BA_G', 'ctx_g_int->int->int'('A_G','BA_G'),'ctx_v_int->int'('BBA_APP_V'))]
                                                                                    ) )).
 
@@ -3047,10 +3047,87 @@ ut("naming   HO param passing let app = fun g x -> g x in app app (+)", (   t_e_
                                                                                                  (+)@l:x:(a_x:int->b_x:(ba_x:int->bb_x:int))]
                                                                                                )@l:v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int))
                                                                                            )@l:v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int)) ))).
-
-
-
-
+ut("path     HO param passing let app = fun g x -> g x in app app (+)", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
+                                                                                            abs([g@l:(A->B), x@l:A],
+                                                                                                app(g@l:(A->B),
+                                                                                                    [x@l:A]
+                                                                                                   )@l:B
+                                                                                               )@l:((A->B)->A->B),
+                                                                                            app(app@l:(((int->int->int)->int->int->int)->(int->int->int)->int->int->int),
+                                                                                                [app@l:((int->int->int)->int->int->int),
+                                                                                                 (+)@l:(int->int->int)]
+                                                                                               )@l:(int->int->int)
+                                                                                           ), l, (int->int->int), v, empty, En@L:N),
+                                                                            n_e_to_p_e1(En, L, N,
+                                                                                        let(app@l:app:(g:(a_g:A->b_g:B)->f1_app:(x:A->ret_app:B)),
+                                                                                            abs([g@l:(A->B),x@l:A],
+                                                                                                app(g@l:(A->B),
+                                                                                                    [x@l:A]
+                                                                                                   )@l:B
+                                                                                               )@l:((A->B)->A->B),
+                                                                                            app(app@l:app_v:(g:(g:(aa_g:int -> b_g:(aba_g:int -> abb_g:int)) -> f1_app:(ba_g:int -> ret_app:(bba_g:int ->bbb_g:int)))->f1_app:(x:(a_x:int->b_x:(ba_x:int->bb_x:int))->v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int)))),
+                                                                                                [app@l:g:(g:(aa_g:int->b_g:(aba_g:int->abb_g:int))->f1_app:(ba_g:int->ret_app:(bba_g:int->bbb_g:int))) --> 'app_(int->int->int)->int->int->int'('BA_G', 'BBA_G', 'BBB_G'),
+                                                                                                 (+)@l:x:(a_x:int->b_x:(ba_x:int->bb_x:int)) --> ('BB_X'='A_X'+'BA_X')]
+                                                                                               )@l:v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int)) --> 'app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BBA_APP_V', 'BBBA_APP_V', 'BBBB_APP_V')
+                                                                                           )@l:v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int)) --> 'app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BBA_APP_V', 'BBBA_APP_V', 'BBBB_APP_V') ))).
+ut("procs    HO param passing let app = fun g x -> g x in app app (+)", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
+                                                                                            abs([g@l:(A->B), x@l:A],
+                                                                                                app(g@l:(A->B),
+                                                                                                    [x@l:A]
+                                                                                                   )@l:B
+                                                                                               )@l:((A->B)->A->B),
+                                                                                            app(app@l:(((int->int->int)->int->int->int)->(int->int->int)->int->int->int),
+                                                                                                [app@l:((int->int->int)->int->int->int),
+                                                                                                 (+)@l:(int->int->int)]
+                                                                                               )@l:(int->int->int)
+                                                                                           ), l, (int->int->int), v, empty, En@L:N),
+                                                                            n_e_to_p_e1(En, L, N, Ep@L:N-->K),
+                                                                            p_e_to_p_d1(Ep, L, N, true, K, empty, node(app, (true, abs([g@l:(A->B), x@l:A],
+                                                                                                app(g@l:(A->B),
+                                                                                                    [x@l:A]
+                                                                                                   )@l:B
+                                                                                               )@l:((A->B)->A->B)), 0, empty, empty)) )).
+ut("summ     HO param passing let app = fun g x -> g x in app app (+)", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
+                                                                                            abs([g@l:(A->B), x@l:A],
+                                                                                                app(g@l:(A->B),
+                                                                                                    [x@l:A]
+                                                                                                   )@l:B
+                                                                                               )@l:((A->B)->A->B),
+                                                                                            app(app@l:(((int->int->int)->int->int->int)->(int->int->int)->int->int->int),
+                                                                                                [app@l:((int->int->int)->int->int->int),
+                                                                                                 (+)@l:(int->int->int)]
+                                                                                               )@l:(int->int->int)
+                                                                                           ), l, (int->int->int), v, empty, En@L:N),
+                                                                            n_e_to_p_e1(En, L, N, Ep@L:N-->K),
+                                                                            p_e_to_p_d1(Ep, L, N, true, K, empty, D),
+                                                                            p_e_to_c1(Ep, L, N, empty, true, K, D,
+                                                                                      [('ctx_app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BBA_APP_V','BBBA_APP_V'):-true),
+                                                                                       ('ctx_app_(int->int->int)->int->int->int'('BA_G','BBA_G'):-'ctx_g_(int->int->int)->int->int->int'('BA_G','BBA_G')),
+                                                                                       ('ctx_g_(int->int->int)->int->int->int'('BA_G_RET_APP','BBA_G_RET_APP'):-'ctx_app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BA_G_RET_APP','BBA_G_RET_APP')),
+                                                                                       ('ctx_x_int->int->int'('A_A_G','BA_A_G'):-'ctx_a_g_int->int->int'('A_A_G','BA_A_G')),
+                                                                                       ('a_g_int->int->int'('A_A_G','BA_A_G','BB_A_G'):-'x_int->int->int'('A_A_G','BA_A_G','BB_A_G'),'ctx_a_g_int->int->int'('A_A_G','BA_A_G'),'ctx_app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BA_G_RET_APP','BBA_G_RET_APP')),
+                                                                                       ('app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BA_G_RET_APP','BBA_G_RET_APP','BBB_G_RET_APP'):-'g_(int->int->int)->int->int->int'('BA_G_RET_APP','BBA_G_RET_APP','BBB_G_RET_APP'),'ctx_app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BA_G_RET_APP','BBA_G_RET_APP')),
+                                                                                       ('g_(int->int->int)->int->int->int'('BA_G','BBA_G','BBB_G'):-'app_(int->int->int)->int->int->int'('BA_G','BBA_G','BBB_G'),'ctx_g_(int->int->int)->int->int->int'('BA_G','BBA_G')),
+                                                                                       ('x_int->int->int'('A_X','BA_X','BB_X'):-'BB_X'='A_X'+'BA_X','ctx_x_int->int->int'('A_X','BA_X'))]) )).
+ut("end-to-e HO param passing let app = fun g x -> g x in app app (+)", t_e_to_c1(let(app@l:((A->B)->A->B),
+                                                                                      abs([g@l:(A->B), x@l:A],
+                                                                                          app(g@l:(A->B),
+                                                                                              [x@l:A]
+                                                                                             )@l:B
+                                                                                         )@l:((A->B)->A->B),
+                                                                                      app(app@l:(((int->int->int)->int->int->int)->(int->int->int)->int->int->int),
+                                                                                          [app@l:((int->int->int)->int->int->int),
+                                                                                           (+)@l:(int->int->int)]
+                                                                                         )@l:(int->int->int)
+                                                                                     ), l, (int->int->int), v, empty, true, empty, _N, _K,
+                                                                                  [('ctx_app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BBA_APP_V','BBBA_APP_V'):-'ctx_v_int->int->int'('BBA_APP_V','BBBA_APP_V')),
+                                                                                   ('ctx_app_(int->int->int)->int->int->int'('BA_G','BBA_G'):-'ctx_g_(int->int->int)->int->int->int'('BA_G','BBA_G')),
+                                                                                   ('ctx_g_(int->int->int)->int->int->int'('BA_G_RET_APP','BBA_G_RET_APP'):-'ctx_app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BA_G_RET_APP','BBA_G_RET_APP'),'ctx_v_int->int->int'('BBA_APP_V','BBBA_APP_V')),
+                                                                                   ('ctx_x_int->int->int'('A_A_G','BA_A_G'):-'ctx_a_g_int->int->int'('A_A_G','BA_A_G')),
+                                                                                   ('a_g_int->int->int'('A_A_G','BA_A_G','BB_A_G'):-'x_int->int->int'('A_A_G','BA_A_G','BB_A_G'),'ctx_a_g_int->int->int'('A_A_G','BA_A_G'),'ctx_app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BA_G_RET_APP','BBA_G_RET_APP'),'ctx_v_int->int->int'('BBA_APP_V','BBBA_APP_V')),
+                                                                                   ('app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BA_G_RET_APP','BBA_G_RET_APP','BBB_G_RET_APP'):-'g_(int->int->int)->int->int->int'('BA_G_RET_APP','BBA_G_RET_APP','BBB_G_RET_APP'),'ctx_app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BA_G_RET_APP','BBA_G_RET_APP'),'ctx_v_int->int->int'('BBA_APP_V','BBBA_APP_V')),
+                                                                                   ('g_(int->int->int)->int->int->int'('BA_G','BBA_G','BBB_G'):-'app_(int->int->int)->int->int->int'('BA_G','BBA_G','BBB_G'),'ctx_g_(int->int->int)->int->int->int'('BA_G','BBA_G'),'ctx_v_int->int->int'('BBA_APP_V','BBBA_APP_V')),
+                                                                                   ('x_int->int->int'('A_X','BA_X','BB_X'):-'BB_X'='A_X'+'BA_X','ctx_x_int->int->int'('A_X','BA_X'),'ctx_v_int->int->int'('BBA_APP_V','BBBA_APP_V'))]) ).
 
 
 % **********************************************************************
