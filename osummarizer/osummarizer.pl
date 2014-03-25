@@ -905,7 +905,7 @@ p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, Env, K, Kd, D, S) :- !,
                 ord_add_element(S0, (Summ :- SummRel), S1)
             ;   S1=[]                              % Ef is formal parameter
             ),
-            % construct parameter passing summary for call to Ef
+            % construct parameter passing constraint for call to Ef
             mk_ctx_pred(Ef:Tf, CtxEf),
             (   foreach(Ei@Li:Xi:Ti-->Ki, ELNKs),
                 fromto(true, InKs, OutKs, Ks),
@@ -1090,6 +1090,10 @@ t_e_to_c1(+E, +L, +T, +X, +Env, +K, +D, -N, -Kd, -S)
 */
 t_e_to_c1(E, L, T, X, Env, K, D, N, Kd, S) :-
         dpush_portray_clause(t_e_to_c1(E, L, T, X, Env, K, D, N, Kd, S)-in),
+        lprint('\n'),
+        lindent, lprint('* Typed expression:\n'),
+        lprint(E@L:T),
+        lprint('\n'),
         t_e_to_n_e1(E, L, T, X, Env, En@L:N),
         lprint('\n'),
         lindent, lprint('* Named expression:\n'),
@@ -1140,11 +1144,6 @@ summarize(FileIn, FileOut) :-
                 halt(1)
             )
         ),
-% Log the typed expression
-        lprint('\n'),
-        lprint('* Typed expression:\n'),
-        lprint(ELT),
-        lprint('\n'),
 % Sumarize the typed expression
         typed_exp_to_constraints(ELT, S),
 % Output the summary
