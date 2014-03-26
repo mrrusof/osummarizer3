@@ -11,7 +11,7 @@ fi
 for f in `ls tests/*/*.of`; do
     f=${f%.of}
     echo -n "$f.qarmc "
-    for (( i=${#f}; i < 60; i++ )); do
+    for (( i=${#f}; i < 66; i++ )); do
         echo -n .
     done
     echo -n ' '

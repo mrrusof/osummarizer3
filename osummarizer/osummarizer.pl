@@ -831,9 +831,9 @@ return(X:T, R) :-
 p_e_to_p_d1(+E, +L, +N, +K, +Kd, +D, -Dd)
 */
 
-p_e_to_p_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, K, (Xu='_'), D, D) :- !,
-        dpush_portray_clause(p_e_to_p_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, K, (Xu='_'), D, D)-nondet-in),
-        dpop_portray_clause(p_e_to_p_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, K, (Xu='_'), D, D)-nondet-out).
+p_e_to_p_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, K, Kd, D, D) :- !,
+        dpush_portray_clause(p_e_to_p_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, K, Kd, D, D)-in),
+        dpop_portray_clause(p_e_to_p_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, K, Kd, D, D)-out).
 p_e_to_p_d1(app(ELNKf, ELNKs), L, N, K, Kd, D, Dd) :- !,
         dpush_portray_clause(p_e_to_p_d1(app(ELNKf, ELNKs), L, N, K, Kd, D, Dd)-in),
         (   (Ef@Lf:Nf-->Kf) = ELNKf ->
@@ -887,10 +887,19 @@ p_e_to_p_d1(E, L, N, K, Kd, D, D) :-
 /*
 p_e_to_c1(+E, +L, +N, +Env, +K, +Kd, +D, -S)
 */
+p_e_to_c1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, N, Env, K, Kd, D, []) :- !,
+        dpush_portray_clause(p_e_to_c1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, N, Env, K, Kd, D, [])-in),
+        dpop_portray_clause(p_e_to_c1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, N, Env, K, Kd, D, [])-out).
 p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, Env, K, Kd, D, S) :- !,
         dpush_portray_clause(p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, Env, K, Kd, D, S)-in),
         (   ml_const(Ef) ->
-            S = []
+            % construct parameter passing constraint for call to Ef
+            (   foreach(Ei@Li:Xi:Ti-->Ki, ELNKs),
+                foreach(Si, Ss),
+                param(Env, K, D)
+            do  p_e_to_c1(Ei, Li, Xi:Ti, Env, K, Ki, D, Si)
+            ),
+            ord_union(Ss, S)
         ;   ml_id(Ef) ->
             (   avl_fetch(Ef, D, (K0, PreELT0)) -> % Ef is let bound identifier
                 % instantiate type of Ef
@@ -900,13 +909,12 @@ p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, Env, K, Kd, D, S) :- !,
                 t_e_to_c1(E0, L0, T0, Ef, Env, K0, D, N0, Kd0, S0),
                 % construct summary constraint for Ef
                 mk_ctx_pred(N0, Ctx0),
-                mk_summ_pred(N0, Summ),
                 mk_conj((Kd0, Ctx0, K0), SummRel),
-                ord_add_element(S0, (Summ :- SummRel), S1)
-            ;   S1=[]                              % Ef is formal parameter
+                mk_summ_pred(N0, Summ),
+                ord_add_element(S0, (Summ :- SummRel), Sf)
+            ;   Sf=[]                              % Ef is formal parameter
             ),
             % construct parameter passing constraint for call to Ef
-            mk_ctx_pred(Ef:Tf, CtxEf),
             (   foreach(Ei@Li:Xi:Ti-->Ki, ELNKs),
                 fromto(true, InKs, OutKs, Ks),
                 foreach(Si, Ss),
@@ -914,18 +922,18 @@ p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, Env, K, Kd, D, S) :- !,
             do  (   function_type(Ti) ->
                     OutKs = InKs,
                     mk_ctx_pred(Xi:Ti, Ctxi),
-                    mk_conj((Ctxi, K), CtxiK),
-                    p_e_to_c1(Ei, Li, Xi:Ti, Env, CtxiK, Ki, D, Sprei),
-                    mk_summ_pred(Xi:Ti, Summi),
+                    p_e_to_c1(Ei, Li, Xi:Ti, Env, (Ctxi, K), Ki, D, Si1),
                     mk_conj((Ki, Ctxi, K), SummReli),
-                    ord_add_element(Sprei, (Summi :- SummReli), Si)
+                    mk_summ_pred(Xi:Ti, Summi),
+                    ord_add_element(Si1, (Summi :- SummReli), Si)
                 ;   OutKs = (Ki, InKs),
                     p_e_to_c1(Ei, Li, Xi:Ti, Env, K, Ki, D, Si)
                 )
             ),
             mk_conj((Ks, K), Actuals),
-            ord_add_element(S1, (CtxEf :- Actuals), S2),
-            ord_union([S2|Ss], S)
+            mk_ctx_pred(Ef:Tf, CtxEf),
+            ord_add_element(Sf, (CtxEf :- Actuals), Sfp),
+            ord_union([Sfp|Ss], S)
         ),
         dpop_portray_clause(p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, Env, K, Kd, D, S)-out).
 p_e_to_c1(abs(XLTs, Eb@Lb:Nb-->Kb), L, X:T, Env, K, Kb, D, S) :- !,
@@ -1104,7 +1112,10 @@ t_e_to_c1(E, L, T, X, Env, K, D, N, Kd, S) :-
         lindent, lprint('* Path expression:\n'),
         lprint(Ep@L:N-->Kd),
         lprint('\n'),
-        mk_ctx_pred(N, Ctx),
+        (   function_type(T) ->
+            mk_ctx_pred(N, Ctx)
+        ;   Ctx = true
+        ),
         p_e_to_p_d1(Ep, L, N, (Ctx, K), Kd, D, Dd),
         lprint('\n'),
         lindent, lprint('* Function definitions:\n'),
