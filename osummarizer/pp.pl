@@ -6,6 +6,7 @@
 :- use_module(ast,     [ml_const/1,
                         ml_id/1,
                         string/1]).
+:- use_module(library(avl), [avl_to_list/2]).
 
 :- multifile user:portray/1.
 :- dynamic user:portray/1.
