@@ -2,6 +2,7 @@
                                           mk_conj/2]).
 :- use_module('mltypes.pl',              [roots/3,
                                           formals/2,
+                                          formals_return/2,
                                           return/2,
                                           remove_formals_nty/3,
                                           unname_type/2,
