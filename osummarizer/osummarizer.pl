@@ -1,446 +1,43 @@
-:- use_module('terms.pl').
-:- use_module('log.pl', [start_log/0, if_log/1,
-                         lpush/0, lpop/0, lindent/0,
-                         lprint/1, lformat/2]).
-:- use_module('debug.pl', [start_debug/0,
-                           dpush_portray_clause/1, dpop_portray_clause/1,
-                           dnl/0]).
-:- use_module('ext/utils/misc.pl', [format_atom/3]).
-:- use_module('ext/utils/list_utils.pl', [list2tuple/2,
-                                          tuple2flatlist/2]).
-:- use_module(library(avl), [avl_fetch/3, avl_store/4, avl_to_list/2]).
-:- use_module(library(lists), [rev/2, maplist/3, include/3]).
-:- use_module(library(ordsets), [ord_add_element/3, ord_union/2]).
-:- use_module(library(terms), [term_variables/2]).
+:- use_module('plterms.pl',              [uppercase_atom/2,
+                                          mk_conj/2,
+                                          flatten_tuple/2,
+                                          simplify_formula/2]).
+:- use_module('mltypes.pl',              [roots/3,
+                                          formals/2,
+                                          return/2,
+                                          remove_formals_nty/3,
+                                          unname_type/2,
+                                          name_of_type/2]).
+:- use_module('ast.pl',                  [ml_const/1,
+                                          ml_id/1,
+                                          named_base_type/1,
+                                          function_type/1,
+                                          wf_typed_exp/1]).
+:- use_module('pp.pl',                   [start_pp/0,
+                                          push_pp/0,
+                                          pop_pp/0]).
+:- use_module('log.pl',                  [start_log/0,
+                                          if_log/1,
+                                          lpush/0,
+                                          lpop/0,
+                                          lindent/0,
+                                          lprint/1,
+                                          lformat/2]).
+:- use_module('debug.pl',                [start_debug/0,
+                                          dpush_portray_clause/1,
+                                          dpop_portray_clause/1,
+                                          dnl/0]).
+:- use_module('ext/utils/misc.pl',       [format_atom/3]).
 
-:- multifile user:portray/1.
-:- dynamic user:portray/1.
-
-:- op(540, xfy, @). % A@B:C == (A@B):C because current_op(N, _, :) ---> N = 550
-:- op(560, xfy, -->). % A@B:C-->D == ((A@B):C)-->D because current_op(N, _, :) ---> N = 550
-
-
-
-% **********************************************************************
-% Syntax and well-formedness of typed expressions
-
-/*
-
-* Syntax
-
-Expression e:
-x                   ::=  lowercase atom
-c                   ::=  path | pervasives | string
-e, ..., e           ::=  tup([e, ..., e])
-e e ... e           ::=  app(e, [e, ..., e])
-fun x ... x -> e    ::=  abs([x, ..., x], e)
-if e then e else e  ::=  ite(e, e, e)
-let x = e in e      ::=  let(x, e, e)
-let rec x = e
-    and ... and
-        x = e in e  ::=  ltr([(x, e), ..., (x, e)], e)
-assert(e)           ::=  assert(e)
-assume(e)           ::=  assume(e)
-
-Expression e (continuation):
-X                   ::=  capitalized atom
-X(e, ..., e)        ::=
-match e with
- | p when e -> e
- ...
- | p when e -> e    ::=  mae(e, [(p, e, e), ..., (p, e, e)])
-
-
-Pattern p:
-x                   ::=  lowercase atom
-X(p, ..., p)        ::=  app(X, [p, ..., p])
-
-
-Type t:
-'a                  ::=  prolog var
-b                   ::=  bool | int
-t -> t              ::=  t -> t
-t * ... * t         ::=  t * ... * t
-X(t, ..., t)        ::=  X(t, ..., t)
-
-
-Typed expression: substitute e:t for e in Expression.
-Typed pattern: substitute p:t for p in Pattern.
-*/
-
-ml_const(C) :- ground(C), ( number(C) ; string(C) ; ml_const_pervasives(C) ; ml_const_path(C) ; ml_const_custom(C) ).
-ml_const_custom(nondet).
-ml_const_path('List.nil').
-ml_const_path('List.cons').
-ml_const_path('List.map').
-ml_const_path('List.length').
-ml_const_path('Random.int').
-ml_const_pervasives(+).
-ml_const_pervasives(-).
-ml_const_pervasives(*).
-ml_const_pervasives(/).
-ml_const_pervasives(=).
-ml_const_pervasives(<>).
-ml_const_pervasives(>).
-ml_const_pervasives(<).
-ml_const_pervasives(>=).
-ml_const_pervasives(<=).
-ml_const_pervasives(&&).
-ml_const_pervasives('||').
-ml_const_pervasives('not').
-ml_const_pervasives(true).
-ml_const_pervasives(false).
-ml_const_pervasives(unit).
-ml_const_pervasives(read_int).
-
-string(C) :- ( foreach(N, C) do number(N) ).
-
-ml_id(X) :- atom(X), \+ml_const(X).
-
-base_type(int).
-base_type(bool).
-base_type(unit).
-base_type(string).
-function_type(T) :- compound(T), T = (_->_).
-nullary_type(T) :- base_type(T). % ( base_type(T) -> true ; T =..['*'|_] ).
-type_var(T) :- var(T).
-nullary_named_type(_:T) :- nullary_type(T).
-
-
-/*
-
-* Well-formedness of typed expressions
-
-wf_typed_exp(+ELT)
-*/
-wf_typed_exp(E@L:T) :- wf_t_e(E, L, T).
-
-/*
-wf_t_e(+E, +L, +T)
-*/
-wf_t_e(app(Ef@Lf:Tf, ELTs), L, T) :- !,
-        dpush_portray_clause(wf_t_e(app(Ef@Lf:Tf, ELTs), L, T)-in),
-        wf_l(L),
-        wf_t(T),
-        wf_t_e(Ef, Lf, Tf),
-        length(ELTs, Count),
-        Count > 0,
-        remove_formals_ty(Count, Tf, T),
-        (   foreach(Ei@Li:Ti, ELTs)
-        do  wf_t_e(Ei, Li, Ti)
-        ),
-        dpop_portray_clause(wf_t_e(app(Ef@Lf:Tf, ELTs), L, T)-out).
-wf_t_e(abs(XLTs, Eb@Lb:Tb), L, T) :- !,
-        dpush_portray_clause(wf_t_e(abs(XLTs, Eb@Lb:Tb), L, T)-in),
-        wf_l(L),
-        wf_t(T),
-        XLTs = [_|_],
-        (   foreach(Xi@Li:Ti, XLTs)
-        do  ml_id(Xi),
-            wf_l(Li),
-            wf_t(Ti)
-        ),
-        wf_t_e(Eb, Lb, Tb),
-        dpop_portray_clause(wf_t_e(abs(XLTs, Eb@Lb:Tb), L, T)-out).
-wf_t_e(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T) :- !,
-        dpush_portray_clause(wf_t_e(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T)-in),
-        T1 == bool,
-        wf_l(L),
-        wf_t(T),
-        T2 == T3,
-        T == T3,
-        wf_t_e(E1, L1, T1),
-        wf_t_e(E2, L2, T2),
-        wf_t_e(E3, L3, T3),
-        dpop_portray_clause(wf_t_e(ite(E1@L1:T1, E2@L2:T2, E3@L3:T3), L, T)-out).
-wf_t_e(let(X@Lx:Tx, E1@L1:T1, E2@L2:T2), L, T) :- !,
-        dpush_portray_clause(wf_t_e(let(X@Lx:Tx, E1@L1:T1, E2@L2:T2), L, T)-in),
-        wf_l(L),
-        wf_t(T),
-        ml_id(X),
-        wf_l(Lx),
-        wf_t(Tx),
-        wf_t_e(E1, L1, T1),
-        wf_t_e(E2, L2, T2),
-        dpop_portray_clause(wf_t_e(let(X@Lx:Tx, E1@L1:T1, E2@L2:T2), L, T)-out).
-wf_t_e(assert(Ec@Lc:Tc), L, T) :- !,
-        dpush_portray_clause(wf_t_e(assert(Ec@Lc:Tc), L, T)-assert-in),
-        T == unit,
-        wf_t_e(Ec, Lc, Tc),
-        wf_l(L),
-        dpop_portray_clause(wf_t_e(assert(Ec@Lc:Tc), L, T)-assert-out).
-wf_t_e(assume(Ec@Lc:Tc), L, T) :- !,
-        dpush_portray_clause(wf_t_e(assume(Ec@Lc:Tc), L, T)-assume-in),
-        T == unit,
-        wf_t_e(Ec, Lc, Tc),
-        wf_l(L),
-        dpop_portray_clause(wf_t_e(assume(Ec@Lc:Tc), L, T)-assume-out).
-wf_t_e(E, L, T) :-
-        dpush_portray_clause(wf_t_e(E, L, T)-in),
-        wf_l(L),
-        wf_t(T),
-        ( ml_const(E) ; ml_id(E) ),
-        dpop_portray_clause(wf_t_e(E, L, T)-out).
-
-/*
-wf_l(+L)
-*/
-wf_l(loc(Name, Line1, LineOff1, Line2, LineOff2, Start, Stop)) :- !,
-        atom(Name),
-        number(Line1),
-        number(LineOff1),
-        number(Line2),
-        number(LineOff2),
-        number(Start),
-        number(Stop).
-
-/*
-wf_t(+T)
-*/
-wf_t(T) :-
-        (   compound(T) ->
-            (   T = (T1->T2) ->
-                wf_t(T1),
-                wf_t(T2)
-            % ;   T =.. ['*'|Ts],
-            %     (   foreach(Ti, Ts)
-            %     do  wf_t(Ti)
-            %     )
-            )
-        ;   ( type_var(T) ; base_type(T) )
-        ).
-
-/*
-remove_formals_ty(+Count, +T, -R) :-
-*/
-remove_formals_ty(Count, T, R) :-
-	(   Count > 0 ->
-	    T = (_->T2),
-	    Count1 is Count-1,
-	    remove_formals_ty(Count1, T2, R)
-	;   R = T
-	).
-
-
-
-% **********************************************************************
-% Pretty printing
-
-pretty_ground_term(T1, T2) :-
-        copy_term(T1, T2),
-        term_variables(T2, Vars),
-        (   foreach(V, Vars),
-            count(N, 65, _)
-        do  atom_codes(A, [N]),
-            V = A
-        ).
-
-put_indent_pp(I) :-
-        bb_put(pp_e_indent, I).
-get_indent_pp(I) :-
-        (   bb_get(pp_e_indent, I) ->
-            true
-        ;   I = ""
-        ).
-push_pp :- push_pp(_, _).
-push_pp(I, J) :-
-        get_indent_pp(I),
-        append(I, "  ", J),
-        put_indent_pp(J).
-pop_pp :-
-        get_indent_pp(I),
-        append(J, "  ", I),
-        put_indent_pp(J).
-stop_pp :-
-        retractall(portray(_)).
-start_pp :-
-        assert((
-portray(Term) :-
-        (   compound(Term) ->
-            (   Term = (Head:-Body) ->
-                get_indent_pp(I),
-                format('~s', [I]),
-                print(Head),
-                write(' :- '),
-                print(Body),
-                write('.')
-            ;   Term =.. ['\\+'|[A]] ->
-                format('\\+~p', [A])
-            ;   Term = (A -> B ; C) ->
-                format('(~p -> ~p ; ~p)', [A,B,C])
-            ;   Term =.. [';'|[A|Args]] ->
-                format('(~p', [A]),
-                (   foreach(Ai, Args)
-                do  write(' ; '),
-                    print(Ai)
-                ),
-                write(')')
-            ;   Term =.. [','|[A|Args]] ->
-                print(A),
-                (   foreach(Ai, Args)
-                do  write(', '),
-                    print(Ai)
-                )
-            ;   (   Term = _@_:_:_-->_
-                ;   Term = _@_:_:_
-                ;   Term = _@_:_ ) ->
-                pretty_ground_term(Term, Ground),
-                pp_e(Ground)
-            ;   Term = X:(T1->T2) ->
-                format('~p:(', [X]),
-                print(T1),
-                write(' -> '),
-                print(T2),
-                write(')')
-            ;   Term = (T1->T2) ->
-                paren_t(T1),
-                write(' -> '),
-                print(T2)
-            ;   Term = node(_, _, _, _, _) ->
-                avl_to_list(Term, List),
-                get_indent_pp(I),
-                append(I, "          ", J),
-                put_indent_pp(J),
-                (   foreach(X-(K,E), List)
-                do  format("~s~p |->\n~s       K: ~p\n~s  ^E@L:N:\n~p", [I, X, I, K, I, E])
-                ),
-                put_indent_pp(I)
-            ;   Term =.. [F|Args], F \== '.',
-                (   Args = [A] ->
-                    format('~q(~p)', [F, A])
-                ;   \+ (   current_op(_, T, F),
-                           ( T == xfx ; T == xfy ; T == yfx ) ),
-                    A =.. [','|Args],
-                    format('~q(~p)', [F, A])
-                )
-            )
-        )
-        )).
-
-/*
-paren_t(+T)
-*/
-paren_t(T) :-
-        (   compound(T), T = (_->_) ->
-            write('('),
-            print(T),
-            write(')')
-        ;   write(T)
-        ).
-
-pp_const_parenthesis(+).
-pp_const_parenthesis(-).
-pp_const_parenthesis(*).
-pp_const_parenthesis(/).
-pp_const_parenthesis(=).
-pp_const_parenthesis(<>).
-pp_const_parenthesis(>).
-pp_const_parenthesis(<).
-pp_const_parenthesis(>=).
-pp_const_parenthesis(<=).
-pp_const_parenthesis(&&).
-
-pp_e(ELN-->K) :- !,
-        pp_e(ELN),
-        write(' --> '),
-        print(K).
-pp_e(E@_:X:T) :- !,
-        pp_e(E),
-        write(':'),
-        print(X:T).
-pp_e(E@_:T) :- !,
-        pp_e(E),
-        write(':'),
-        paren_t(T).
-pp_e(app(Ef, Es)) :- !,
-        push_pp(I, _),
-        format('~s(\n', [I]),
-        pp_e(Ef),
-        (   foreach(Ei, Es)
-        do  write('\n'),
-            pp_e(Ei)
-        ),
-        format('\n~s)', [I]),
-        pop_pp.
-pp_e(abs(Xs, Eb)) :- !,
-        push_pp(I, _),
-        format('~s(fun\n', [I]),
-        (   Xs = [Xh|Xr] ->
-            pp_e(Xh),
-            (   foreach(X, Xr)
-            do  write('\n'),
-                pp_e(X)
-            )
-        ;   Xs = [X] ->
-            pp_e(X)
-        ),
-        format('\n~s->\n', [I]),
-        print(Eb),
-        format('\n~s)', [I]),
-        pop_pp.
-pp_e(ite(E1, E2, E3)) :- !,
-        push_pp(I, _),
-        format('~s(if\n', [I]),
-        print(E1),
-        format('\n~sthen\n', [I]),
-        print(E2),
-        format('\n~selse\n', [I]),
-        print(E3),
-        format('\n~s)', [I]),
-        pop_pp.
-pp_e(let(X, E1, E2)) :- !,
-        push_pp(I, _),
-        format('~s(let\n', [I]),
-        print(X),
-        format('\n~s=\n', [I]),
-        print(E1),
-        format('\n~sin\n', [I]),
-        print(E2),
-        format('\n~s)', [I]),
-        pop_pp.
-pp_e(assert(Ec)) :- !,
-        push_pp(I, _),
-        (   compound(Ec),
-            ( Ec = E@_:_:_-->_
-            ; Ec = E@_:_:_
-            ; Ec = E@_:_ ),
-            ( E == true ; E == false ) ->
-            format('~s(assert(\n', [I]),
-            print(Ec),
-            format('\n~s))', [I])
-        ;   format('~s(assert\n', [I]),
-            print(Ec),
-            format('\n~s)', [I])
-        ),
-        pop_pp.
-pp_e(assume(Ec)) :- !,
-        push_pp(I, _),
-        (   compound(Ec),
-            ( Ec = E@_:_:_-->_
-            ; Ec = E@_:_:_
-            ; Ec = E@_:_ ),
-            ( E == true ; E == false ) ->
-            format('~s(assume(\n', [I]),
-            print(Ec),
-            format('\n~s))', [I])
-        ;   format('~s(assume\n', [I]),
-            print(Ec),
-            format('\n~s)', [I])
-        ),
-        pop_pp.
-pp_e(E) :-
-        push_pp(I, _),
-        format('~s', [I]),
-        (   pp_const_parenthesis(E) ->
-            write('('),
-            write(E),
-            write(')')
-        ;   string(E) ->
-            format("\"~s\"", [E])
-        ;   ( ml_const(E) ; ml_id(E) ) ->
-            write(E)
-        ),
-        pop_pp.
+:- use_module('ext/utils/list_utils.pl', [list2tuple/2]).
+:- use_module(library(avl),              [avl_fetch/3,
+                                          avl_store/4,
+                                          avl_to_list/2]).
+:- use_module(library(lists),            [rev/2,
+                                          maplist/3,
+                                          include/3]).
+:- use_module(library(ordsets),          [ord_add_element/3,
+                                          ord_union/2]).
 
 
 
@@ -471,7 +68,7 @@ t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efn@Lf:Nf, ELNs)@L:X:Npre) :-
         rev(ELNs, RevELNs),
         roots(Count, PreNf, Rs),
         rev(Rs, RevRs),
-        remove_formals(Count, PreNf, _:Npre),
+        remove_formals_nty(Count, PreNf, _:Npre),
         (   foreach(_@_:Nj, RevELNs),
             fromto(RevRs, [Rj|OutRs], OutRs, _),
             fromto(X:Npre, InNf, Rj:(Nj->InNf), Nf)
@@ -582,38 +179,6 @@ choose_names(X:S, Y:T, R) :-
             ;   R = Y:T
             )
         ).
-
-/*
-formals(+N, -Formals)
-*/
-formals(_:T, Formals) :-
-        (   compound(T), T = (R->T2) ->
-            formals(T2, Rs),
-            Formals = [R|Rs]
-        ;   Formals = []
-        ).
-
-/*
-roots(+Count, +N, -Roots)
-*/
-roots(Count, X:T, Roots) :-
-        (   Count > 0, compound(T), T = (_->T2) ->
-            Count1 is Count - 1,
-            roots(Count1, T2, Rs),
-            Roots = [X|Rs]
-        ;   Roots = []
-        ).
-
-/*
-remove_formals(+Count, +N, -R) :-
-*/
-remove_formals(Count, N, R) :-
-	(   Count > 0 ->
-	    N = _:(_->N2),
-	    Count1 is Count-1,
-	    remove_formals(Count1, N2, R)
-	;   R = N
-	).
 
 /*
 ml_const_to_name(?Const, ?Name)
@@ -757,7 +322,7 @@ n_e_to_p_e1(assume(Ec@Lc:Xc:Tc), L, N, assume(ELNc-->Kc)@L:N-->(Xcu=1, Kc)) :- !
         uppercase_atom(Xc, Xcu),
         dpop_portray_clause(n_e_to_p_e1(assume(Ec@Lc:Xc:Tc), L, N, assume(ELNc-->Kc)@L:N-->(Xcu=1, Kc))-out).
 n_e_to_p_e1(E, L, X:T, E@L:X:T-->Kd) :-
-        dpush_portray_clause(n_e_to_p_e1(E, L, X:T, ELNK)-id-cst-in),
+        dpush_portray_clause(n_e_to_p_e1(E, L, X:T, E@L:X:T-->Kd)-id-cst-in),
         (   E == not ->
             (V:bool -> R:bool) = T,
             maplist(uppercase_atom, [V, R], [Vu, Ru]),
@@ -799,7 +364,7 @@ n_e_to_p_e1(E, L, X:T, E@L:X:T-->Kd) :-
                 Kd = (Xu=Eu)
             )
         ),
-        dpop_portray_clause(n_e_to_p_e1(E, L, X:T, ELNK)-id-cst-out).
+        dpop_portray_clause(n_e_to_p_e1(E, L, X:T, E@L:X:T-->Kd)-id-cst-out).
 
 /*
 ml_const_to_prolog_const(?ML, ?Prolog)
@@ -813,15 +378,6 @@ ml_const_to_prolog_const(<=, =<).
 ml_const_to_prolog_const('&&', ',').
 ml_const_to_prolog_const('||', ';').
 
-/*
-return(+N, -R)
-*/
-return(X:T, R) :-
-	(   compound(T), T = (_->T2) ->
-            return(T2, R)
-	;   R = X:T
-	).
-
 
 
 % **********************************************************************
@@ -830,7 +386,6 @@ return(X:T, R) :-
 /*
 p_e_to_p_d1(+E, +L, +N, +K, +Kd, +D, -Dd)
 */
-
 p_e_to_p_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, K, Kd, D, D) :- !,
         dpush_portray_clause(p_e_to_p_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, K, Kd, D, D)-in),
         dpop_portray_clause(p_e_to_p_d1(app(nondet@Lf:Nf, [unit@Lu:Nu]), L, X:T, K, Kd, D, D)-out).
@@ -988,7 +543,7 @@ mk_summ_pred(+N, -Summ)
 mk_summ_pred(N, Summ) :-
         summ_sy(N, Sy),
         formals_return(N, NFormalsRet),
-        include(nullary_named_type, NFormalsRet, NullNFormalsRet),
+        include(named_base_type, NFormalsRet, NullNFormalsRet),
         maplist(name_of_type, NullNFormalsRet, NullFormalsRet),
         maplist(uppercase_atom, NullFormalsRet, NullUFormalsRet),
         Summ =.. [Sy|NullUFormalsRet].
@@ -1007,7 +562,7 @@ mk_ctx_pred(+N, -Ctx)
 mk_ctx_pred(N, Ctx) :-
         ctx_sy(N, Sy),
         formals(N, NFormals),
-        include(nullary_named_type, NFormals, NullNFormals),
+        include(named_base_type, NFormals, NullNFormals),
         maplist(name_of_type, NullNFormals, NullFormals),
         maplist(uppercase_atom, NullFormals, NullUFormals),
         Ctx =.. [Sy|NullUFormals].
@@ -1019,71 +574,6 @@ ctx_sy(N, Sy) :-
         unname_type(N, T),
         N = X:_,
         format_atom('ctx_~w_~w', [X, T], Sy).
-
-/*
-mk_conj(+Tuple, -Conj)
-*/
-mk_conj(T, C) :-
-        flatten_tuple(T, Flat),
-        simplify_formula(Flat, C).
-
-/*
-flatten_tuple(+K, -R)
-*/
-flatten_tuple(K, R) :-
-        tuple2flatlist(K, L),
-        list2tuple(L, R).
-
-/*
-simplify_formula(+K, -R)
-*/
-simplify_formula(K, R) :-
-        (   compound(K), K = (A, B) ->
-            simplify_formula(A, Ar),
-            simplify_formula(B, Br),
-            (   Ar == true ->
-                R = Br
-            ;   Br == true ->
-                R = Ar
-            ;   R = (Ar, Br)
-            )
-        ;   compound(K), K = (A ; B) ->
-            simplify_formula(A, Ar),
-            simplify_formula(B, Br),
-            (   Ar == false ->
-                R = Br
-            ;   Br == false ->
-                R = Ar
-            ;   R = (Ar ; Br)
-            )
-        ;   R = K
-        ).
-
-/*
-formals_return(+N, -FormalsRet)
-*/
-formals_return(X:T, [R|Rs]) :-
-	(   compound(T), T = (R->T2) ->
-            formals_return(T2, Rs)
-	;   R = X:T,
-	    Rs = []
-	).
-
-/*
-unname_type(+N, -T)
-*/
-unname_type(_:T, R) :-
-	(   compound(T), T = (N1->N2) ->
-            unname_type(N1, R1),
-            unname_type(N2, R2),
-            R = (R1->R2)
-	;   R = T
-	).
-
-/*
-name_of_type(+N, -X)
-*/
-name_of_type(X:_, X).
 
 
 

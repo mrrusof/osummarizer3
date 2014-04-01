@@ -1,265 +1,18 @@
-:- ['osummarizer.pl'].
 :- use_module(library(ordsets), [list_to_ord_set/2]).
 :- use_module(library(codesio), [format_to_codes/3]).
 :- set_prolog_flag(discontiguous_warnings, off).
+:- multifile ut/2.
 
-
-
-% **********************************************************************
-% Pretty printing of typed expressions
-
-ut("PP typed const 10", pp(10@loc('max.ml', 0, 0, 0, 0, 0, 0):int, "10:int")).
-ut("PP typed const \"hola\"", pp("hola"@loc('max.ml', 0, 0, 0, 0, 0, 0):string, "\"hola\":string")).
-ut("PP typed const (+):(int->int->int)", pp((+)@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int), "(+):(int -> int -> int)")).
-ut("PP typed const (>):(int->int->int)", pp((>)@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool), "(>):(int -> int -> bool)")).
-ut("PP typed id x", pp(x@loc('max.ml', 0, 0, 0, 0, 0, 0):int, "x:int")).
-ut("PP typed id inc", pp(inc@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int), "inc:(int -> int)")).
-ut("PP typed id max1", pp(max1@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int), "max1:(int -> int -> int)")).
-
-ut("PP typed app (>):(int->int->int)", pp(app(
-                            '>'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
-                            [x@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                             y@loc('max.ml', 0, 0, 0, 0, 0, 0):int]
-                           )@loc('max.ml', 0, 0, 0, 0, 0, 0):bool, "(\n  (>):(int -> int -> bool)\n  x:int\n  y:int\n):bool")).
-ut("PP typed abs id", pp(abs([x@loc('id.ml', 0, 0, 0, 0, 0, 0):int],
-                             x@loc('id.ml', 0, 0, 0, 0, 0, 0):int
-                            )@loc('id.ml', 0, 0, 0, 0, 0, 0):(int -> int), "(fun\n  x:int\n->\n  x:int\n):(int -> int)")).
-ut("PP typed abs snd", pp(abs([x@loc('snd.ml', 0, 0, 0, 0, 0, 0):int, y@loc('snd.ml', 0, 0, 0, 0, 0, 0):int],
-                              y@loc('snd.ml', 0, 0, 0, 0, 0, 0):int
-                             )@loc('snd.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int), "(fun\n  x:int\n  y:int\n->\n  y:int\n):(int -> int -> int)")).
-ut("PP typed ite", pp(ite(true@loc('max.ml', 0, 0, 0, 0, 0, 0):bool,
-                          x@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                          y@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                         )@loc('max.ml', 0, 0, 0, 0, 0, 0):int, "(if\n  true:bool\nthen\n  x:int\nelse\n  y:int\n):int")).
-ut("PP typed let", pp(let(x@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                          1@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                          x@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                         )@loc('max.ml', 0, 0, 0, 0, 0, 0):int, "(let\n  x:int\n=\n  1:int\nin\n  x:int\n):int")).
-ut("PP typed assert true", pp(assert(
-                                     true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
-                                    )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit, "(assert(\n  true:bool\n)):unit")).
-ut("PP typed assert gt", pp(assert(
-                                   app(
-                                       '>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
-                                       [x@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int,
-                                        y@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int]
-                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
-                                  )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit, "(assert\n  (\n    (>):(int -> int -> bool)\n    x:int\n    y:int\n  ):bool\n):unit")).
-ut("PP typed assume true", pp(assume(
-                                     true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
-                                    )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit, "(assume(\n  true:bool\n)):unit")).
-ut("PP typed assume gt", pp(assume(
-                                   app(
-                                       '>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
-                                       [x@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int,
-                                        y@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int]
-                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
-                                  )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit, "(assume\n  (\n    (>):(int -> int -> bool)\n    x:int\n    y:int\n  ):bool\n):unit")).
-ut("PP typed max int", pp(let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
-                              abs(['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                                   'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                                   ],
-                                  ite(app('>'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
-                                          ['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                                           'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                                           ]
-                                         )@loc('max.ml', 0, 0, 0, 0, 0, 0):bool,
-                                      'x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                                      'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                                      )@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                                 )@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
-                              app('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
-                                  [3@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                                   1@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                                  ]
-                                 )@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                             )@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-      "(let\n  max1:(int -> int -> int)\n=\n  (fun\n    x2:int\n    y3:int\n  ->\n    (if\n      (\n        (>):(int -> int -> bool)\n        x2:int\n        y3:int\n      ):bool\n    then\n      x2:int\n    else\n      y3:int\n    ):int\n  ):(int -> int -> int)\nin\n  (\n    max1:(int -> int -> int)\n    3:int\n    1:int\n  ):int\n):int")).
-% ut("PP typed max", false).
-
-
+:- ['../osummarizer.pl'].
+:- ['../ast.pl'].
+:- ['../pp.pl'].
 
 % **********************************************************************
-% Pretty printing of named expressions
-
-
-ut("PP named const 10", pp(10@loc('max.ml', 0, 0, 0, 0, 0, 0):r:int, "10:r:int")).
-ut("PP named const \"hola\"", pp("hola"@loc('max.ml', 0, 0, 0, 0, 0, 0):str:string, "\"hola\":str:string")).
-ut("PP named const +", pp((+)@loc('max.ml', 0, 0, 0, 0, 0, 0):'plus_r':('a_plus_r':int -> 'b_plus_r':('ba_plus_r':int -> 'bb_plus_r':int)),
-       "(+):plus_r:(a_plus_r:int -> b_plus_r:(ba_plus_r:int -> bb_plus_r:int))")).
-ut("PP named const (>):(int->int->int)", pp((>)@loc('max.ml', 0, 0, 0, 0, 0, 0):'gt_c_ret_max1':('a_gt_c_ret_max1':int -> 'b_gt_c_ret_max1':('ba_gt_c_ret_max1':int -> 'bb_gt_c_ret_max1':bool)),
-       "(>):gt_c_ret_max1:(a_gt_c_ret_max1:int -> b_gt_c_ret_max1:(ba_gt_c_ret_max1:int -> bb_gt_c_ret_max1:bool))")).
-ut("PP named id x", pp(x@loc('max.ml', 0, 0, 0, 0, 0, 0):r:int, "x:r:int")).
-ut("PP named id inc", pp(inc@loc('max.ml', 0, 0, 0, 0, 0, 0):inc:(a_inc_x:int -> b_inc_x:int), "inc:inc:(a_inc_x:int -> b_inc_x:int)")).
-ut("PP named id max1", pp(max1@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(a_max1_v:int -> f1_max1:(ba_max1_v:int -> bb_max1_v:int)),
-       "max1:max1:(a_max1_v:int -> f1_max1:(ba_max1_v:int -> bb_max1_v:int))")).
-ut("PP named app +", pp(app(
-                             '+'@loc('max.ml', 0, 0, 0, 0, 0, 0):'plus_ret':('a_plus_ret':int -> 'b_plus_ret':('ba_plus_ret':int -> ret:int)),
-                             [1@loc('max.ml', 0, 0, 0, 0, 0, 0):'a_plus_ret':int,
-                              2@loc('max.ml', 0, 0, 0, 0, 0, 0):'ba_plus_ret':int]
-                            )@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int,
-       "(\n  (+):plus_ret:(a_plus_ret:int -> b_plus_ret:(ba_plus_ret:int -> ret:int))\n  1:a_plus_ret:int\n  2:ba_plus_ret:int\n):ret:int" )).
-ut("PP named app (>):(int->int->int)", pp(app(
-                             '>'@loc('max.ml', 0, 0, 0, 0, 0, 0):'gt_c_ret_max1':('a_gt_c_ret_max1':int -> 'b_gt_c_ret_max1':('ba_gt_c_ret_max1':int -> c_ret_max1:bool)),
-                             [x2@loc('max.ml', 0, 0, 0, 0, 0, 0):'a_gt_c_ret_max1':int,
-                              y3@loc('max.ml', 0, 0, 0, 0, 0, 0):'ba_gt_c_ret_max1':int]
-                            )@loc('max.ml', 0, 0, 0, 0, 0, 0):c_ret_max1:bool,
-       "(\n  (>):gt_c_ret_max1:(a_gt_c_ret_max1:int -> b_gt_c_ret_max1:(ba_gt_c_ret_max1:int -> c_ret_max1:bool))\n  x2:a_gt_c_ret_max1:int\n  y3:ba_gt_c_ret_max1:int\n):c_ret_max1:bool")).
-ut("PP named abs id", pp(abs([x@loc('id.ml', 0, 0, 0, 0, 0, 0):x:int],
-                              x@loc('id.ml', 0, 0, 0, 0, 0, 0):ret_id:int
-                             )@loc('id.ml', 0, 0, 0, 0, 0, 0):id:(x:int -> ret_id:int),
-       "(fun\n  x:x:int\n->\n  x:ret_id:int\n):id:(x:int -> ret_id:int)")).
-ut("PP named abs snd", pp(abs([x@loc('snd.ml', 0, 0, 0, 0, 0, 0):x:int, y@loc('snd.ml', 0, 0, 0, 0, 0, 0):y:int],
-                               y@loc('snd.ml', 0, 0, 0, 0, 0, 0):ret_snd:int
-                              )@loc('snd.ml', 0, 0, 0, 0, 0, 0):snd:(x:int -> f1_snd:(y:int -> ret_snd:int)),
-       "(fun\n  x:x:int\n  y:y:int\n->\n  y:ret_snd:int\n):snd:(x:int -> f1_snd:(y:int -> ret_snd:int))")).
-ut("PP named ite", pp(ite(true@loc('max.ml', 0, 0, 0, 0, 0, 0):c_ret:bool,
-                           x@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int,
-                           y@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int
-                          )@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int,
-       "(if\n  true:c_ret:bool\nthen\n  x:ret:int\nelse\n  y:ret:int\n):ret:int")).
-ut("PP named let", pp(let(x@loc('max.ml', 0, 0, 0, 0, 0, 0):x:int,
-                           1@loc('max.ml', 0, 0, 0, 0, 0, 0):x:int,
-                           x@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int
-                          )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int,
-       "(let\n  x:x:int\n=\n  1:x:int\nin\n  x:v:int\n):v:int")).
-ut("PP named assert true", pp(assert(
-                                      true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ase_ret_f1:bool
-                                     )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit,
-       "(assert(\n  true:ase_ret_f1:bool\n)):ret_f1:unit")).
-ut("PP named assert (>):(int->int->int)", pp(assert(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):gt_ase_ret_f1:(a_gt_ase_ret_f1:int -> b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int -> ase_ret_f1:bool)),
-                                        ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):a_gt_ase_ret_f1:int,
-                                         0@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ba_gt_ase_ret_f1:int]
-                                       )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ase_ret_f1:bool
-                                   )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit,
-       "(assert\n  (\n    (>):gt_ase_ret_f1:(a_gt_ase_ret_f1:int -> b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int -> ase_ret_f1:bool))\n    x2:a_gt_ase_ret_f1:int\n    0:ba_gt_ase_ret_f1:int\n  ):ase_ret_f1:bool\n):ret_f1:unit")).
-ut("PP named assume true", pp(assume(
-                                      true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):asu__3:bool
-                                     )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):'_3':unit,
-       "(assume(\n  true:asu__3:bool\n)):_3:unit")).
-ut("PP named assume (>):(int->int->int)", pp(assume(
-                                    app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):gt_asu__3:(a_gt_asu__3:int -> b_gt_asu__3:(ba_gt_asu__3:int -> asu__3:bool)),
-                                        ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):a_gt_asu__3:int,
-                                         1@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ba_gt_asu__3:int]
-                                       )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):asu__3:bool
-                                   )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):'_3':unit,
-       "(assume\n  (\n    (>):gt_asu__3:(a_gt_asu__3:int -> b_gt_asu__3:(ba_gt_asu__3:int -> asu__3:bool))\n    x2:a_gt_asu__3:int\n    1:ba_gt_asu__3:int\n  ):asu__3:bool\n):_3:unit")).
-ut("PP named max int", pp(let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int)),
-                               abs(['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):x2:int,
-                                    'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):y3:int],
-                                   ite(app('>'@loc('max.ml', 0, 0, 0, 0, 0, 0):'gt_c_ret_max1':('a_gt_c_ret_max1':int -> 'b_gt_c_ret_max1':('ba_gt_c_ret_max1':int -> c_ret_max1:bool)),
-                                           ['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):'a_gt_c_ret_max1':int,
-                                            'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):'ba_gt_c_ret_max1':int]
-                                           )@loc('max.ml', 0, 0, 0, 0, 0, 0):c_ret_max1:bool,
-                                       'x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):ret_max1:int,
-                                       'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):ret_max1:int
-                                       )@loc('max.ml', 0, 0, 0, 0, 0, 0):ret_max1:int
-                                  )@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int)),
-                               app('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(a_max1_v:int -> f1_max1:(ba_max1_v:int -> v:int)),
-                                   [3@loc('max.ml', 0, 0, 0, 0, 0, 0):a_max1_v:int,
-                                    1@loc('max.ml', 0, 0, 0, 0, 0, 0):ba_max1_v:int]
-                                  )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int
-                              )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int,
-       "(let\n  max1:max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int))\n=\n  (fun\n    x2:x2:int\n    y3:y3:int\n  ->\n    (if\n      (\n        (>):gt_c_ret_max1:(a_gt_c_ret_max1:int -> b_gt_c_ret_max1:(ba_gt_c_ret_max1:int -> c_ret_max1:bool))\n        x2:a_gt_c_ret_max1:int\n        y3:ba_gt_c_ret_max1:int\n      ):c_ret_max1:bool\n    then\n      x2:ret_max1:int\n    else\n      y3:ret_max1:int\n    ):ret_max1:int\n  ):max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int))\nin\n  (\n    max1:max1:(a_max1_v:int -> f1_max1:(ba_max1_v:int -> v:int))\n    3:a_max1_v:int\n    1:ba_max1_v:int\n  ):v:int\n):v:int")).
-% ut("PP named max", false).
-
-
-
-% **********************************************************************
-% Pretty printing of constraints
-
-ut("PP cstr 'id1_int->int'", pp(('id1_int->int'('X2', 'RET_ID1'):-('RET_ID1'='X2', 'ctx_id1_int->int'('X2'))),
-                                "'id1_int->int'(X2, RET_ID1) :- RET_ID1=X2, 'ctx_id1_int->int'(X2).")).
-ut("PP cstr 'ctx_id1_int->int'", pp(('ctx_id1_int->int'('A_ID1_V') :- 'A_ID1_V'=3),
-                                    "'ctx_id1_int->int'(A_ID1_V) :- A_ID1_V=3.")).
-ut("PP cstr 'max1_int->int->int'", pp(('max1_int->int->int'('X2', 'Y3', 'RET_MAX1') :- (('X2'>'Y3', 'RET_MAX1'='X2' ; \+'X2'>'Y3', 'RET_MAX1'='Y3'), 'ctx_max1_int->int->int'('X2', 'Y3'))),
-                                      "'max1_int->int->int'(X2, Y3, RET_MAX1) :- (X2>Y3, RET_MAX1=X2 ; \\+X2>Y3, RET_MAX1=Y3), 'ctx_max1_int->int->int'(X2, Y3).")).
-ut("PP cstr 'ctx_max1_int->int->int'", pp(('ctx_max1_int->int->int'('A_MAX1_V', 'BA_MAX1_V') :- ('A_MAX1_V'=3, 'BA_MAX1_V'=1)),
-                                          "'ctx_max1_int->int->int'(A_MAX1_V, BA_MAX1_V) :- A_MAX1_V=3, BA_MAX1_V=1.")).
-ut("PP cstr 'snd_int->int->int'", pp(('snd_int->int->int'('X','Y','RET_SND') :- ('RET_SND'='Y', 'ctx_snd_int->int->int'('X','Y'))),
-                                     "'snd_int->int->int'(X, Y, RET_SND) :- RET_SND=Y, 'ctx_snd_int->int->int'(X, Y).")).
-ut("PP cstr assert", pp(('X2'>0 :- ('X2'>1, 'ctx_f1_int->unit'('X2'))),
-                        "X2>0 :- X2>1, 'ctx_f1_int->unit'(X2).")).
-
-
-
-% **********************************************************************
-% Well-formedness of typed expressions
-
-ut("WF const true", wf_typed_exp(true@loc('max.ml', 0, 0, 0, 0, 0, 0):bool)).
-ut("WF const 10", wf_typed_exp('10'@loc('max.ml', 0, 0, 0, 0, 0, 0):int)).
-ut("WF const \"hola\"", wf_typed_exp("hola"@loc('max.ml', 0, 0, 0, 0, 0, 0):string)).
-ut("WF const +", wf_typed_exp('+'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int))).
-ut("WF const >", wf_typed_exp('>'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool))).
-ut("WF id x", wf_typed_exp(x@loc('max.ml', 0, 0, 0, 0, 0, 0):int)).
-ut("WF id inc", wf_typed_exp(inc@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int))).
-ut("WF id max1", wf_typed_exp(max1@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int))).
-ut("WF app >", wf_typed_exp(
-                     app(
-                         '>'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
-                         [x@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                          y@loc('max.ml', 0, 0, 0, 0, 0, 0):int]
-                        )@loc('max.ml', 0, 0, 0, 0, 0, 0):bool
-                    )).
-ut("WF abs id", wf_typed_exp(
-                     abs([x@loc('id.ml', 0, 0, 0, 0, 0, 0):int],
-                         x@loc('id.ml', 0, 0, 0, 0, 0, 0):int
-                         )@loc('id.ml', 0, 0, 0, 0, 0, 0):(int -> int)
-                    )).
-ut("WF abs snd", wf_typed_exp( abs([x@loc('snd.ml', 0, 0, 0, 0, 0, 0):int, y@loc('snd.ml', 0, 0, 0, 0, 0, 0):int],
-                                    x@loc('snd.ml', 0, 0, 0, 0, 0, 0):int
-                                   )@loc('snd.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int) )).
-ut("WF ite", wf_typed_exp( ite(true@loc('max.ml', 0, 0, 0, 0, 0, 0):bool,
-                                    x@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                                    y@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                                   )@loc('max.ml', 0, 0, 0, 0, 0, 0):int )).
-ut("WF let", wf_typed_exp( let(x@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                                    1@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                                    x@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                                   )@loc('max.ml', 0, 0, 0, 0, 0, 0):int )).
-ut("WF assert", wf_typed_exp( assert(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
-                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit )).
-ut("WF assume", wf_typed_exp( assume(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
-                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):unit )).
-ut("WF max int", wf_typed_exp( let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
-                                    abs(['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                                         'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                                         ],
-                                        ite(app('>'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
-                                                ['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                                                 'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                                                 ]
-                                               )@loc('max.ml', 0, 0, 0, 0, 0, 0):bool,
-                                            'x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                                            'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                                            )@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                                       )@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
-                                    app('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> int),
-                                        [3@loc('max.ml', 0, 0, 0, 0, 0, 0):int,
-                                         1@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                                        ]
-                                       )@loc('max.ml', 0, 0, 0, 0, 0, 0):int
-                                   )@loc('max.ml', 0, 0, 0, 0, 0, 0):int )).
-% ut("WF max", false).
-ut("Negative WF app no param", \+ wf_typed_exp( app(
-                                       '>'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int -> int -> bool),
-                                       []
-                                      )@loc('max.ml', 0, 0, 0, 0, 0, 0):bool )).
-ut("Negative WF abs no param", \+ wf_typed_exp( abs([],
-                                       x@loc('id.ml', 0, 0, 0, 0, 0, 0):int
-                                      )@loc('id.ml', 0, 0, 0, 0, 0, 0):(int -> int) )).
-ut("Negative WF assert 1", \+ wf_typed_exp( assert(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
-                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool )).
-ut("Negative WF assert 2", \+ wf_typed_exp( assert(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
-                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):int )).
-ut("Negative WF assert 3", \+ wf_typed_exp( assert(true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):bool
-                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):_ )).
-ut("Negative WF assume 1", \+ wf_typed_exp( assume(true@loc('assume_assume.ml', 0, 0, 0, 0, 0, 0):bool
-                                      )@loc('assume_assume.ml', 0, 0, 0, 0, 0, 0):bool )).
-ut("Negative WF assume 2", \+ wf_typed_exp( assume(true@loc('assume_assume.ml', 0, 0, 0, 0, 0, 0):bool
-                                      )@loc('assume_assume.ml', 0, 0, 0, 0, 0, 0):int )).
-ut("Negative WF assume 3", \+ wf_typed_exp( assume(true@loc('assume_assume.ml', 0, 0, 0, 0, 0, 0):bool
-                                      )@loc('assume_assume.ml', 0, 0, 0, 0, 0, 0):_ )).
+% Tests for modules
+:- ['plterms.pl'].
+:- ['mltypes.pl'].
+:- ['ast.pl'].
+:- ['pp.pl'].
 
 
 
@@ -281,36 +34,24 @@ ut("choose_names 2", choose_names(max1:(x2:int -> f1_max1:(y3:int -> ret_max1:in
 ut("choose_names 3", choose_names(app  :(g      :(a_g     :A  ->b_g     :B                             )->f1_app :(x       :A  ->ret_app :B                             )),
                                   app_v:(a_app_v:(aa_app_v:int->ab_app_v:(aba_app_v:int->abb_app_v:int))->b_app_v:(ba_app_v:int->bb_app_v:(bba_app_v:int->bbb_app_v:int))),
                                   app  :(g      :(aa_app_v:int->b_g     :(aba_app_v:int->abb_app_v:int))->f1_app :(ba_app_v:int->ret_app :(bba_app_v:int->bbb_app_v:int))))).
-ut("formals 1", formals(f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)),
-                          [a_f:(aa_f:i -> ab_f:i),        ba_f:(baa_f:i -> bab_f:i)])).
-ut("formals 2", formals(f:(g:(x:int -> y:bool) -> h:(z:int -> u:bool)),
-                          [g:(x:int -> y:bool),      z:int] )).
-ut("remove_formals 1", remove_formals(1, f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)),
-                                                                      b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)  )).
-ut("remove_formals 2", remove_formals(2, f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)),
-                                                                                                        bb_f:i   )).
-ut("remove_formals 3", remove_formals(1, f:(g:(x:int -> y:bool) -> h:(z:int -> u:bool)),
-                                                                   h:(z:int -> u:bool)  )).
-ut("remove_formals 4", remove_formals(2, f:(g:(x:int -> y:bool) -> h:(z:int -> u:bool)),
-                                                                               u:bool   )).
-ut("mk_conj 1", mk_conj(((('BA_ADD_V'=2, 'A_ADD_V'=1), true), true), ('BA_ADD_V'=2, 'A_ADD_V'=1))).
-ut("simplify_formula 1", simplify_formula(('X2'>1,'ctx_f1_int->unit'('X2'),true), ('X2'>1,'ctx_f1_int->unit'('X2'))) ).
-ut("simplify_formula 2", simplify_formula(('X2'>1,true,'ctx_f1_int->unit'('X2')), ('X2'>1,'ctx_f1_int->unit'('X2'))) ).
-ut("simplify_formula 3", simplify_formula((true,'X2'>1,'ctx_f1_int->unit'('X2')), ('X2'>1,'ctx_f1_int->unit'('X2'))) ).
-ut("simplify_formula 4", simplify_formula(('BA_ADD_V'=2,'A_ADD_V'=1,true,true), ('BA_ADD_V'=2,'A_ADD_V'=1))).
-ut("simplify_formula 5", simplify_formula(('BA_ADD_V'=2,'A_ADD_V'=1 ; false), ('BA_ADD_V'=2,'A_ADD_V'=1))).
-ut("simplify_formula 6", simplify_formula(((false, true) ; 'BA_ADD_V'=2,'A_ADD_V'=1), ('BA_ADD_V'=2,'A_ADD_V'=1))).
 
-ut("return 1", return(f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)), bb_f:i) ).
-ut("return 2", return(f:(g:(x:int -> y:bool) -> h:(z:int -> u:bool)), u:bool) ).
-ut("formals_return 1", formals_return(f:(a_f:(aa_f:i -> ab_f:i) -> b_f:(ba_f:(baa_f:i -> bab_f:i) -> bb_f:i)),
-                                        [a_f:(aa_f:i -> ab_f:i),        ba_f:(baa_f:i -> bab_f:i),   bb_f:i]  )).
-ut("formals_return 2", formals_return(f:(g:(x:int -> y:bool) -> h:(z:int -> u:bool)),
-                                        [g:(x:int -> y:bool),      z:int,   u:bool]  )).
-ut("uppercase_atom 1", uppercase_atom(str, 'STR') ).
-ut("unname_type 1", unname_type(v1:(v11:(v111:i->v112:i)->v12:(v121:(v1211:i->v1212:i)->v122:i)),
-                                   (    (     i->     i)->          (      i->      i)->     i ) )).
 
+
+
+
+
+
+
+
+
+
+
+
+% **********************************************************************
+% THE REST
+
+% **********************************************************************
+% Naming of typed expressions
 
 ut("naming id x", t_e_to_n_e1(x, loc('max.ml', 0, 0, 0, 0, 0, 0), int, r, empty,
                               x@loc('max.ml', 0, 0, 0, 0, 0, 0):r:int )).
@@ -448,143 +189,6 @@ ut("naming max int", (   E@L:T = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int
                                               1@loc('max.ml', 0, 0, 0, 0, 0, 0):ba_max1_v:int]
                                             )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int
                                         )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int) )).
-% ut("naming max", false).
-
-% ut("summarizing const true", n_e_to_c1(true, loc('max.ml', 0, 0, 0, 0, 0, 0), r:bool, empty, true, true, []) ).
-% ut("summarizing const 10", n_e_to_c1(10, loc('max.ml', 0, 0, 0, 0, 0, 0), r:int, empty, true, 'R'=10, []) ).
-% ut("summarizing const \"hola\"", n_e_to_c1("hola", loc('max.ml', 0, 0, 0, 0, 0, 0), str:string, empty, true, 'STR'="hola", []) ).
-% ut("summarizing const +", n_e_to_c1('+', loc('max.ml', 0, 0, 0, 0, 0, 0),
-%                                     'plus_r':('a_plus_r':int -> 'b_plus_r':('ba_plus_r':int -> 'bb_plus_r':int)),
-%                                     empty, true, ('BB_PLUS_R' = 'A_PLUS_R' + 'BA_PLUS_R'), []) ).
-% ut("summarizing const >", n_e_to_c1('>', loc('max.ml', 0, 0, 0, 0, 0, 0),
-%                                     'gt_c_ret_max1':('a_gt_c_ret_max1':int -> 'b_gt_c_ret_max1':('ba_gt_c_ret_max1':int -> 'bb_gt_c_ret_max1':bool)),
-%                                     empty, true, ('A_GT_C_RET_MAX1' > 'BA_GT_C_RET_MAX1'), []) ).
-% ut("summarizing id x", n_e_to_c1(x, loc('max.ml', 0, 0, 0, 0, 0, 0), r:int, empty, true, ('R'='X'), []) ).
-% ut("summarizing id inc", n_e_to_c1(inc, loc('max.ml', 0, 0, 0, 0, 0, 0),
-%                                    inc:(a_inc_x:int -> b_inc_x:int), empty, true, 'inc_int->int'('A_INC_X', 'B_INC_X'), []) ).
-% ut("summarizing id pos", n_e_to_c1(pos, loc('max.ml', 0, 0, 0, 0, 0, 0), pos:(a_pos_x:int -> b_pos_x:bool), empty, true, 'pos_int->bool'('A_POS_X'), []) ).
-% ut("summarizing id max1", n_e_to_c1(max1, loc('max.ml', 0, 0, 0, 0, 0, 0), max1:(a_max1_v:int -> f1_max1:(ba_max1_v:int -> bb_max1_v:int)),
-%                                     empty, true, 'max1_int->int->int'('A_MAX1_V', 'BA_MAX1_V', 'BB_MAX1_V'), []) ).
-% ut("summarizing app >", (   E@L:N = app(
-%                                         '>'@loc('max.ml', 0, 0, 0, 0, 0, 0):'gt_c_ret_max1':('a_gt_c_ret_max1':int -> 'b_gt_c_ret_max1':('ba_gt_c_ret_max1':int -> c_ret_max1:bool)),
-%                                         [x2@loc('max.ml', 0, 0, 0, 0, 0, 0):'a_gt_c_ret_max1':int,
-%                                          y3@loc('max.ml', 0, 0, 0, 0, 0, 0):'ba_gt_c_ret_max1':int]
-%                                        )@loc('max.ml', 0, 0, 0, 0, 0, 0):c_ret_max1:bool,
-%                             n_e_to_c1(E, L, N, empty, true, ('X2' > 'Y3'), []) )).
-% ut("summarizing app Obj.magic",
-%                   (   E@L:N = app('Obj.magic'@loc('assume_assert.ml',0,0,0,0,0,0):magic_a_f1_v:(a_magic_a_f1_v:unit->a_f1_v:int),
-%                                   [unit@loc('assume_assert.ml',0,0,0,0,0,0):a_magic_a_f1_v:unit]
-%                                  )@loc('assume_assert.ml',0,0,0,0,0,0):a_f1_v:int,
-%                       n_e_to_c1(E, L, N, empty, true, 'A_F1_V'='_', []) )).
-% ut("summarizing app max1",
-%                   (   E@L:N = app('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(a_max1_v:int -> f1_max1:(ba_max1_v:int -> v:int)),
-%                                    [3@loc('max.ml', 0, 0, 0, 0, 0, 0):a_max1_v:int,
-%                                     1@loc('max.ml', 0, 0, 0, 0, 0, 0):ba_max1_v:int]
-%                                   )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int,
-%                       n_e_to_c1(E, L, N, empty, true, 'max1_int->int->int'(3, 1, 'V'), S),
-%                       S == [('ctx_max1_int->int->int'('A_MAX1_V', 'BA_MAX1_V') :- 'A_MAX1_V'=3, 'BA_MAX1_V'=1)] )).
-% ut("summarizing abs id",
-%                   (   E@L:N = abs([x2@loc('id.ml', 0, 0, 0, 0, 0, 0):x2:int],
-%                                   x2@loc('id.ml', 0, 0, 0, 0, 0, 0):ret_id1:int
-%                                  )@loc('id.ml', 0, 0, 0, 0, 0, 0):id1:(x2:int -> ret_id1:int),
-%                       n_e_to_c1(E, L, N, empty, true, true, S),
-%                       S == [('id1_int->int'('X2', 'RET_ID1') :- 'RET_ID1'='X2', 'ctx_id1_int->int'('X2')) ] )).
-% ut("summarizing abs snd",
-%                   (   E@L:N = abs([x@loc('snd.ml', 0, 0, 0, 0, 0, 0):x:int, y@loc('snd.ml', 0, 0, 0, 0, 0, 0):y:int],
-%                                   y@loc('snd.ml', 0, 0, 0, 0, 0, 0):ret_snd:int
-%                                  )@loc('snd.ml', 0, 0, 0, 0, 0, 0):snd:(x:int -> f1_snd:(y:int -> ret_snd:int)),
-%                       n_e_to_c1(E, L, N, empty, true, true, S),
-%                       S == [('snd_int->int->int'('X','Y','RET_SND') :- 'RET_SND'='Y', 'ctx_snd_int->int->int'('X','Y'))] )).
-% ut("summarizing ite nullary",
-%                   (   E@L:N = ite(true@loc('max.ml', 0, 0, 0, 0, 0, 0):c_ret:bool,
-%                                x@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int,
-%                                y@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int
-%                               )@loc('max.ml', 0, 0, 0, 0, 0, 0):ret:int,
-%                       n_e_to_c1(E, L, N, empty, true, (true -> 'RET'='X'; 'RET'='Y'), []) )).
-% ut("summarizing ite function",
-%                   false ).
-% ut("summarizing let nullary",
-%                   (   E@L:N = let(x@loc('max.ml', 0, 0, 0, 0, 0, 0):x:int,
-%                                   1@loc('max.ml', 0, 0, 0, 0, 0, 0):x:int,
-%                                   x@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int
-%                                  )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int,
-%                       n_e_to_c1(E, L, N, empty, true, ('V'='X', 'X'=1), []) )).
-% ut("summarizing let function",
-%                   (   E@L:N = let('id1'@loc('id.ml', 0, 0, 0, 0, 0, 0):id1:(x2:int -> ret_id1:int),
-%                                   abs(['x2'@loc('id.ml', 0, 0, 0, 0, 0, 0):x2:int],
-%                                       'x2'@loc('id.ml', 0, 0, 0, 0, 0, 0):ret_id1:int
-%                                       )@loc('id.ml', 0, 0, 0, 0, 0, 0):id1:(x2:int -> ret_id1:int),
-%                                   app('id1'@loc('id.ml', 0, 0, 0, 0, 0, 0):id1:(a_id1_v:int -> v:int),
-%                                       [3@loc('id.ml', 0, 0, 0, 0, 0, 0):a_id1_v:int]
-%                                      )@loc('id.ml', 0, 0, 0, 0, 0, 0):v:int
-%                                  )@loc('id.ml', 0, 0, 0, 0, 0, 0):v:int,
-%                       n_e_to_c1(E, L, N, empty, true, 'id1_int->int'(3, 'V'), S),
-%                       S == [('ctx_id1_int->int'('A_ID1_V') :- 'A_ID1_V'=3),
-%                             ('id1_int->int'('X2','RET_ID1'):- 'RET_ID1'='X2','ctx_id1_int->int'('X2'))] )).
-% ut("summarizing let assume-assert",
-%                   (   E@L:N = let('_3'@loc('assume_assert.ml',0,0,0,0,0,0):'_3':unit,
-%                                           assume(app(> @loc('assume_assert.ml',0,0,0,0,0,0):gt_asu__3:(a_gt_asu__3:int->b_gt_asu__3:(ba_gt_asu__3:int->asu__3:bool)),
-%                                                      [x2@loc('assume_assert.ml',0,0,0,0,0,0):a_gt_asu__3:int,
-%                                                       1@loc('assume_assert.ml',0,0,0,0,0,0):ba_gt_asu__3:int
-%                                                      ]
-%                                                     )@loc('assume_assert.ml',0,0,0,0,0,0):asu__3:bool
-%                                                 )@loc('assume_assert.ml',0,0,0,0,0,0):'_3':unit,
-%                                           assert(app(> @loc('assume_assert.ml',0,0,0,0,0,0):gt_ase_ret_f1:(a_gt_ase_ret_f1:int->b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int->ase_ret_f1:bool)),
-%                                                      [x2@loc('assume_assert.ml',0,0,0,0,0,0):a_gt_ase_ret_f1:int,
-%                                                       0@loc('assume_assert.ml',0,0,0,0,0,0):ba_gt_ase_ret_f1:int
-%                                                      ]
-%                                                     )@loc('assume_assert.ml',0,0,0,0,0,0):ase_ret_f1:bool
-%                                                 )@loc('assume_assert.ml',0,0,0,0,0,0):ret_f1:unit
-%                                          )@loc('assume_assert.ml',0,0,0,0,0,0):ret_f1:unit,
-%                       n_e_to_c1(E, L, N, empty, 'ctx_f1_int->unit'('X2'), ('X2'>0,'X2'>1), [('X2'>0 :- ('X2'>1, 'ctx_f1_int->unit'('X2')))]) )).
-% ut("summarizing assert true",
-%                   (   E@L:N = assert(
-%                                      true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ase_ret_f1:bool
-%                                     )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit,
-%                        n_e_to_c1(E, L, N, empty, true, true, [ (true :- true) ]) )).
-% ut("summarizing assert gt",
-%                   (   E@L:N = assert(app('>'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):gt_ase_ret_f1:(a_gt_ase_ret_f1:int -> b_gt_ase_ret_f1:(ba_gt_ase_ret_f1:int -> ase_ret_f1:bool)),
-%                                       ['x2'@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):a_gt_ase_ret_f1:int,
-%                                        0@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ba_gt_ase_ret_f1:int
-%                                       ]
-%                                      )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ase_ret_f1:bool
-%                                  )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):ret_f1:unit,
-%                       n_e_to_c1(E, L, N, empty, ('X2'>1, 'ctx_f1_int->unit'('X2')), 'X2'>0, [('X2'>0 :- ('X2'>1, 'ctx_f1_int->unit'('X2')))]) )).
-% ut("summarizing assume true",
-%                   (   E@L:N = assume(
-%                                      true@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):asu_3:bool
-%                                     )@loc('assume_assert.ml', 0, 0, 0, 0, 0, 0):'_3':unit,
-%                        n_e_to_c1(E, L, N, empty, true, true, []) )).
-% ut("summarizing assume gt",
-%                   (   E@L:N = assume(app(> @loc('assume_assert.ml',0,0,0,0,0,0):gt_asu__3:(a_gt_asu__3:int->b_gt_asu__3:(ba_gt_asu__3:int->asu__3:bool)),
-%                                          [x2@loc('assume_assert.ml',0,0,0,0,0,0):a_gt_asu__3:int,
-%                                           1@loc('assume_assert.ml',0,0,0,0,0,0):ba_gt_asu__3:int
-%                                          ]
-%                                         )@loc('assume_assert.ml',0,0,0,0,0,0):asu__3:bool
-%                                     )@loc('assume_assert.ml',0,0,0,0,0,0):'_3':unit,
-%                       n_e_to_c1(E, L, N, empty, true, 'X2'>1, []) )).
-% ut("summarizing max int",
-%                   (   E@L:N = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int)),
-%                                   abs(['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):x2:int,
-%                                        'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):y3:int],
-%                                       ite(app('>'@loc('max.ml', 0, 0, 0, 0, 0, 0):'gt_c_ret_max1':('a_gt_c_ret_max1':int -> 'b_gt_c_ret_max1':('ba_gt_c_ret_max1':int -> c_ret_max1:bool)),
-%                                               ['x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):'a_gt_c_ret_max1':int,
-%                                                'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):'ba_gt_c_ret_max1':int]
-%                                               )@loc('max.ml', 0, 0, 0, 0, 0, 0):c_ret_max1:bool,
-%                                           'x2'@loc('max.ml', 0, 0, 0, 0, 0, 0):ret_max1:int,
-%                                           'y3'@loc('max.ml', 0, 0, 0, 0, 0, 0):ret_max1:int
-%                                           )@loc('max.ml', 0, 0, 0, 0, 0, 0):ret_max1:int
-%                                      )@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(x2:int -> f1_max1:(y3:int -> ret_max1:int)),
-%                                   app('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):max1:(a_max1_v:int -> f1_max1:(ba_max1_v:int -> v:int)),
-%                                       [3@loc('max.ml', 0, 0, 0, 0, 0, 0):a_max1_v:int,
-%                                        1@loc('max.ml', 0, 0, 0, 0, 0, 0):ba_max1_v:int]
-%                                      )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int
-%                                  )@loc('max.ml', 0, 0, 0, 0, 0, 0):v:int,
-%                       n_e_to_c1(E, L, N, empty, true, 'max1_int->int->int'(3, 1, 'V'), S),
-%                       S == [('ctx_max1_int->int->int'('A_MAX1_V','BA_MAX1_V'):-'A_MAX1_V'=3,'BA_MAX1_V'=1),
-%                             ('max1_int->int->int'('X2','Y3','RET_MAX1'):-('X2'>'Y3','RET_MAX1'='X2';\+'X2'>'Y3','RET_MAX1'='Y3'),'ctx_max1_int->int->int'('X2','Y3'))] )).
-% ut("summarizing max",
-%                   false ).
 
 
 
@@ -592,17 +196,17 @@ ut("naming max int", (   E@L:T = let('max1'@loc('max.ml', 0, 0, 0, 0, 0, 0):(int
 % | c                                                      Constant
 
 % unit:v:unit --> V=1
-ut("naming const ()", t_e_to_n_e1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), unit, v, empty, unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit)).
+ut("naming const          ()", t_e_to_n_e1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), unit, v, empty, unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit)).
 ut("Negative naming const ()", \+ t_e_to_n_e1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), unit, v, empty, unit@loc('c.ml', 0, 0, 0, 0, 0, 0):unit:v)).
-ut("path   const ()", n_e_to_p_e1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit-->('V'=1))).
+ut("path   const          ()", n_e_to_p_e1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit-->('V'=1))).
 ut("Negative path 1 const ()", \+ n_e_to_p_e1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit-->1)).
 ut("Negative path 2 const ()", \+ n_e_to_p_e1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit-->true)).
-ut("summ   const ()", p_e_to_c1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, empty, true, 'V'=1, empty, [])).
+ut("summ   const          ()", p_e_to_c1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, empty, true, 'V'=1, empty, [])).
 ut("Negative summ   const ()", \+ p_e_to_c1(unit, loc('c.ml', 0, 0, 0, 0, 0, 0), v:unit, empty, true, 'V'=1, empty, [_])).
 
-ut("PP typed const ()", pp(unit@loc('c.ml', 0, 0, 0, 0, 0, 0):unit, "unit:unit")).
-ut("PP named const ()", pp(unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit, "unit:v:unit")).
-ut("PP path  const ()", pp(unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit-->'V'=1, "unit:v:unit --> V=1")).
+ut("PP typed const        ()", pp(unit@loc('c.ml', 0, 0, 0, 0, 0, 0):unit, "unit:unit")).
+ut("PP named const        ()", pp(unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit, "unit:v:unit")).
+ut("PP path  const        ()", pp(unit@loc('c.ml', 0, 0, 0, 0, 0, 0):v:unit-->'V'=1, "unit:v:unit --> V=1")).
 
 % true:v:bool --> V=1
 ut("naming const true", t_e_to_n_e1(true, loc('c.ml', 0, 0, 0, 0, 0, 0), bool, v, empty, true@loc('c.ml', 0, 0, 0, 0, 0, 0):v:bool)).
@@ -727,17 +331,17 @@ ut("Negative summ   comp:(int->int->bool)", \+ p_e_to_c1(comp, l, g:(a_g:int->b_
 % | c                                                      Constant
 % | e e ... e                                              Application
 
-ut("naming 1+2", t_e_to_n_e1(app((+)@l2:(int->int->int), [1@l3:int, 2@l4:int]), l1, int, v, empty,
+ut("naming          1+2", t_e_to_n_e1(app((+)@l2:(int->int->int), [1@l3:int, 2@l4:int]), l1, int, v, empty,
                              app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> v:int)),
                                  [1@l3:a_plus_v:int,
                                   2@l4:ba_plus_v:int]
                                 )@l1:v:int)).
-ut("path   1+2", n_e_to_p_e1(app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> v:int)), [1@l3:a_plus_v:int, 2@l4:ba_plus_v:int]), l1, v:int,
+ut("path            1+2", n_e_to_p_e1(app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> v:int)), [1@l3:a_plus_v:int, 2@l4:ba_plus_v:int]), l1, v:int,
                              app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> v:int)),
                                  [1@l3:a_plus_v:int --> ('A_PLUS_V'=1),
                                   2@l4:ba_plus_v:int --> ('BA_PLUS_V'=2)]
                                 )@l1:v:int --> ('V'=1+2))).
-ut("summ   1+2", p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> v:int)),
+ut("summ            1+2", p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> b_plus_v:(ba_plus_v:int -> v:int)),
                                [1@l3:a_plus_v:int --> ('A_PLUS_V'=1),
                                 2@l4:ba_plus_v:int --> ('BA_PLUS_V'=2)]
                               ), l1, v:int, empty, true, ('V'=1+2), empty, [])).
@@ -746,7 +350,7 @@ ut("Negative summ   1+2", \+ p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> b_plus
                                 2@l4:ba_plus_v:int --> ('BA_PLUS_V'=2)]
                               ), l1, v:int, empty, true, ('V'=1+2), empty, [_])).
 
-ut("PP typed 1+2", pp(app('+'@l2:(int -> int -> bool), [1@l3:int, 2@l4:int])@l1:bool, "(\n  (+):(int -> int -> bool)\n  1:int\n  2:int\n):bool")).
+ut("PP typed        1+2", pp(app('+'@l2:(int -> int -> bool), [1@l3:int, 2@l4:int])@l1:bool, "(\n  (+):(int -> int -> bool)\n  1:int\n  2:int\n):bool")).
 
 ut("naming           1>2", t_e_to_n_e1(app((>)@l2:(int->int->bool), [1@l3:int, 2@l4:int]), l1, bool, v, empty, app((>)@l2:gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> v:bool)), [1@l3:a_gt_v:int, 2@l4:ba_gt_v:int])@l1:v:bool)).
 ut("path             1>2", n_e_to_p_e1(app((>)@l2:gt_v:(a_gt_v:int -> b_gt_v:(ba_gt_v:int -> v:bool)), [1@l3:a_gt_v:int, 2@l4:ba_gt_v:int]), l1, v:bool,
@@ -875,14 +479,14 @@ ut("Negative summ 2  (1+2)=3", \+ p_e_to_c1(app((=)@l2:eq_v:(a_eq_v:int->b_eq_v:
                                        3@l7:ba_eq_v:int --> ('BA_EQ_V'=3)]
                                      ), l1, v:bool, empty, true, (('A_EQ_V'=3 -> 'V'=1 ; 'V'=0), 'A_EQ_V'=1+2), empty, [_|_])).
 
-ut("naming (+) 1", t_e_to_n_e1(app((+)@l2:(int->int->int), [1@l3:int]), l1, (int->int), v, empty, app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)), [1@l3:a_plus_v:int])@l1:v:(ba_plus_v:int -> bb_plus_v:int))).
-ut("path   (+) 1", n_e_to_p_e1(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
+ut("naming          (+) 1", t_e_to_n_e1(app((+)@l2:(int->int->int), [1@l3:int]), l1, (int->int), v, empty, app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)), [1@l3:a_plus_v:int])@l1:v:(ba_plus_v:int -> bb_plus_v:int))).
+ut("path            (+) 1", n_e_to_p_e1(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
                                    [1@l3:a_plus_v:int]
                                   ), l1, v:(ba_plus_v:int -> bb_plus_v:int),
                                app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
                                    [1@l3:a_plus_v:int --> ('A_PLUS_V'=1)]
                                   )@l1:v:(ba_plus_v:int -> bb_plus_v:int)-->('BB_PLUS_V'=1+'BA_PLUS_V'))).
-ut("summ   (+) 1", p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
+ut("summ            (+) 1", p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
                                  [1@l3:a_plus_v:int --> ('A_PLUS_V'=1)]
                                 ), l1, v:(ba_plus_v:int -> bb_plus_v:int), empty, true, 'BB_PLUS_V'=1+'BA_PLUS_V', empty, [])).
 ut("Negative summ 1 (+) 1", \+ p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
@@ -892,7 +496,7 @@ ut("Negative summ 2 (+) 1", \+ p_e_to_c1(app((+)@l2:plus_v:(a_plus_v:int -> v:(b
                                  [1@l3:a_plus_v:int --> ('A_PLUS_V'=1)]
                                 ), l1, v:(ba_plus_v:int -> bb_plus_v:int), empty, true, 'BB_PLUS_V'=1+'BA_PLUS_V', empty, [_|_])).
 
-ut("PP path  (+) 1", pp(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
+ut("PP path         (+) 1", pp(app((+)@l2:plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int)),
                                    [1@l3:a_plus_v:int]
                                   )@l1:v:(ba_plus_v:int -> bb_plus_v:int)-->('BB_PLUS_V'=1+'BA_PLUS_V'),
                         "(\n  (+):plus_v:(a_plus_v:int -> v:(ba_plus_v:int -> bb_plus_v:int))\n  1:a_plus_v:int\n):v:(ba_plus_v:int -> bb_plus_v:int) --> BB_PLUS_V=1+BA_PLUS_V")).
