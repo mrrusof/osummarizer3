@@ -1,11 +1,14 @@
-:- use_module(library(ordsets), [list_to_ord_set/2]).
 :- use_module(library(codesio), [format_to_codes/3]).
 :- set_prolog_flag(discontiguous_warnings, off).
 :- multifile ut/2.
 
+:- ['../debug.pl'].
+:- ['../log.pl'].
 :- ['../osummarizer.pl'].
 :- ['../ast.pl'].
 :- ['../pp.pl'].
+
+
 
 % **********************************************************************
 % Tests for modules
@@ -34,16 +37,6 @@ ut("choose_names 2", choose_names(max1:(x2:int -> f1_max1:(y3:int -> ret_max1:in
 ut("choose_names 3", choose_names(app  :(g      :(a_g     :A  ->b_g     :B                             )->f1_app :(x       :A  ->ret_app :B                             )),
                                   app_v:(a_app_v:(aa_app_v:int->ab_app_v:(aba_app_v:int->abb_app_v:int))->b_app_v:(ba_app_v:int->bb_app_v:(bba_app_v:int->bbb_app_v:int))),
                                   app  :(g      :(aa_app_v:int->b_g     :(aba_app_v:int->abb_app_v:int))->f1_app :(ba_app_v:int->ret_app :(bba_app_v:int->bbb_app_v:int))))).
-
-
-
-
-
-
-
-
-
-
 
 
 

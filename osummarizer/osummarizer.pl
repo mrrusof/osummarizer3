@@ -1,7 +1,5 @@
 :- use_module('plterms.pl',              [uppercase_atom/2,
-                                          mk_conj/2,
-                                          flatten_tuple/2,
-                                          simplify_formula/2]).
+                                          mk_conj/2]).
 :- use_module('mltypes.pl',              [roots/3,
                                           formals/2,
                                           return/2,
@@ -16,23 +14,18 @@
 :- use_module('pp.pl',                   [start_pp/0,
                                           push_pp/0,
                                           pop_pp/0]).
-:- use_module('log.pl',                  [start_log/0,
-                                          if_log/1,
+:- use_module('log.pl',                  [if_log/1,
                                           lpush/0,
                                           lpop/0,
                                           lindent/0,
-                                          lprint/1,
-                                          lformat/2]).
-:- use_module('debug.pl',                [start_debug/0,
-                                          dpush_portray_clause/1,
-                                          dpop_portray_clause/1,
-                                          dnl/0]).
+                                          lprint/1]).
+:- use_module('debug.pl',                [dpush_portray_clause/1,
+                                          dpop_portray_clause/1]).
 :- use_module('ext/utils/misc.pl',       [format_atom/3]).
 
 :- use_module('ext/utils/list_utils.pl', [list2tuple/2]).
 :- use_module(library(avl),              [avl_fetch/3,
-                                          avl_store/4,
-                                          avl_to_list/2]).
+                                          avl_store/4]).
 :- use_module(library(lists),            [rev/2,
                                           maplist/3,
                                           include/3]).
