@@ -7,7 +7,7 @@ all: osummarizer
 osummarizer: osummarizer.sav
 	spld --output="osummarizer" --main=restore --moveable --static --resources-from-sav --resources=osummarizer.sav=/osummarizer/osummarizer.sav
 
-osummarizer.sav: *.pl ext/utils/misc.pl ext/utils/list_utils.pl
+osummarizer.sav: *.pl ext/utils/*.pl
 	@rm -f osummarizer.sav
 	sicstus --goal "compile(main), save_program('osummarizer.sav'), halt." 2>&1 | tee /tmp/osummarizer.sav.log
 	@(! sed -e '/\[Choices\] treated as local in do-loop but also used outside/D' \
@@ -16,7 +16,7 @@ osummarizer.sav: *.pl ext/utils/misc.pl ext/utils/list_utils.pl
 	   grep -n -e '^\!' -e '^\*') \
          || (rm -f osummarizer.sav && false)
 
-ext/utils/misc.pl:
+ext/utils/*.pl:
 	./ext/checkout-externals.sh
 
 /tmp/osum-tests: osummarizer
@@ -25,7 +25,7 @@ ext/utils/misc.pl:
 tests: /tmp/osum-tests
 	@cat /tmp/osum-tests
 
-/tmp/osum-unit: *.pl
+/tmp/osum-unit: *.pl ext/utils/*.pl
 	@sicstus -l unit/unit.pl --goal 'halt.' 2>/tmp/unit.pl.log | \
 	sed -e 's/PASSED/\\033[0;32mPASSED\\033[0m/' -e 's/FAILED/\\033[0;31mFAILED\\033[0m/' | \
 	(while read -r l; do echo "$$l"; done) >/tmp/osum-unit
