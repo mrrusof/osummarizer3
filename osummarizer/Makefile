@@ -25,7 +25,7 @@ ext/utils/*.pl:
 tests: /tmp/osum-tests
 	@cat /tmp/osum-tests
 
-/tmp/osum-unit: *.pl ext/utils/*.pl
+/tmp/osum-unit: *.pl unit/*.pl ext/utils/*.pl
 	@sicstus -l unit/unit.pl --goal 'halt.' 2>/tmp/unit.pl.log | \
 	sed -e 's/PASSED/\\033[0;32mPASSED\\033[0m/' -e 's/FAILED/\\033[0;31mFAILED\\033[0m/' | \
 	(while read -r l; do echo "$$l"; done) >/tmp/osum-unit
