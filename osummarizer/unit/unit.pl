@@ -2797,6 +2797,28 @@ ut("etoe fun x y -> let app = fun g x -> g x in assert(app app (+) x y=x+y)",
               ('x_int->int->int'('A_X','BA_X','BB_X'):-'BB_X'='A_X'+'BA_X','ctx_x_int->int->int'('A_X','BA_X'),'ctx_v_int->int->unit'('X','Y'))]
             )).
 
+ut("etoe   let app g x = g x in assert(app (fun u v -> u + v) 1 2 = 1 + 2)",
+   t_e_to_c1(let(app@l:((A->B)->A->B),
+                 abs([g@l:(A->B), x@l:A],
+                     app(g@l:(A->B),
+                         [x@l:A]
+                        )@l:B
+                    )@l:((A->B)->A->B),
+                 assert(
+                        app((=)@l:(int->int->bool),
+                            [app(app@l:((int->int->int)->int->int->int),
+                                 (+)@l:(int->int->int),
+                                 x@l:int,
+                                 y@l:int
+                                )@l:int,
+                             app((+)@l:(int->int->int),
+                                 [x@l:int,
+                                  y@l:int]
+                                )@l:int]
+                           )@l:bool
+                       )@l:unit
+                ), l, unit, v, empty, true, empty, _N, _K, [])).
+
 
 
 % **********************************************************************
