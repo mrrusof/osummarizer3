@@ -2560,7 +2560,7 @@ ut("summ   polymorphic let max1 = fun x2 y3 -> ... in max1 3 1", (   t_e_to_n_e1
                                                                                [('ctx_max1_int->int->int'('A_MAX1_V', 'BA_MAX1_V') :- 'BA_MAX1_V'=1, 'A_MAX1_V'=3),
                                                                                 ('max1_int->int->int'('X2', 'Y3', 'RET_MAX1') :- (('C_RET_MAX1'=1 -> 'RET_MAX1'='X2' ; 'RET_MAX1'='Y3'), ('X2'>'Y3' -> 'C_RET_MAX1'=1 ; 'C_RET_MAX1'=0), 'ctx_max1_int->int->int'('X2', 'Y3')))]))).
 
-ut("naming   HO param passing let app = fun g x -> g x in app (+) 1", t_e_to_n_e1(let(app@l:((A->B)->A->B),
+ut("naming      FO param passing let app = fun g x -> g x in app (+) 1", t_e_to_n_e1(let(app@l:((A->B)->A->B),
                                                                                       abs([g@l:(A->B), x@l:A],
                                                                                           app(g@l:(A->B),
                                                                                               [x@l:A]
@@ -2582,7 +2582,7 @@ ut("naming   HO param passing let app = fun g x -> g x in app (+) 1", t_e_to_n_e
                                                                                            1@l:ba_app_v:int]
                                                                                          )@l:v:(bba_app_v:int->bbb_app_v:int)
                                                                                      )@l:v:(bba_app_v:int->bbb_app_v:int))).
-ut("path     HO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
+ut("path        FO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
                                                                                           abs([g@l:(A->B), x@l:A],
                                                                                               app(g@l:(A->B),
                                                                                                   [x@l:A]
@@ -2605,7 +2605,7 @@ ut("path     HO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to
                                                                                                1@l:ba_app_v:int --> ('BA_APP_V'=1)]
                                                                                              )@l:v:(bba_app_v:int->bbb_app_v:int) --> 'app_(int->int->int)->int->int->int'(1, 'BBA_APP_V', 'BBB_APP_V')
                                                                                          )@l:v:(bba_app_v:int->bbb_app_v:int) --> 'app_(int->int->int)->int->int->int'(1, 'BBA_APP_V', 'BBB_APP_V')))).
-ut("end-to-end  HO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to_c1(let(app@l:((A->B)->A->B),
+ut("end-to-end  FO param passing let app = fun g x -> g x in app (+) 1", (   t_e_to_c1(let(app@l:((A->B)->A->B),
                                                                                         abs([g@l:(A->B), x@l:A],
                                                                                             app(g@l:(A->B),
                                                                                                 [x@l:A]
@@ -2622,7 +2622,7 @@ ut("end-to-end  HO param passing let app = fun g x -> g x in app (+) 1", (   t_e
                                                                                      ('g_int->int->int'('A_G','BA_G','BB_G') :- 'BB_G'='A_G'+'BA_G', 'ctx_g_int->int->int'('A_G','BA_G'),'ctx_v_int->int'('BBA_APP_V'))]
                                                                                    ) )).
 
-ut("naming      HO param passing let app = fun g x -> g x in app app (+)", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
+ut("naming      SO param passing let app = fun g x -> g x in app app (+)", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
                                                                                             abs([g@l:(A->B), x@l:A],
                                                                                                 app(g@l:(A->B),
                                                                                                     [x@l:A]
@@ -2644,7 +2644,7 @@ ut("naming      HO param passing let app = fun g x -> g x in app app (+)", (   t
                                                                                                  (+)@l:x:(a_x:int->b_x:(ba_x:int->bb_x:int))]
                                                                                                )@l:v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int))
                                                                                            )@l:v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int)) ))).
-ut("path        HO param passing let app = fun g x -> g x in app app (+)", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
+ut("path        SO param passing let app = fun g x -> g x in app app (+)", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
                                                                                             abs([g@l:(A->B), x@l:A],
                                                                                                 app(g@l:(A->B),
                                                                                                     [x@l:A]
@@ -2667,7 +2667,7 @@ ut("path        HO param passing let app = fun g x -> g x in app app (+)", (   t
                                                                                                  (+)@l:x:(a_x:int->b_x:(ba_x:int->bb_x:int)) --> ('BB_X'='A_X'+'BA_X')]
                                                                                                )@l:v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int)) --> 'app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BBA_APP_V', 'BBBA_APP_V', 'BBBB_APP_V')
                                                                                            )@l:v:(bba_app_v:int->bbb_app_v:(bbba_app_v:int->bbbb_app_v:int)) --> 'app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BBA_APP_V', 'BBBA_APP_V', 'BBBB_APP_V') ))).
-ut("procs       HO param passing let app = fun g x -> g x in app app (+)", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
+ut("procs       SO param passing let app = fun g x -> g x in app app (+)", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
                                                                                             abs([g@l:(A->B), x@l:A],
                                                                                                 app(g@l:(A->B),
                                                                                                     [x@l:A]
@@ -2684,7 +2684,7 @@ ut("procs       HO param passing let app = fun g x -> g x in app app (+)", (   t
                                                                                                     [x@l:A]
                                                                                                    )@l:B
                                                                                                )@l:((A->B)->A->B)), 0, empty, empty)) )).
-ut("summ        HO param passing let app = fun g x -> g x in app app (+)", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
+ut("summ        SO param passing let app = fun g x -> g x in app app (+)", (   t_e_to_n_e1(let(app@l:((A->B)->A->B),
                                                                                             abs([g@l:(A->B), x@l:A],
                                                                                                 app(g@l:(A->B),
                                                                                                     [x@l:A]
@@ -2706,7 +2706,7 @@ ut("summ        HO param passing let app = fun g x -> g x in app app (+)", (   t
                                                                                        ('app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BA_G_RET_APP','BBA_G_RET_APP','BBB_G_RET_APP'):-'g_(int->int->int)->int->int->int'('BA_G_RET_APP','BBA_G_RET_APP','BBB_G_RET_APP'),'ctx_app_((int->int->int)->int->int->int)->(int->int->int)->int->int->int'('BA_G_RET_APP','BBA_G_RET_APP')),
                                                                                        ('g_(int->int->int)->int->int->int'('BA_G','BBA_G','BBB_G'):-'app_(int->int->int)->int->int->int'('BA_G','BBA_G','BBB_G'),'ctx_g_(int->int->int)->int->int->int'('BA_G','BBA_G')),
                                                                                        ('x_int->int->int'('A_X','BA_X','BB_X'):-'BB_X'='A_X'+'BA_X','ctx_x_int->int->int'('A_X','BA_X'))]) )).
-ut("end-to-end  HO param passing let app = fun g x -> g x in app app (+)",
+ut("end-to-end  SO param passing let app = fun g x -> g x in app app (+)",
    t_e_to_c1(let(app@l:((A->B)->A->B),
                  abs([g@l:(A->B), x@l:A],
                      app(g@l:(A->B),
@@ -2797,27 +2797,140 @@ ut("etoe fun x y -> let app = fun g x -> g x in assert(app app (+) x y=x+y)",
               ('x_int->int->int'('A_X','BA_X','BB_X'):-'BB_X'='A_X'+'BA_X','ctx_x_int->int->int'('A_X','BA_X'),'ctx_v_int->int->unit'('X','Y'))]
             )).
 
-ut("etoe   let app g x = g x in assert(app (fun u v -> u + v) 1 2 = 1 + 2)",
-   t_e_to_c1(let(app@l:((A->B)->A->B),
-                 abs([g@l:(A->B), x@l:A],
-                     app(g@l:(A->B),
-                         [x@l:A]
-                        )@l:B
-                    )@l:((A->B)->A->B),
-                 assert(
-                        app((=)@l:(int->int->bool),
-                            [app(app@l:((int->int->int)->int->int->int),
-                                 (+)@l:(int->int->int),
-                                 x@l:int,
-                                 y@l:int
-                                )@l:int,
-                             app((+)@l:(int->int->int),
-                                 [x@l:int,
-                                  y@l:int]
-                                )@l:int]
-                           )@l:bool
-                       )@l:unit
-                ), l, unit, v, empty, true, empty, _N, _K, [])).
+% ut("etoe   let app g x = g x in assert(app (fun a b -> a + b) 1 2 = 1 + 2)",
+%    t_e_to_c1(let(app@l:((A->B)->A->B),
+%                  abs([g@l:(A->B), x@l:A],
+%                      app(g@l:(A->B),
+%                          [x@l:A]
+%                         )@l:B
+%                     )@l:((A->B)->A->B),
+%                  assert(
+%                         app((=)@l:(int->int->bool),
+%                             [app(app@l:((int->int->int)->int->int->int),
+%                                  [abs([a@l:int, b@l:int],
+%                                       app((+)@l:(int->int->int),
+%                                           [a@l:int,
+%                                            b@l:int]
+%                                          )@l:int
+%                                      )@l:(int->int->int),
+%                                   1@l:int,
+%                                   2@l:int]
+%                                 )@l:int,
+%                              app((+)@l:(int->int->int),
+%                                  [1@l:int,
+%                                   2@l:int]
+%                                 )@l:int]
+%                            )@l:bool
+%                        )@l:unit
+%                 ), l, unit, v, empty, true, empty, _N, _K, [])).
+
+% /*
+
+% * Names for main application:
+
+% let apptoinc f : int = f (fun x -> x + 1) in
+% let appto1 g : int = g 1 in
+% apptoinc:apptoinc_v:(f:(g:(aa_f:int -> ab_f:int) -> b_f:int) -> v:int)
+% appto1:              f:(g:(aa_f:int -> ab_f:int) -> b_f:int)
+
+% * Steps for naming main application:
+
+% (1) Name head. Name actuals with name of formals.
+% apptoinc:apptoinc_v:(f:(a_f:(aaa_apptoinc_v:int -> aab_apptoinc_v:int) -> ab_apptoinc_v:int) -> b_apptoinc_v:int)
+% appto1:              f:(g  :(aa_f          :int -> ab_f          :int) -> b_f          :int)
+
+% (2) Replace formals with actuals.
+% apptoinc:apptoinc_v:(f:(g  :(aa_f          :int -> ab_f          :int) -> b_f          :int) -> b_apptoinc_v:int)
+% appto1:              f:(g  :(aa_f          :int -> ab_f          :int) -> b_f          :int)
+
+% (3) Rename return.
+% apptoinc:apptoinc_v:(f:(g  :(aa_f          :int -> ab_f          :int) -> b_f          :int) ->            v:int)
+% appto1:              f:(g  :(aa_f          :int -> ab_f          :int) -> b_f          :int)
+
+% *Constraints from main application:
+
+% 'ctx_apptoinc_(((int->int)->int)->int)' :- true.
+% 'f_((int->int)->int)'(B_F) :- 'appto1_((int->int)->int)'(B_F).
+% 'ctx_appto1_((int->int)->int)' :- 'ctx_f_((int->int)->int)'.
+
+% * Names for application in apptoinc:
+
+% let apptoinc f : int = f (fun x -> x + 1)
+
+
+
+% Constraints from application in apptoinc:
+
+% 'g_int->int'(X, RET_G) :- RET_G = X + 1, 'ctx_g_int->int'(X), 'ctx_apptoinc_(((int->int)->int)->int)'.
+% 'ctx
+
+% */
+% /* let apptoinc f : int = f (fun x -> x + 1) in let appto1 g : int = g 1 in apptoinc appto1 */
+% ut("etoe TO param passing",
+%    t_e_to_c1(let(apptoinc@l:(((int->int)->int)->int),
+%                  abs([f@l:((int->int)->int)],
+%                      app(f@l:((int->int)->int),
+%                          [abs([x@l:int],
+%                               app((+)@l:(int->int->int),
+%                                   [x@l:int,
+%                                    1@l:int]
+%                                  )@l:int
+%                              )@l:(int->int)]
+%                         )@l:int
+%                     )@l:(((int->int)->int)->int),
+%                  let(appto1@l:((int->int)->int),
+%                      abs([g@l:(int->int)],
+%                          app(g@l:(int->int),
+%                              [1@l:int]
+%                             )@l:int
+%                         )@l:((int->int)->int),
+%                      app(apptoinc@l:(((int->int)->int)->int),
+%                          [appto1@l:((int->int)->int)]
+%                         )@l:int
+%                      )@l:int
+%                 ), l, int, v, empty, true, empty, _N, _K, [])).
+
+ut("naming NO param passing call location  incr 2",
+   (   t_e_to_n_e1(app(incr@l:(i->i), [2@l:i]), l, i, v,
+                   node(incr,incr:(x:i->ret_incr:i),0,empty,empty),
+                   app(incr@l:_:(A:i->B:i), [2@l:A:i])@l:B:i),
+       % NO formals are different
+       A\=B)).
+
+/*
+(
+ app:app_v:(g:(a_g:i -> b_g:i) -> f1_app:(ba_app_v:i -> v:i))
+ incr:      g:(a_g:i -> b_g:i)
+ 2:                                       ba_app_v:i
+):v:i
+*/
+ut("naming FO param passing call location  app incr 2",
+   (   t_e_to_n_e1(app(app@l:((i->i)->i->i), [incr@l:(i->i), 2@l:i]), l, i, v,
+                   node(incr,incr:(x:i -> ret_incr:i),-1,node(app,app:(g:(a_g:Ta -> b_g:Tb) -> f1_app:(x:Ta -> ret_app:Tb)),0,empty,empty),empty),
+                   app(app@l:_:(g:(A:i->B:i)->_:(C:i->D:i)), [incr@l:g:(A:i->B:i), 2@l:C:i])@l:D:i),
+       % NO formals are different
+       A\=B, A\=C, A\=D, B\=C, B\=D, C\=D)).
+
+/*
+(
+ app:app_v:(g:(g:(aa_g:i -> ab_g:i) -> f1_app:(ba_g:i -> bb_g:i)) -> f1_app:(x:(a_x:i -> b_x:i) -> ret_app:(bba_app_v:i -> v:i)))
+ app:       g:(g:(aa_g:i -> ab_g:i) -> f1_app:(ba_g:i -> bb_g:i))
+ incr:                                                                       x:(a_x:i -> b_x:i)
+ 2:                                                                                                         bba_app_v:i
+):v:i
+*/
+ut("naming SO param passing call location  app app incr 2",
+   (   t_e_to_n_e1(app(app@l:(((i->i)->i->i)->(i->i)->i->i), [app@l:((i->i)->i->i), incr@l:(i->i), 2@l:i]), l, i, v,
+                   node(incr,incr:(x:i -> ret_incr:i),-1,node(app,app:(g:(a_g:Ta -> b_g:Tb) -> f1_app:(x:Ta -> ret_app:Tb)),0,empty,empty),empty),
+                   app(app@l:_:(g:(g:(A:i->B:i)->F1:(C:i->D:i))->F1:(x:(E:i->F:i)->_:(G:i->H:i))), [app@l:g:(g:(A:i->B:i)->F1:(C:i->D:i)), incr@l:x:(E:i->F:i), 2@l:G:i])@l:H:i),
+       % NO formals are different
+       A\=B, A\=C, A\=D, A\=E, A\=F, A\=G, A\=H,
+       B\=C, B\=D, B\=E, B\=F, B\=G, B\=H,
+       C\=D, C\=E, C\=F, C\=G, C\=H,
+       D\=E, D\=F, D\=G, D\=H,
+       E\=F, E\=G, E\=H,
+       F\=G, F\=H,
+       G\=H)).
 
 
 
