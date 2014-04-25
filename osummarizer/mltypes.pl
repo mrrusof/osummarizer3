@@ -1,5 +1,6 @@
 :- module(mltypes, [roots/3,
                     formals/2,
+                    formals/3,
                     formals_return/2,
                     return/2,
                     remove_formals_ty/3,
@@ -24,6 +25,17 @@ formals(+N, -Formals)
 formals(_:T, Formals) :-
         (   compound(T), T = (R->T2) ->
             formals(T2, Rs),
+            Formals = [R|Rs]
+        ;   Formals = []
+        ).
+
+/*
+formals(+Count, +N, -Formals)
+*/
+formals(Count, _:T, Formals) :-
+        (   Count > 0, compound(T), T = (R->T2) ->
+            Count1 is Count - 1,
+            formals(Count1, T2, Rs),
             Formals = [R|Rs]
         ;   Formals = []
         ).

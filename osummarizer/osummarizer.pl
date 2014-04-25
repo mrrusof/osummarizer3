@@ -2,6 +2,7 @@
                                           mk_conj/2]).
 :- use_module('mltypes.pl',              [roots/3,
                                           formals/2,
+                                          formals/3,
                                           formals_return/2,
                                           return/2,
                                           remove_formals_nty/3,
@@ -51,11 +52,11 @@ t_e_to_n_e1(app(Ef@Lf:Tf, ELTs), L, T, X, Env, app(Efn@Lf:Nf, ELNs)@L:X:Npre) :-
         ;   format_atom('f_~p', [X], Xf)
         ),
         t_e_to_n_e1(Ef, Lf, Tf, Xf, Env, Efn@Lf:PreNf),
-        formals(PreNf, Fs),
+        length(ELTs, Count),
+        formals(Count, PreNf, Fs),
         (   foreach(Ei@Li:Ti, ELTs),
-            fromto(Fs, [Xi:_|OutFs], OutFs, _),
+            foreach(Xi:_, Fs),
             foreach(ELNi, ELNs),
-            count(_, 1, Count),
             param(Env)
         do  t_e_to_n_e1(Ei, Li, Ti, Xi, Env, ELNi)
         ),
