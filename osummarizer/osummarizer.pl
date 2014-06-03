@@ -452,7 +452,7 @@ p_e_to_c1(app(Ef@Lf:Xf:Tf, ELNKs), L, N, Env, K, Kd, D, S) :- !,
             ord_union(Ss, S)
         ;   ml_id(Ef) ->
             (   avl_fetch(Ef, D, (K0, PreELT0)) -> % Ef is let bound identifier
-                % instantiate type of Ef
+                % instantiate type of definition of Ef
                 copy_term(PreELT0, E0@L0:T0),
                 unname_type(Ef:Tf, T0),
                 % analyze definition of Ef under appropriate context
